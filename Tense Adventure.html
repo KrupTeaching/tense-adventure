@@ -1887,7 +1887,7 @@ button:focus-visible {
     inset 0 0 0 var(--pixel) var(--ff-orange),
     var(--pixel) var(--pixel) 0 var(--ff-shadow),
     0 0 20px rgba(255, 205, 117, 0.4);
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 
 .stage-card.boss-card.playable:hover {
@@ -5330,11 +5330,13 @@ const gameState = {
   guardUsed: false,      // Guard skill used this stage?
   tempAppearance: null,  // working copy in character creator
   reviewMode: false,         // stageId when in review battle, false otherwise
-  tBotRevivalActive: false,  // true when Evil T-Bot has revived bosses 5/10/15
-  wrongCountThisQ: 0,        // player-turn wrongs on current question
-  prevQWrongCount: 0,        // player-turn wrongs on previous question
-  fiftyActiveThisQ: false,   // 50:50 item used on current question
-  usedAttackQuestions: null  // Set — prevents repeated attack-phase questions in boss fights
+  tBotRevivalActive: false,    // true when Evil T-Bot has revived bosses 5/10/15
+  tBotRevivalCompleted: false, // true once player beats all 3 revival bosses
+  wrongCountThisQ: 0,          // player-turn wrongs on current question
+  prevQWrongCount: 0,          // player-turn wrongs on previous question
+  fiftyActiveThisQ: false,     // 50:50 item used on current question
+  usedAttackQuestions: null,   // Set — prevents repeated attack-phase questions in boss fights
+  totalWrongThisBattle: 0      // total wrong answers this battle (for perfect_boss achievement)
 };
 
 // --- RPG: persistent player profile (saved separately) ---
@@ -5798,7 +5800,8 @@ const ACHIEVEMENTS = {
   guess_master: { icon:'🎲', name:'เธอเดาเก่งมาก',                  desc:'ตอบผิด 2 ครั้งในสองคำถามติดกัน เดาพลาดทุกรอบเลย เก่งด้านนี้มากจริงๆ' },
   fifty_wrong:  { icon:'🎰', name:'50:50 แล้วยังผิดได้!?',          desc:'ใช้ 50:50 Crystal ตัดเหลือ 2 ตัวเลือก แล้วยังตอบผิด...ทำได้ไงนะ' },
   // --- Economy ---
-  coin_rich:    { icon:'💰', name:'พอดีบ้านรวย',                    desc:'สะสมเหรียญรวมกันได้ถึง 500 เหรียญ บ้านต้องรวยแน่ๆ' },
+  coin_rich:    { icon:'💰', name:'พอดีบ้านรวย',                    desc:'มีเหรียญในกระเป๋าพร้อมกัน 500 เหรียญ ไม่ต้องทำงานก็ได้!' },
+  perfect_boss: { icon:'🧠', name:'เด็กฉลาดชาติเจริญ',              desc:'ชนะ Boss โดยไม่ตอบผิดแม้แต่ข้อเดียว เก่งจริงๆ ชาติต้องการคนแบบนี้!' },
   all_items:    { icon:'🧪', name:'ของมันต้องมี',                    desc:'ซื้อ Useable Item ทุกชนิดอย่างน้อยครั้งหนึ่ง มีครบทุกอย่าง!' },
   all_cosmetics:{ icon:'👑', name:'พอดีบ้านอยู่ข้างเซ็นทรัล',       desc:'ซื้อ Cosmetic ทุกชิ้นในร้าน นี่คือ Ultimate Flex จริงๆ' },
   shop_addict:  { icon:'🛍️', name:'มาเที่ยวห้างหรอ',                desc:'เปิด Shop มากกว่า 5 ครั้ง ไม่ซื้อก็เที่ยวได้นะ ฟรีนะ' },
@@ -5831,6 +5834,7 @@ function saveProgress() {
     localStorage.setItem('tenseGameBadges', JSON.stringify(gameState.badges));
     localStorage.setItem('tenseGamePlayer', JSON.stringify(player));
     localStorage.setItem('tenseGameRevival', gameState.tBotRevivalActive ? '1' : '0');
+    localStorage.setItem('tenseGameRevivalDone', gameState.tBotRevivalCompleted ? '1' : '0');
   } catch(e) {}
 }
 
@@ -5844,6 +5848,7 @@ function loadProgress() {
     if (s) gameState.bestScores = JSON.parse(s);
     if (b) gameState.badges = JSON.parse(b);
     gameState.tBotRevivalActive = localStorage.getItem('tenseGameRevival') === '1';
+    gameState.tBotRevivalCompleted = localStorage.getItem('tenseGameRevivalDone') === '1';
     if (p) {
       const saved = JSON.parse(p);
       player.level = saved.level || 1;
@@ -5928,7 +5933,7 @@ function renderAchievementsScreen() {
 
   const groups = [
     { label: '📚 การเรียนรู้', ids: ['study_focus','study_sleep','start_idle'] },
-    { label: '⚔️ การต่อสู้',  ids: ['first_x5_combo','boss_loss_first'] },
+    { label: '⚔️ การต่อสู้',  ids: ['first_x5_combo','boss_loss_first','perfect_boss'] },
     { label: '🎲 เดาดวง',    ids: ['guess_master','fifty_wrong'] },
     { label: '💰 เศรษฐกิจ',  ids: ['coin_rich','all_items','all_cosmetics','shop_addict'] },
     { label: '📖 Review Mode', ids: ['review_mode_enter','all_diplomas'] },
@@ -6246,6 +6251,11 @@ function startRevivalBattle(stageId) {
   gameState.earnedExp = 0;
   gameState.phase = 'player';
   gameState.guardUsed = false;
+  gameState.usedAttackQuestions = new Set();
+  gameState.wrongCountThisQ = 0;
+  gameState.prevQWrongCount = 0;
+  gameState.fiftyActiveThisQ = false;
+  gameState.totalWrongThisBattle = 0;
   renderRevivalCutscene(stage);
 }
 
@@ -6573,11 +6583,14 @@ function startGame(stageId) {
   gameState.wrongCountThisQ = 0;
   gameState.prevQWrongCount = 0;
   gameState.fiftyActiveThisQ = false;
-  
+  gameState.totalWrongThisBattle = 0;
+
   // Boss stages with a cutscene play the dialogue first
-  // Stage 16 during revival: show T-Bot return taunt instead of normal cutscene
-  if (stage.id === 16 && gameState.tBotRevivalActive) {
-    renderTBotReturnTaunt(stage);
+  // Stage 16: pick correct opening cutscene
+  if (stage.id === 16 && gameState.tBotRevivalCompleted && !gameState.tBotRevivalActive) {
+    renderTBotRevengeTaunt(stage); // After beating all 3 revival bosses — T-Bot trash-talks them
+  } else if (stage.id === 16 && gameState.tBotRevivalActive) {
+    renderTBotReturnTaunt(stage);  // Re-entering stage 16 while revival still active
   } else if (stage.cutscene && stage.cutscene.length) {
     renderCutscene(stage);
   } else {
@@ -6643,6 +6656,41 @@ function advanceTBotReturnTaunt() {
     if (el) el.classList.toggle('speaking', who === line.speaker);
   });
   showRevivalCutsceneLine();
+}
+
+/* ============================================
+   T-BOT REVENGE TAUNT
+   Shown when player re-challenges T-Bot after beating all 3 revival bosses
+   ============================================ */
+function renderTBotRevengeTaunt(stage) {
+  const lines = [
+    { speaker: "hero",  name: "Time Ranger", text: "Time Dragon, Chrono Reaper, Time Emperor... ข้าเอาชนะพวกเจ้าครบแล้ว! ถึงเวลาของเจ้าแล้ว T-Bot!!" },
+    { speaker: "boss",  name: "Evil T-Bot",  text: "โอ้... เจ้าเอาชนะ Revival Boss ทั้งสามมาได้จริงๆ เหรอ? น่าแปลกใจดีนะ..." },
+    { speaker: "boss",  name: "Evil T-Bot",  text: "แต่ฟังนะ Revival Boss พวกนั้น เก่งไม่ถึงครึ่งหนึ่งของข้าเลยซักนิด! อย่าคิดว่าเอาชนะพวกนั้นแล้วจะพร้อมสู้กับข้า!" },
+    { speaker: "boss",  name: "Evil T-Bot",  text: "อย่าหวังว่าจะเอาชนะข้าง่ายๆ!! ข้าคือผู้ครองกาลเวลา ไม่มีใครเทียบได้!!" },
+    { speaker: "hero",  name: "Time Ranger", text: "ดูแล้วกันสิ T-Bot! ข้าผ่านมาจากนรกแล้ว ไม่มีอะไรหยุดข้าได้อีกแล้ว!!" }
+  ];
+  gameState.winCutsceneLines = lines;
+  gameState.winCutsceneIndex = 0;
+  gameState.cutsceneTyping = false;
+
+  document.getElementById('app').innerHTML = `
+    <div class="cutscene cutscene-bg-galaxy" id="cutscene" onclick="advanceTBotReturnTaunt()">
+      <div class="cutscene-stage">
+        <div class="cutscene-char hero speaking" id="cs-hero">${heroSprite()}</div>
+        <div class="cutscene-char boss" id="cs-boss">
+          <svg viewBox="0 0 32 48" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;shape-rendering:crispEdges"><use href="#evil-tbot-sprite"/></svg>
+        </div>
+      </div>
+      <div class="cutscene-box">
+        <div class="cutscene-name hero" id="cs-name">${lines[0].name}</div>
+        <div class="cutscene-text" id="cs-text"></div>
+        <div class="cutscene-hint" id="cs-hint">▶ แตะเพื่ออ่านต่อ</div>
+        <div id="cs-fight"></div>
+      </div>
+    </div>`;
+  BGM.play('galaxy', true);
+  setTimeout(showRevivalCutsceneLine, 80);
 }
 
 /* ============================================
@@ -7062,7 +7110,8 @@ function renderWinCutscene() {
     gameState.winCutsceneIndex = 0;
     const bvbR = stage.id === 5 ? '0 0 56 56' : stage.id === 10 ? '0 0 44 48' : '0 0 52 56';
     // First line is always boss speaking — boss starts visible, hero faded
-    const firstSpeaker = revWinLines.length ? revWinLines[0].speaker : 'hero';
+    const firstLine = revWinLines[0] || {};
+    const firstSpeaker = firstLine.speaker || 'boss';
     document.getElementById('app').innerHTML = `
       <div class="cutscene cutscene-bg-${stage.worldType||'present'}" id="cutscene" onclick="advanceRevivalWinCutscene()">
         <div class="cutscene-stage">
@@ -7072,14 +7121,14 @@ function renderWinCutscene() {
           </div>
         </div>
         <div class="cutscene-box">
-          <div class="cutscene-name" id="cs-name"></div>
+          <div class="cutscene-name ${firstSpeaker}" id="cs-name">${firstLine.name || ''}</div>
           <div class="cutscene-text" id="cs-text"></div>
           <div class="cutscene-hint" id="cs-hint">▶ แตะเพื่ออ่านต่อ</div>
           <div id="cs-fight"></div>
         </div>
       </div>`;
     SoundFX.win();
-    showWinCutsceneLine();
+    setTimeout(showWinCutsceneLine, 80);
     return;
   }
 
@@ -7249,6 +7298,22 @@ function advanceWinCutscene() {
 
 function renderEndCredits() {
   BGM.stop();
+  // Completion stats
+  const playableStages = STAGES_DATA.filter(s => s.playable);
+  const beatenCount = playableStages.filter(s => gameState.badges[s.id]).length;
+  const stageCompletion = Math.round(beatenCount / playableStages.length * 100);
+  const achKeys = Object.keys(ACHIEVEMENTS).filter(k => !ACHIEVEMENTS[k].isDiploma);
+  const achEarned = achKeys.filter(k => player.achievements[k]).length;
+  const achCompletion = Math.round(achEarned / achKeys.length * 100);
+  // Earned achievements list (non-diploma)
+  const earnedAchHTML = achKeys.filter(k => player.achievements[k]).map(k => {
+    const a = ACHIEVEMENTS[k];
+    return `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,205,117,0.12);border:2px solid rgba(255,205,117,0.4);padding:6px 10px;margin:4px;border-radius:0;">
+      <span style="font-size:1.3rem;">${a.icon}</span>
+      <span style="font-size:0.75rem;color:var(--ff-cream);">${a.name}</span>
+    </div>`;
+  }).join('') || '<div class="credits-item" style="color:var(--ff-text-dim);">ยังไม่ได้รับ Achievement ใดเลย</div>';
+
   document.getElementById('app').innerHTML = `
     <div class="end-credits-overlay">
       <div class="credits-scroll-wrap">
@@ -7260,25 +7325,31 @@ function renderEndCredits() {
           <div class="credits-item">เจ้าเอาชนะ Evil T-Bot แล้ว!</div>
           <div class="credits-item">เรียนรู้ Tenses ทั้ง 12 รูปแบบสำเร็จ!</div>
           <hr class="credits-divider">
+          <div class="credits-section">📊 COMPLETION</div>
+          <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin:12px 0;">
+            <div style="text-align:center;">
+              <div style="font-family:'Press Start 2P',monospace;font-size:1.6rem;color:var(--ff-gold);">${stageCompletion}%</div>
+              <div style="font-size:0.8rem;color:var(--ff-text-dim);margin-top:4px;">ด่านที่ผ่าน ${beatenCount}/${playableStages.length}</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-family:'Press Start 2P',monospace;font-size:1.6rem;color:var(--ff-cyan);">${achCompletion}%</div>
+              <div style="font-size:0.8rem;color:var(--ff-text-dim);margin-top:4px;">Achievement ${achEarned}/${achKeys.length}</div>
+            </div>
+          </div>
+          <hr class="credits-divider">
+          <div class="credits-section">🏅 ACHIEVEMENTS ที่ได้รับ</div>
+          <div style="text-align:center;padding:8px 0;">${earnedAchHTML}</div>
+          <hr class="credits-divider">
           <div class="credits-section">📖 TENSES ที่เรียนรู้</div>
-          <div class="credits-item">Present Simple / Continuous</div>
-          <div class="credits-item">Present Perfect / Perfect Continuous</div>
-          <div class="credits-item">Past Simple / Continuous</div>
-          <div class="credits-item">Past Perfect / Perfect Continuous</div>
-          <div class="credits-item">Future Simple / Continuous</div>
-          <div class="credits-item">Future Perfect / Perfect Continuous</div>
+          <div class="credits-item">Present Simple / Continuous / Perfect / Perfect Continuous</div>
+          <div class="credits-item">Past Simple / Continuous / Perfect / Perfect Continuous</div>
+          <div class="credits-item">Future Simple / Continuous / Perfect / Perfect Continuous</div>
           <hr class="credits-divider">
           <div class="credits-section">👥 CHARACTERS</div>
           <div class="credits-item">Time Ranger — ผู้เล่น</div>
           <div class="credits-item">Evil T-Bot — ผู้ร้าย</div>
           <div class="credits-item">ครูพีพี — ผู้ช่วยลึกลับ</div>
-          <div class="credits-item">Time Dragon — Boss แห่ง Present</div>
-          <div class="credits-item">Chrono Reaper — Boss แห่ง Past</div>
-          <div class="credits-item">Time Emperor — Boss แห่ง Future</div>
-          <hr class="credits-divider">
-          <div class="credits-section">🎓 CREATED FOR</div>
-          <div class="credits-item">นักเรียนภาษาอังกฤษทุกคน</div>
-          <div class="credits-item">ที่กล้าออกผจญภัยแห่ง Tense!</div>
+          <div class="credits-item">Time Dragon · Chrono Reaper · Time Emperor — Bosses</div>
           <hr class="credits-divider">
           <div style="margin-top:30px;font-family:'Press Start 2P',monospace;font-size:0.55rem;color:#7c3aed;">
             ยังมี อาณาจักร Grammar อื่นๆ อีกมากมาย...<br>รอการผจญภัยครั้งต่อไป!
@@ -7293,6 +7364,7 @@ function renderEndCredits() {
 }
 
 function renderGameScreen() {
+  _currentScreen = 'battle'; // Invalidates any pending lesson-screen achievement timers
   const stage = gameState.currentStage;
   const q = gameState.activeQuestions[gameState.currentQuestionIndex];
   BGM.play(stage.worldType, stage.isBoss);
@@ -7575,6 +7647,7 @@ function checkAnswer(answer, btn) {
     gameState.wrongTries++;
     gameState.comboCount = 0;
     gameState.wrongCountThisQ++;
+    gameState.totalWrongThisBattle = (gameState.totalWrongThisBattle || 0) + 1;
     // 50:50 then wrong achievement
     if (gameState.fiftyActiveThisQ) unlockAchievement('fifty_wrong');
     updateComboDisplay();
@@ -7663,9 +7736,10 @@ function checkDefenseAnswer(answer, btn) {
     });
     SoundFX.wrong();
     gameState.comboCount = 0;
+    gameState.totalWrongThisBattle = (gameState.totalWrongThisBattle || 0) + 1;
     updateComboDisplay();
   }
-  
+
   // Boss attacks the hero
   fxBossWindup();
   SoundFX.bossCharge();
@@ -7728,7 +7802,7 @@ function checkDefenseAnswer(answer, btn) {
     
     // Player defeated?
     if (gameState.playerHP <= 0) {
-      document.getElementById('explanation-text').innerHTML += `<br><strong style="color:var(--ff-red)">⚠️ HP หมด! แต่ภารกิจยังไม่จบ สู้ต่อได้!</strong>`;
+      document.getElementById('explanation-text').innerHTML += `<br><strong style="color:var(--ff-red)">💀 HP หมดแล้ว! เจ้าแพ้แล้ว... กด NEXT เพื่อดูผล</strong>`;
     }
   }, 700);
 }
@@ -7942,6 +8016,9 @@ function updateBossHP() {
 function nextQuestion() {
   // Boss defeated mid-stage → victory cutscene then results
   if (gameState.bossDefeated) {
+    if (gameState.currentStage.isBoss && (gameState.totalWrongThisBattle || 0) === 0) {
+      unlockAchievement('perfect_boss');
+    }
     BGM.stop();
     renderWinCutscene();
     return;
@@ -8077,7 +8154,7 @@ function renderResultScreen() {
     gameState.earnedCoins += completionBonus;
     player.coins += gameState.earnedCoins;
     player.stats.coinsLifetime = (player.stats.coinsLifetime || 0) + gameState.earnedCoins;
-    if (player.stats.coinsLifetime >= 500) unlockAchievement('coin_rich');
+    if (player.coins >= 500) unlockAchievement('coin_rich');
     player.exp += gameState.earnedExp;
     const beforeSkills = Object.keys(player.skills).length;
     // Level up loop
@@ -8152,7 +8229,8 @@ function renderResultScreen() {
       // 4. After T-Bot revival: re-unlock stage 16 when all 3 bosses re-beaten
       if ([5, 10, 15].includes(stage.id) && !gameState.unlockedStages.includes(16)) {
         if (gameState.badges[5] && gameState.badges[10] && gameState.badges[15]) {
-          gameState.tBotRevivalActive = false; // End revival — all bosses reconquered
+          gameState.tBotRevivalActive = false;    // End revival — all bosses reconquered
+          gameState.tBotRevivalCompleted = true;  // Flag for T-Bot revenge cutscene
           gameState.unlockedStages.push(16);
           gameState.bossUnlocked = 'tbot';
           setTimeout(() => SoundFX.unlock(), 600);
@@ -8223,11 +8301,11 @@ function renderResultScreen() {
           <div class="result-stats">
             <div class="stat-box">
               <div class="stat-label">SCORE</div>
-              <div class="stat-value">${gameState.score}/${maxScore}</div>
+              <div class="stat-value">${gameState.score}</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label">CORRECT</div>
-              <div class="stat-value">${gameState.correctCount}/${total}</div>
+              <div class="stat-label">ACCURACY</div>
+              <div class="stat-value">${Math.round(pct)}%</div>
             </div>
           </div>
           
@@ -8582,6 +8660,7 @@ function startReviewBattle(stageId) {
   gameState.wrongCountThisQ = 0;
   gameState.prevQWrongCount = 0;
   gameState.fiftyActiveThisQ = false;
+  gameState.totalWrongThisBattle = 0;
 
   BGM.play(stage.worldType, false);
   renderGameScreen();
