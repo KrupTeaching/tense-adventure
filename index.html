@@ -1019,14 +1019,26 @@ button:focus-visible {
   50% { filter: brightness(1.3); }
 }
 
-/* Boss attacking animation */
-.battle-boss-pos.attack-boss {
-  animation: bossLunge 0.5s steps(2);
+/* Boss continuous idle sway */
+@keyframes bossIdleSway {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50%     { transform: translateY(-6px) rotate(3deg); }
+}
+.battle-boss-pos:not(.attack-boss):not(.shake):not(.windup):not(.hit-recoil):not(.defeated) {
+  animation: bossIdleSway 0.9s steps(2) infinite;
 }
 
-@keyframes bossLunge {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-40px); }
+/* Boss attack: wind-up → lunge toward hero → retreat */
+.battle-boss-pos.attack-boss {
+  animation: bossAttackLunge 0.65s steps(6);
+}
+@keyframes bossAttackLunge {
+  0%   { transform: translate(0,   0)    rotate(0deg);  }
+  20%  { transform: translate(-8px,-8px) rotate(-8deg); }  /* wind-up */
+  50%  { transform: translate(-80px, 0)  rotate(5deg);  }  /* lunge */
+  65%  { transform: translate(-90px, 5px) rotate(10deg); } /* impact */
+  80%  { transform: translate(-60px, 0)  rotate(2deg);  }  /* recoil */
+  100% { transform: translate(0,   0)    rotate(0deg);  }  /* return */
 }
 
 .power-row {
@@ -2003,18 +2015,28 @@ button:focus-visible {
   75% { transform: translateX(8px); }
 }
 
-.battle-hero-pos.attack {
-  animation: heroAttackDash 0.7s steps(8);
-  z-index: 7;
+/* Hero continuous idle bob */
+@keyframes heroIdleBob {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-5px); }
+}
+.battle-hero-pos:not(.attack):not(.shake) {
+  animation: heroIdleBob 0.7s steps(2) infinite;
 }
 
-@keyframes heroAttackDash {
-  0%   { transform: translateX(0) translateY(0) rotate(0); }
-  20%  { transform: translateX(20px) translateY(-30px) rotate(-15deg); }  /* leap back & up */
-  45%  { transform: translateX(130px) translateY(-10px) rotate(10deg); }  /* lunge forward */
-  55%  { transform: translateX(140px) translateY(0) rotate(20deg); }      /* strike */
-  70%  { transform: translateX(120px) translateY(-5px) rotate(0); }       /* recoil */
-  100% { transform: translateX(0) translateY(0) rotate(0); }              /* return */
+/* Hero jump-attack: crouch → leap arc → slash → land */
+.battle-hero-pos.attack {
+  animation: heroJumpAttack 0.75s steps(8);
+  z-index: 7;
+}
+@keyframes heroJumpAttack {
+  0%   { transform: translate(0,   0)   rotate(0deg);   }  /* ready */
+  12%  { transform: translate(4px, 6px) rotate(0deg);   }  /* crouch */
+  32%  { transform: translate(50px,-55px) rotate(-25deg); } /* leap up */
+  52%  { transform: translate(140px,-15px) rotate(10deg); } /* arc down */
+  62%  { transform: translate(152px, 4px) rotate(22deg);  } /* strike */
+  72%  { transform: translate(130px, 0)   rotate(8deg);   } /* recoil */
+  100% { transform: translate(0,   0)   rotate(0deg);   }  /* return */
 }
 
 /* Boss takes a hit - knockback + flash */
@@ -3148,13 +3170,793 @@ button:focus-visible {
 
 /* Win cutscene hero-only layout */
 .cutscene-char.victory-hero {
-  left: 50%;
-  transform: translateX(-50%);
+  left: 8%;          /* player on left, T-Bot stays center — no overlap */
+  transform: none;
   width: 120px;
   height: 160px;
 }
 .cutscene-char.victory-hero.speaking {
-  animation: charBobCenter 0.6s steps(2) infinite;
+  animation: charBob 0.6s steps(2) infinite;
+}
+
+/* ============================================================
+   POKEMON GEN 3/4 (GBA/DS) MAKEOVER
+   ============================================================ */
+
+/* --- Global background & palette (Galaxy dark) --- */
+html, body {
+  background: #0d0820 !important;
+  color: #181818 !important;
+}
+
+:root {
+  --pk-white:  #f0f0e0;
+  --pk-panel:  #e0e0d0;
+  --pk-dark:   #181818;
+  --pk-mid:    #808070;
+  --pk-blue:   #3858d0;
+  --pk-red:    #d02020;
+  --pk-yellow: #e8b820;
+  --pk-green:  #38b040;
+  --pk-border: 3px solid #181818;
+  --pk-shadow: 3px 3px 0 #181818;
+  --pk-hp-hi:  #50c838;
+  --pk-hp-mid: #f0c820;
+  --pk-hp-lo:  #e83020;
+}
+
+/* --- Override ff-panels/boxes to Pokemon style --- */
+.ff-box, .ff-box-fancy, .ff-panel {
+  background: var(--pk-white) !important;
+  border: 3px solid var(--pk-dark) !important;
+  box-shadow: 4px 4px 0 var(--pk-dark) !important;
+  color: var(--pk-dark) !important;
+}
+.world-section { background: transparent !important; }
+.ff-box-fancy h3, .world-title { color: var(--pk-dark) !important; text-shadow: none !important; }
+.mode-title { color: var(--pk-dark) !important; text-shadow: none !important; }
+.mode-desc  { color: var(--pk-mid) !important; }
+.mode-icon-pixel { background: var(--pk-panel) !important; border: 3px solid var(--pk-dark) !important; outline: none !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; }
+
+/* --- Override ff-btn to Pokemon style --- */
+.ff-btn {
+  background: var(--pk-white) !important;
+  color: var(--pk-dark) !important;
+  border: 3px solid var(--pk-dark) !important;
+  outline: none !important;
+  box-shadow: 3px 3px 0 var(--pk-dark) !important;
+  text-shadow: none !important;
+}
+.ff-btn:hover {
+  background: var(--pk-panel) !important;
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 5px 5px 0 var(--pk-dark) !important;
+}
+.ff-btn:active { transform: translate(1px,1px) !important; box-shadow: 1px 1px 0 var(--pk-dark) !important; }
+.ff-btn-gold {
+  background: var(--pk-yellow) !important;
+  color: var(--pk-dark) !important;
+  text-shadow: none !important;
+  box-shadow: 3px 3px 0 var(--pk-dark) !important;
+}
+.ff-btn-gold:hover { background: #f8d840 !important; }
+.ff-btn-red  { background: #e84848 !important; color: #fff !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; }
+.ff-btn-cyan { background: #48b8e8 !important; color: var(--pk-dark) !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; }
+.ff-btn-purple { background: #9868e0 !important; color: #fff !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; }
+.ff-btn::before { color: var(--pk-dark) !important; }
+
+/* Back button */
+.back-btn {
+  background: var(--pk-dark) !important;
+  color: var(--pk-white) !important;
+  border: 3px solid var(--pk-dark) !important;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.4) !important;
+  outline: none !important;
+  text-shadow: none !important;
+}
+.back-btn:hover { background: #383838 !important; }
+
+/* --- Screen headers --- */
+.screen-header { text-align: center; margin-bottom: 16px; }
+.screen-title  { color: var(--pk-white) !important; text-shadow: 2px 2px 0 var(--pk-dark) !important; }
+.screen-subtitle { color: #d0f0b0 !important; }
+
+/* --- Map screen --- */
+.stage-card {
+  background: var(--pk-white) !important;
+  border: 3px solid var(--pk-dark) !important;
+  box-shadow: 3px 3px 0 var(--pk-dark) !important;
+  color: var(--pk-dark) !important;
+}
+.stage-card.playable:hover {
+  transform: translate(-2px,-2px) !important;
+  box-shadow: 5px 5px 0 var(--pk-dark) !important;
+  background: #fffff0 !important;
+}
+.stage-card.locked { background: #c8c8b8 !important; opacity: 0.75 !important; }
+.stage-tense  { color: var(--pk-dark) !important; text-shadow: none !important; }
+.stage-world  { color: var(--pk-mid) !important; text-shadow: none !important; }
+.stage-num-badge {
+  background: var(--pk-dark) !important;
+  color: var(--pk-white) !important;
+  border-radius: 3px !important;
+  box-shadow: none !important;
+}
+.boss-card {
+  border-color: var(--pk-red) !important;
+  box-shadow: 3px 3px 0 var(--pk-red) !important;
+  background: #fff0f0 !important;
+}
+.boss-card:hover { box-shadow: 5px 5px 0 var(--pk-red) !important; }
+.boss-label { color: var(--pk-red) !important; text-shadow: none !important; }
+.coming-soon { color: var(--pk-mid) !important; text-shadow: none !important; }
+.world-title { color: var(--pk-dark) !important; text-shadow: none !important; }
+.world-present .world-title { color: #206820 !important; }
+.world-past    .world-title { color: #804010 !important; }
+.world-future  .world-title { color: #183880 !important; }
+.world-galaxy  .world-title { color: #602060 !important; text-shadow: none !important; }
+
+/* Player bar on map */
+.player-bar { background: var(--pk-dark) !important; }
+.player-bar-item { color: var(--pk-white) !important; }
+.player-bar-exp { background: var(--pk-mid) !important; border-color: var(--pk-dark) !important; }
+.player-bar-exp-fill { background: var(--pk-yellow) !important; }
+
+/* --- HUD on battle screen --- */
+.game-hud {
+  background: var(--pk-dark) !important;
+  border: 3px solid var(--pk-dark) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: var(--pk-white) !important;
+  margin-bottom: 0 !important;
+  border-bottom: none !important;
+  padding-left: 90px !important; /* clear fixed EXIT button */
+}
+.hud-stage, .hud-score, .hud-progress { color: var(--pk-white) !important; text-shadow: none !important; }
+
+/* --- Phase banner --- */
+.phase-banner {
+  background: var(--pk-dark) !important;
+  color: var(--pk-white) !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  text-align: center;
+  font-size: 0.5rem !important;
+  padding: 4px 8px !important;
+  margin: 0 !important;
+}
+.phase-banner.player-phase { background: var(--pk-blue) !important; }
+.phase-banner.boss-phase   { background: var(--pk-red) !important; }
+
+/* --- Pokemon Battle Scene Layout --- */
+.pk-battle-scene {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  border: 3px solid var(--pk-dark);
+  border-top: none;
+  margin-bottom: 0;
+}
+
+/* Override sprite positions inside pk-battle-scene
+   Pokemon layout: Enemy = top-RIGHT (front sprite), Player = bottom-LEFT (back sprite) */
+.pk-battle-scene .battle-boss-pos {
+  position: absolute !important;
+  right: 6% !important;
+  top: 10px !important;
+  left: auto !important;
+  width: 110px !important;
+  height: 110px !important;
+}
+.pk-battle-scene .boss-dragon-pos {
+  width: 120px !important;
+  height: 120px !important;
+}
+.pk-battle-scene .boss-stage-scene .battle-boss-pos {
+  width: 130px !important;
+  height: 130px !important;
+}
+.pk-battle-scene .battle-hero-pos {
+  position: absolute !important;
+  left: 6% !important;
+  bottom: 10px !important;
+  right: auto !important;
+  width: 80px !important;
+  height: 110px !important;
+}
+
+/* Enemy HP box — top LEFT (diagonal opposite from enemy sprite on RIGHT) */
+.pk-enemy-hp-box {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  right: auto;
+  background: var(--pk-white);
+  border: 3px solid var(--pk-dark);
+  border-radius: 6px;
+  padding: 5px 10px 7px;
+  min-width: 155px;
+  box-shadow: 3px 3px 0 var(--pk-dark);
+  z-index: 5;
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* Player HP box — bottom RIGHT (diagonal opposite from player sprite on LEFT) */
+.pk-player-hp-box {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  left: auto;
+  background: var(--pk-white);
+  border: 3px solid var(--pk-dark);
+  border-radius: 6px;
+  padding: 5px 10px 7px;
+  min-width: 155px;
+  box-shadow: 3px 3px 0 var(--pk-dark);
+  z-index: 5;
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* HP box internals */
+.pk-box-namerow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+.pk-box-name {
+  font-size: 0.42rem;
+  color: var(--pk-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  letter-spacing: 0.02em;
+}
+.pk-box-level {
+  font-size: 0.38rem;
+  color: var(--pk-dark);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pk-box-hprow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 2px;
+}
+.pk-box-hp-label {
+  font-size: 0.35rem;
+  color: var(--pk-dark);
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+.pk-hp-track {
+  flex: 1;
+  height: 6px;
+  background: #484840;
+  border: 1px solid var(--pk-dark);
+  overflow: hidden;
+  border-radius: 1px;
+}
+.pk-hp-fill {
+  height: 100%;
+  background: var(--pk-hp-hi);
+  transition: width 0.35s ease, background 0.35s;
+}
+/* HP colour states (JS uses .low and .danger on the fill) */
+.pk-hp-fill.low    { background: var(--pk-hp-mid) !important; }
+.pk-hp-fill.danger { background: var(--pk-hp-lo) !important; animation: pkHpFlash 0.5s steps(2) infinite; }
+@keyframes pkHpFlash { 0%,100%{opacity:1} 50%{opacity:0.45} }
+.pk-box-hp-nums {
+  font-size: 0.35rem;
+  color: var(--pk-dark);
+  text-align: right;
+  margin-top: 1px;
+}
+
+/* ATK/power strip */
+.pk-power-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--pk-white);
+  border: 3px solid var(--pk-dark);
+  border-top: none;
+  padding: 3px 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  color: var(--pk-dark);
+  min-height: 18px;
+}
+.pk-atk-track {
+  flex: 1;
+  height: 5px;
+  background: #d8d8c8;
+  border: 1px solid var(--pk-dark);
+  overflow: hidden;
+}
+.pk-atk-fill {
+  height: 100%;
+  background: var(--pk-blue);
+  transition: width 0.3s;
+}
+.pk-atk-label { flex-shrink: 0; min-width: 72px; font-size: 0.38rem; }
+.combo-display { font-size: 0.55rem !important; color: var(--pk-yellow) !important; text-shadow: 1px 1px 0 var(--pk-dark); }
+
+/* --- Pokemon dialog box (question) --- */
+.pk-dialog {
+  background: var(--pk-white);
+  border: 3px solid var(--pk-dark);
+  border-top: none;
+  padding: 12px 18px 10px;
+  min-height: 52px;
+}
+.pk-dialog .question-text {
+  font-family: 'Sarabun', sans-serif !important;
+  font-size: 1.15rem !important;
+  color: var(--pk-dark) !important;
+  text-align: left !important;
+  line-height: 1.6 !important;
+}
+.pk-dialog .question-text .blank {
+  background: #d0d8f0 !important;
+  border-bottom: 3px solid var(--pk-blue) !important;
+  color: var(--pk-blue) !important;
+}
+
+/* --- Pokemon moves panel (2×2 grid + BAG) --- */
+.pk-bottom-panel {
+  display: flex;
+  border: 3px solid var(--pk-dark);
+  border-top: 2px solid var(--pk-mid);
+  background: var(--pk-white);
+  margin-bottom: 10px;
+}
+.pk-choices {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0 !important;
+  flex: 1;
+  margin: 0 !important;
+}
+.pk-move {
+  background: var(--pk-white) !important;
+  border: 0 !important;
+  border-right: 2px solid #c0c0b0 !important;
+  border-bottom: 2px solid #c0c0b0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 10px 10px 10px 8px !important;
+  font-family: 'Sarabun', sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: var(--pk-dark) !important;
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  text-shadow: none !important;
+  transform: none !important;
+  min-width: 0 !important;
+}
+.pk-move:nth-child(2), .pk-move:nth-child(4) { border-right: none !important; }
+.pk-move:nth-child(3), .pk-move:nth-child(4) { border-bottom: none !important; }
+.pk-move:not(:disabled):hover {
+  background: #e8e8d8 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+.pk-move:not(:disabled):hover::before {
+  content: '▶';
+  position: absolute;
+  left: 3px;
+  color: var(--pk-dark);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  animation: cursorBlink 0.4s steps(2) infinite;
+}
+.pk-move.correct {
+  background: #90e890 !important;
+  color: var(--pk-dark) !important;
+  animation: correctPulse 0.5s steps(4) !important;
+}
+.pk-move.wrong {
+  background: #f09090 !important;
+  color: var(--pk-dark) !important;
+  animation: wrongShake 0.4s steps(4) !important;
+}
+.pk-move.show-correct { background: #68c868 !important; color: var(--pk-dark) !important; }
+.pk-move:disabled { cursor: not-allowed; opacity: 0.75; }
+.pk-move-alpha {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  color: var(--pk-mid);
+  flex-shrink: 0;
+  width: 12px;
+}
+
+/* BAG column */
+.pk-bag-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border-left: 2px solid var(--pk-mid);
+}
+.pk-bag-col .ff-btn {
+  min-width: 56px !important;
+  padding: 8px 6px !important;
+  font-size: 0.45rem !important;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* --- Hint / Explanation boxes --- */
+/* hint-box = small inline hint panel in lessons */
+.hint-box {
+  background: var(--pk-white) !important;
+  border: 3px solid var(--pk-dark) !important;
+  box-shadow: 3px 3px 0 var(--pk-dark) !important;
+  color: var(--pk-dark) !important;
+}
+.hint-title { color: var(--pk-dark) !important; border-bottom: 2px solid var(--pk-dark) !important; }
+/* explanation-box = full-screen feedback overlay — keep dark */
+.explanation-box {
+  background: rgba(5, 8, 20, 0.88) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.explanation-title { color: var(--pk-white) !important; text-shadow: none !important; }
+/* Explanation (feedback) box — keep dark panels, force white text */
+.explanation-inner {
+  color: #f0f0e0 !important;
+  outline: none !important;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8) !important;
+}
+.explanation-content { color: #f0f0e0 !important; }
+.explanation-title { text-shadow: none !important; }
+.explanation-box.correct .explanation-title { color: #80f080 !important; }
+.explanation-box.wrong .explanation-title   { color: #ff8080 !important; }
+.explanation-box.correct .explanation-inner {
+  background: linear-gradient(180deg, #0a3a1f, #052414) !important;
+  border: 3px solid #40c040 !important;
+}
+.explanation-box.wrong .explanation-inner {
+  background: linear-gradient(180deg, #3d0d18, #1f0508) !important;
+  border: 3px solid #c04040 !important;
+}
+/* hint-box = inline lesson box (light bg) — keep text dark */
+.hint-box .explanation-content { color: var(--pk-dark) !important; }
+
+/* --- Lesson screen --- */
+.lesson-container .ff-box-fancy,
+.lesson-container .ff-box {
+  background: var(--pk-white) !important;
+}
+.lesson-title    { color: var(--pk-dark) !important; text-shadow: none !important; }
+.lesson-subtitle { color: var(--pk-mid) !important; text-shadow: none !important; }
+.lesson-formula  {
+  background: #e0f0e8 !important;
+  border: 2px solid var(--pk-green) !important;
+  color: var(--pk-dark) !important;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+}
+.lesson-example {
+  background: #e8e8f8 !important;
+  border: 2px solid var(--pk-blue) !important;
+  color: var(--pk-dark) !important;
+}
+.lesson-section-title  { color: var(--pk-blue) !important; border-bottom: 2px solid var(--pk-blue) !important; }
+.lesson-story { background: #f8f8e8 !important; border: 2px solid var(--pk-mid) !important; color: var(--pk-dark) !important; }
+.lesson-chapter-title  { color: var(--pk-dark) !important; }
+.lesson-chapter-text   { color: var(--pk-dark) !important; }
+.lesson-use            { color: var(--pk-dark) !important; }
+.lesson-warn           { background: #fff0e0 !important; border-color: #e09030 !important; }
+.lesson-mistake { color: var(--pk-dark) !important; }
+.lesson-use-ex  { color: var(--pk-blue) !important; }
+
+/* --- Result screen --- */
+.result-container { color: var(--pk-dark) !important; }
+.stat-box { background: var(--pk-white) !important; border: 2px solid var(--pk-dark) !important; color: var(--pk-dark) !important; box-shadow: 2px 2px 0 var(--pk-dark) !important; }
+.stat-label { color: var(--pk-mid) !important; }
+.stat-value { color: var(--pk-dark) !important; }
+
+/* --- Title/Start screen --- */
+.title-logo { color: var(--pk-white) !important; text-shadow: 3px 3px 0 var(--pk-dark), 0 0 30px #a0d060 !important; }
+.title-sub  { color: #d0f090 !important; }
+
+/* --- Shop / Achievement screens --- */
+.shop-item        { background: var(--pk-white) !important; border: 3px solid var(--pk-dark) !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; color: var(--pk-dark) !important; }
+.shop-item-name   { color: var(--pk-dark) !important; text-shadow: none !important; }
+.shop-item-desc   { color: var(--pk-mid) !important; }
+.shop-item-owned  { color: var(--pk-blue) !important; }
+.shop-price       { color: var(--pk-dark) !important; text-shadow: none !important; }
+.wallet-coins     { color: var(--pk-dark) !important; text-shadow: none !important; }
+.wallet-level     { color: var(--pk-blue) !important; }
+.skills-title     { color: var(--pk-dark) !important; text-shadow: none !important; }
+
+/* --- Cutscene screen --- */
+.cutscene-dialog {
+  background: var(--pk-white) !important;
+  border: 3px solid var(--pk-dark) !important;
+  color: var(--pk-dark) !important;
+}
+.cutscene-name   { color: var(--pk-dark) !important; }
+.cutscene-text   { color: var(--pk-dark) !important; }
+.cutscene-next-btn {
+  background: var(--pk-dark) !important;
+  color: var(--pk-white) !important;
+  border: 2px solid var(--pk-mid) !important;
+}
+
+/* --- Item bar --- */
+.item-bar { background: var(--pk-white) !important; border: 3px solid var(--pk-dark) !important; padding: 8px !important; }
+.item-btn { background: var(--pk-panel) !important; border: 2px solid var(--pk-dark) !important; color: var(--pk-dark) !important; box-shadow: 2px 2px 0 var(--pk-dark) !important; }
+.item-btn:not(.disabled):hover { background: #d8d8c8 !important; }
+.item-label { color: var(--pk-dark) !important; }
+.item-count { color: var(--pk-blue) !important; }
+
+/* --- Boss intro banner --- */
+.boss-intro-banner { border: 3px solid var(--pk-dark) !important; }
+.boss-intro-text { color: var(--pk-red) !important; text-shadow: 2px 2px 0 var(--pk-dark) !important; }
+.boss-intro-sub  { color: var(--pk-dark) !important; text-shadow: 1px 1px 0 var(--pk-mid) !important; }
+
+/* --- Achievement toast --- */
+.achievement-toast { background: var(--pk-yellow) !important; border: 3px solid var(--pk-dark) !important; color: var(--pk-dark) !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; }
+.achievement-toast-name { color: var(--pk-dark) !important; }
+
+/* --- Teacher mode banner --- */
+.teacher-mode-banner { background: #e8b820 !important; color: var(--pk-dark) !important; border-bottom: 3px solid var(--pk-dark) !important; }
+
+/* screen-danger overlay stays the same */
+
+/* --- Lesson screen deep overrides --- */
+.lesson-section {
+  background: var(--pk-white) !important;
+  border-left: 4px solid var(--pk-blue) !important;
+  outline: none !important;
+  color: var(--pk-dark) !important;
+}
+.lesson-section-title {
+  color: var(--pk-blue) !important;
+  text-shadow: none !important;
+}
+.lesson-chapter {
+  background: #f0f0ff !important;
+  border-left: 5px solid #7068d0 !important;
+  color: var(--pk-dark) !important;
+}
+.lesson-chapter-title { color: #5050b0 !important; text-shadow: none !important; }
+.lesson-chapter-text  { color: var(--pk-dark) !important; }
+.lesson-story {
+  background: #f8f8e8 !important;
+  border: 2px solid var(--pk-mid) !important;
+  color: var(--pk-dark) !important;
+}
+.lesson-story-header { color: var(--pk-dark) !important; }
+.lesson-tip {
+  background: #fff8e0 !important;
+  border: 3px solid var(--pk-yellow) !important;
+  color: var(--pk-dark) !important;
+}
+.lesson-use { border-bottom-color: #c0c0b0 !important; color: var(--pk-dark) !important; }
+.lesson-use-ex { color: var(--pk-blue) !important; }
+.lesson-mistake { border-bottom-color: #c0c0b0 !important; color: var(--pk-dark) !important; }
+.lesson-mistake s { color: #c04040 !important; }
+.wrong-x  { color: var(--pk-red) !important; }
+.right-check { color: var(--pk-green) !important; }
+.lesson-keywords { color: var(--pk-dark) !important; }
+.lesson-formula {
+  background: #e8f8e8 !important;
+  color: #206020 !important;
+  border: 2px solid var(--pk-green) !important;
+}
+.lesson-example {
+  background: #e8e8f8 !important;
+  color: #203060 !important;
+  border: 2px solid var(--pk-blue) !important;
+}
+.lesson-warn {
+  background: #fff0e0 !important;
+  border-left-color: #e09030 !important;
+}
+
+/* --- Start screen & other screens text fix --- */
+.screen-header .screen-title { color: var(--pk-white) !important; }
+.title-game-story { background: var(--pk-white) !important; border: 3px solid var(--pk-dark) !important; color: var(--pk-dark) !important; }
+.title-game-story * { color: var(--pk-dark) !important; }
+
+/* Result screen panels */
+.result-screen, .result-container { color: var(--pk-dark) !important; }
+.rank-display { color: var(--pk-dark) !important; }
+.badge-display span { color: var(--pk-dark) !important; }
+
+/* Fix any remaining dark panel backgrounds */
+.ff-panel, .game-over-screen, .end-credits { background: var(--pk-white) !important; color: var(--pk-dark) !important; }
+
+/* Player bar on map → dark strip */
+.player-bar-item { color: var(--pk-white) !important; }
+
+/* Navigation hint text */
+.cutscene-hint { color: #a0a080 !important; }
+
+/* =====================================================
+   POKEMON GALAXY — Deep override pass (all screens)
+   ===================================================== */
+
+/* ---- Cutscene dialog box ---- */
+.cutscene-box {
+  background: var(--pk-dark) !important;
+  border: 3px solid #888878 !important;
+  outline: none !important;
+  box-shadow: 4px 4px 0 #000 !important;
+  color: var(--pk-white) !important;
+}
+.cutscene-box::before, .cutscene-box::after {
+  background: var(--pk-yellow) !important;
+  box-shadow: 0 0 0 2px #000 !important;
+}
+.cutscene-name { text-shadow: none !important; }
+.cutscene-name.hero { color: #80f080 !important; }
+.cutscene-name.boss { color: #ff8080 !important; }
+.cutscene-name.tbot { color: #80d8ff !important; }
+.cutscene-text  { color: var(--pk-white) !important; }
+.cutscene-hint  { color: #a0a080 !important; }
+
+/* ---- Victory / Result screen ---- */
+.result-screen { background: var(--pk-white) !important; }
+.result-title  { text-shadow: none !important; filter: none !important; }
+.result-title.gold   { color: #c07808 !important; }
+.result-title.silver { color: #606060 !important; }
+.result-title.bronze { color: #904020 !important; }
+.result-title.fail   { color: var(--pk-red) !important; }
+.stat-box {
+  background: var(--pk-panel) !important;
+  border: 3px solid var(--pk-dark) !important;
+  outline: none !important;
+  box-shadow: 3px 3px 0 var(--pk-dark) !important;
+}
+.stat-label { color: var(--pk-blue) !important; }
+.stat-value { color: var(--pk-dark) !important; text-shadow: none !important; }
+.result-msg { color: var(--pk-mid) !important; }
+.reward-panel {
+  background: var(--pk-dark) !important;
+  border: 3px solid var(--pk-yellow) !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.reward-row { color: var(--pk-white) !important; }
+.reward-label { color: #a0c8e0 !important; }
+.reward-value { color: var(--pk-yellow) !important; }
+.reward-highlight { color: var(--pk-yellow) !important; text-shadow: none !important; }
+.level-up-text  { color: var(--pk-yellow) !important; text-shadow: none !important; }
+.exp-bar-track  { background: #303030 !important; border-color: var(--pk-dark) !important; }
+.exp-bar-fill   { background: var(--pk-yellow) !important; }
+.result-badge { color: var(--pk-mid) !important; }
+
+/* ---- Achievement gallery ---- */
+.ach-card {
+  background: #1e1840 !important;
+  border: 2px solid #4040a0 !important;
+  outline: none !important;
+  box-shadow: 3px 3px 0 #000 !important;
+  color: #e0e0ff !important;
+}
+.ach-card.earned {
+  background: #1a2040 !important;
+  border-color: var(--pk-yellow) !important;
+  box-shadow: 3px 3px 0 #806000 !important;
+}
+.ach-card.locked-ach { opacity: 0.6 !important; filter: grayscale(0.4) !important; }
+.ach-card.diploma { border-color: #a078f0 !important; box-shadow: 3px 3px 0 #6040c0 !important; }
+.ach-name  { color: var(--pk-yellow) !important; text-shadow: none !important; }
+.ach-desc  { color: #c0c0e0 !important; }
+.ach-date  { color: #8080b0 !important; }
+.ach-status { color: #80d8ff !important; }
+.ach-section-title {
+  color: #a0c8ff !important;
+  text-shadow: none !important;
+}
+
+/* ---- Character creator ---- */
+.cc-group-title {
+  color: var(--pk-blue) !important;
+  text-shadow: none !important;
+}
+.cc-option {
+  background: var(--pk-panel) !important;
+  border: 2px solid var(--pk-dark) !important;
+  outline: none !important;
+  color: var(--pk-dark) !important;
+  box-shadow: 2px 2px 0 var(--pk-dark) !important;
+}
+.cc-option:hover { background: #d8d8c8 !important; }
+.cc-option.selected {
+  background: var(--pk-yellow) !important;
+  color: var(--pk-dark) !important;
+  box-shadow: 3px 3px 0 var(--pk-dark) !important;
+  border-color: var(--pk-dark) !important;
+  outline: none !important;
+}
+.cc-option.locked-option { background: #c0c0b0 !important; color: var(--pk-mid) !important; }
+.cc-preview-label { color: var(--pk-mid) !important; text-shadow: none !important; }
+.cc-hero-display {
+  background: var(--pk-panel) !important;
+  border: 3px solid var(--pk-dark) !important;
+  box-shadow: 3px 3px 0 var(--pk-dark) !important;
+  outline: none !important;
+}
+
+/* ---- Modal (item confirm, how-to-play) ---- */
+.modal-card {
+  background: var(--pk-white) !important;
+  border: 3px solid var(--pk-dark) !important;
+  box-shadow: 5px 5px 0 var(--pk-dark) !important;
+  outline: none !important;
+}
+.modal-title { color: var(--pk-dark) !important; text-shadow: none !important; }
+#ic-desc  { color: var(--pk-mid) !important; }
+#ic-count { color: var(--pk-blue) !important; }
+.how-to-list li { background: var(--pk-panel) !important; border-left-color: var(--pk-dark) !important; color: var(--pk-dark) !important; }
+
+/* ---- Global text-shadow nuke for any remaining elements ---- */
+.screen-title { text-shadow: none !important; color: var(--pk-white) !important; }
+.result-title, .stat-value, .hud-stage, .hud-score,
+.cc-group-title, .ach-name, .world-title,
+.mode-title, .lesson-title, .stage-tense,
+.boss-label, .coming-soon { text-shadow: none !important; }
+
+/* ---- Teacher modal: subtitle text on light modal bg ---- */
+#teacher-modal .modal-card > p { color: var(--pk-mid) !important; }
+
+/* ---- Theme toggle button (Day/Night) ---- */
+.theme-toggle {
+  position: fixed;
+  bottom: 16px;
+  right: 72px;
+  z-index: 200;
+  width: 48px;
+  height: 48px;
+  font-size: 1.3rem;
+  background: linear-gradient(180deg, var(--ff-navy) 0%, var(--ff-bg-deep) 100%);
+  border: var(--pixel) solid var(--ff-white);
+  outline: var(--pixel) solid var(--ff-shadow);
+  box-shadow:
+    inset 0 0 0 var(--pixel) var(--ff-blue),
+    var(--pixel) var(--pixel) 0 var(--ff-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+.theme-toggle:hover { background: var(--ff-blue); transform: translateY(-2px); }
+
+/* ============================================
+   DAY MODE — toggle via class on <html>
+   ============================================ */
+html.day-mode,
+html.day-mode body {
+  background: #b8d4a8 !important;   /* soft grass-green sky */
+}
+html.day-mode .starfield          { opacity: 0 !important; }
+html.day-mode .screen-title       { color: var(--pk-dark) !important; text-shadow: none !important; }
+html.day-mode .screen-header .screen-title { color: var(--pk-dark) !important; }
+html.day-mode .screen-subtitle    { color: var(--pk-mid) !important; }
+html.day-mode .title-sub          { color: var(--pk-mid) !important; }
+html.day-mode .result-title.gold   { color: #8a5800 !important; }
+html.day-mode .result-title.silver { color: #404040 !important; }
+html.day-mode .result-title.bronze { color: #6a2800 !important; }
+html.day-mode .result-title.fail   { color: var(--pk-red) !important; }
+html.day-mode #theme-toggle {
+  background: linear-gradient(180deg, #e8e060 0%, #c8a820 100%) !important;
+  border-color: var(--pk-dark) !important;
+  box-shadow: inset 0 0 0 var(--pixel) #c8a820, var(--pixel) var(--pixel) 0 var(--pk-dark) !important;
 }
 
 </style>
@@ -3166,6 +3968,7 @@ button:focus-visible {
 <div class="teacher-badge">▶ TEACHER MODE</div>
 
 <button class="sound-toggle" id="sound-toggle" onclick="toggleSound()" aria-label="เปิด/ปิดเสียง">🔊</button>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="สลับธีม Day/Night">☀️</button>
 
 <div id="app"></div>
 
@@ -3191,8 +3994,8 @@ button:focus-visible {
     <div style="text-align:center;">
       <div id="ic-icon" style="font-size:3.5rem; margin-bottom:10px;"></div>
       <h2 class="modal-title" id="ic-name" style="margin-bottom:10px;"></h2>
-      <p id="ic-desc" style="color:var(--ff-cream); font-size:1.05rem; margin-bottom:8px;"></p>
-      <p id="ic-count" style="color:var(--ff-cyan); font-family:'Press Start 2P',monospace; font-size:0.6rem; margin-bottom:20px;"></p>
+      <p id="ic-desc" style="font-size:1.05rem; margin-bottom:8px;"></p>
+      <p id="ic-count" style="font-family:'Press Start 2P',monospace; font-size:0.6rem; margin-bottom:20px;"></p>
       <div style="display:flex; gap:10px; justify-content:center;">
         <button class="ff-btn ff-btn-small ff-btn-gold" id="ic-confirm">✓ ใช้เลย</button>
         <button class="ff-btn ff-btn-small ff-btn-red" onclick="closeItemConfirm()">✗ ยกเลิก</button>
@@ -5475,7 +6278,23 @@ const SoundFX = {
     this.init();
     this.sequence([[523,0.08],[659,0.08],[988,0.16]], 'sine', 0.14);
   },
-  
+  expGain() {
+    this.init();
+    // Rising sparkle — short and satisfying
+    this.sequence([[330,0.05],[392,0.05],[523,0.05],[659,0.08],[784,0.07]], 'square', 0.09);
+  },
+  levelUpFanfare() {
+    this.init();
+    // Full 8-bit level-up fanfare
+    this.sequence([[523,0.1],[659,0.1],[784,0.08],[659,0.05],[784,0.05],[1047,0.45]], 'square', 0.17);
+    // Second voice harmonics
+    setTimeout(() => {
+      if (this.enabled && this.ctx) {
+        this.sequence([[392,0.1],[494,0.1],[587,0.08],[494,0.05],[587,0.05],[784,0.45]], 'triangle', 0.08);
+      }
+    }, 20);
+  },
+
   toggle() {
     this.enabled = !this.enabled;
     if (this.enabled) { this.init(); this.click(); }
@@ -5627,7 +6446,8 @@ const player = {
     weapon: 'sword',   // sword | staff | bow | axe
     eyes: 'normal',    // normal | happy | cool | star
     mouth: 'smile',    // smile | grin | neutral | open
-    hat: 'hood'        // hood | crown | cap | none
+    hat: 'hood',       // hood | crown | cap | none
+    bag: 'none'        // none | backpack | sling | fanny | tote
   }
 };
 
@@ -5690,6 +6510,13 @@ const APPEARANCE_OPTIONS = {
     { key: 'froghat',   label: '🐸 หมวกกบ',       locked: true },
     { key: 'catears',   label: '🐱 หูแมว',        locked: true },
     { key: 'snapback',  label: '🎩 Snapback',    locked: true }
+  ],
+  bag: [
+    { key: 'none',      label: '🚫 ไม่มี' },
+    { key: 'backpack',  label: '🎒 เป้' },
+    { key: 'sling',     label: '👜 Sling',       locked: true },
+    { key: 'fanny',     label: '🏋️ Fanny Pack',  locked: true },
+    { key: 'tote',      label: '🛍️ Tote',        locked: true }
   ]
 };
 
@@ -5888,12 +6715,42 @@ function heroSpriteContent(ap) {
       <rect x="6" y="33" width="20" height="2" fill="${oc.main}"/>`;
   }
   
+  // --- BAG ---
+  if (ap.bag === 'backpack') {
+    s += `<rect x="13" y="19" width="2" height="10" fill="#5a3010"/>
+      <rect x="17" y="19" width="2" height="10" fill="#5a3010"/>
+      <rect x="13" y="25" width="6" height="2" fill="#3a1a00"/>
+      <rect x="2" y="18" width="6" height="10" fill="#7a4a20"/>
+      <rect x="2" y="18" width="6" height="1" fill="#a06030"/>
+      <rect x="3" y="25" width="4" height="2" fill="#5a3010"/>
+      <rect x="3" y="20" width="4" height="1" fill="#a06030" opacity="0.5"/>`;
+  } else if (ap.bag === 'sling') {
+    s += `<rect x="19" y="17" width="1" height="14" fill="#c0801a"/>
+      <rect x="18" y="21" width="1" height="2" fill="#c0801a"/>
+      <rect x="17" y="23" width="1" height="2" fill="#c0801a"/>
+      <rect x="16" y="25" width="1" height="2" fill="#c0801a"/>
+      <rect x="7" y="27" width="6" height="6" fill="#b07418"/>
+      <rect x="7" y="27" width="6" height="1" fill="#d49428"/>
+      <rect x="8" y="30" width="4" height="1" fill="#8a5010"/>`;
+  } else if (ap.bag === 'fanny') {
+    s += `<rect x="8" y="28" width="16" height="4" fill="#3b5dc9"/>
+      <rect x="8" y="28" width="16" height="1" fill="#5a7ce8"/>
+      <rect x="13" y="29" width="6" height="3" fill="#2a4299"/>
+      <rect x="15" y="30" width="2" height="1" fill="#5a7ce8"/>`;
+  } else if (ap.bag === 'tote') {
+    s += `<rect x="4" y="26" width="5" height="7" fill="#d4b896"/>
+      <rect x="4" y="26" width="5" height="1" fill="#e8ccaa"/>
+      <rect x="5" y="23" width="1" height="4" fill="#b09070"/>
+      <rect x="7" y="23" width="1" height="4" fill="#b09070"/>
+      <rect x="4" y="32" width="5" height="1" fill="#b09070"/>`;
+  }
+
   // --- ARMS ---
   s += `<rect x="6" y="20" width="2" height="8" fill="${oc.main}"/>
     <rect x="24" y="20" width="2" height="8" fill="${oc.main}"/>
     <rect x="6" y="28" width="2" height="2" fill="${skin}"/>
     <rect x="24" y="28" width="2" height="2" fill="${skin}"/>`;
-  
+
   // --- LEGS ---
   const legY = ap.gender === 'girl' ? 34 : 30;
   const legColor = '#3b5dc9';
@@ -6049,7 +6906,11 @@ const COSMETICS = {
   vr:          { icon: '🥽', name: 'VR Headset',      category: 'eyes',   key: 'vr',          price: 180, desc: 'แว่น VR cyber Metaverse aesthetic' },
   // --- Mouth ---
   tongue:      { icon: '😛', name: 'Tongue Out',      category: 'mouth',  key: 'tongue',      price: 50,  desc: 'แลบลิ้น chaotic Gen Z energy 😜' },
-  smirk:       { icon: '😏', name: 'Cool Smirk',      category: 'mouth',  key: 'smirk',       price: 60,  desc: 'ยิ้มเท่ smirk เหมือนตัวเอกในซีรีส์เกาหลี' }
+  smirk:       { icon: '😏', name: 'Cool Smirk',      category: 'mouth',  key: 'smirk',       price: 60,  desc: 'ยิ้มเท่ smirk เหมือนตัวเอกในซีรีส์เกาหลี' },
+  // --- Bags ---
+  slingbag:    { icon: '👜', name: 'Sling Bag',       category: 'bag',    key: 'sling',       price: 70,  desc: 'กระเป๋าสะพายข้าง สไตล์ minimal Gen Z' },
+  fannybag:    { icon: '🏋️', name: 'Fanny Pack',      category: 'bag',    key: 'fanny',       price: 90,  desc: 'Belt bag สายวินเทจ ยุค 90s กลับมาแล้ว!' },
+  totebag:     { icon: '🛍️', name: 'Tote Bag',        category: 'bag',    key: 'tote',        price: 100, desc: 'Tote bag canvas eco chic สายสิ่งแวดล้อม' }
 };
 
 // Achievement catalog
@@ -6152,7 +7013,7 @@ function resetProgress() {
     player.ownedCosmetics = {};
     player.achievements = {};
     player.stats = { coinsLifetime:0, shopVisits:0, maxCombo:0, totalLosses:0, itemsBoughtSet:{}, reviewModeEntered:false };
-    player.appearance = { gender:'boy', outfit:'green', weapon:'sword', eyes:'normal', mouth:'smile', hat:'hood' };
+    player.appearance = { gender:'boy', outfit:'green', weapon:'sword', eyes:'normal', mouth:'smile', hat:'hood', bag:'backpack' };
     renderMapScreen();
   });
 }
@@ -6375,6 +7236,7 @@ function renderCharacterCreator() {
             ${optionGroup('gender', '👤 เพศ')}
             ${optionGroup('outfit', '👕 ชุด')}
             ${optionGroup('weapon', '⚔️ อาวุธ')}
+            ${optionGroup('bag', '🎒 กระเป๋า')}
             ${optionGroup('eyes', '👁️ ตา')}
             ${optionGroup('mouth', '👄 ปาก')}
             ${optionGroup('hat', '🎩 หมวก')}
@@ -7681,57 +8543,37 @@ function renderGameScreen() {
     </div>
   ` : '';
   
+  const bossHpPct = (gameState.bossHP / gameState.bossMaxHP) * 100;
+  const bossLvDisplay = stage.num * 5;
+
   document.getElementById('app').innerHTML = `
     <div class="screen active ${teacherClass}">
       ${bossIntroHTML}
       <button class="back-btn" onclick="renderMapScreen()">◀ EXIT</button>
       <div class="gameplay-container" id="gameplay-container">
-        <div class="game-hud ${bossHudClass}">
-          <div class="hud-stage">${isBoss ? '👑 BOSS' : '⚔ STAGE'} ${stage.num}</div>
-          <div class="hud-score">★ ${gameState.score}</div>
-          <div class="hud-progress">Q ${gameState.currentQuestionIndex + 1}/${gameState.activeQuestions.length}</div>
-        </div>
-        
-        <div class="phase-banner ${isBossTurn ? 'boss-phase' : 'player-phase'}" id="phase-banner">
-          ${isBossTurn ? '🛡️ BOSS TURN — ตอบให้ถูกเพื่อป้องกัน!' : '⚔️ YOUR TURN — โจมตีบอส!'}
-        </div>
-        
-        <div class="boss-hp-container ${bossHpClass}">
-          <div class="boss-hp-label">
-            <span>${isBoss ? '🐉' : '👹'} ${stage.bossName}${isBoss ? ' — BOSS' : ''}</span>
-            <span id="hp-text">HP ${Math.round(gameState.bossHP)}/${gameState.bossMaxHP}</span>
+
+        <!-- Pokemon-style top HUD bar -->
+        <div class="game-hud ${bossHudClass}" style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="hud-stage" style="font-size:0.5rem;">${isBoss ? '👑 BOSS' : 'STAGE'} ${stage.num}</div>
+          <div class="phase-banner ${isBossTurn ? 'boss-phase' : 'player-phase'}" id="phase-banner"
+               style="margin:0;border:none;padding:2px 10px;font-size:0.45rem;border-radius:3px;display:inline-block;">
+            ${isBossTurn ? '🛡 DEFEND' : '⚔ ATTACK'}
           </div>
-          <div class="boss-hp-bar">
-            <div class="boss-hp-fill" id="hp-fill" style="width: ${(gameState.bossHP/gameState.bossMaxHP)*100}%"></div>
-          </div>
+          <div class="hud-score" style="font-size:0.5rem;">★ ${gameState.score}</div>
         </div>
-        
-        <div class="player-hp-container">
-          <div class="boss-hp-label">
-            <span>🦸 Time Ranger</span>
-            <span id="php-text">HP ${Math.round(gameState.playerHP)}/${gameState.playerMaxHP}</span>
-          </div>
-          <div class="boss-hp-bar">
-            <div class="player-hp-fill" id="php-fill" style="width: ${hpPct}%"></div>
-          </div>
-        </div>
-        
-        <div class="power-row">
-          <div class="power-meter">
-            <span class="power-label" id="power-meter-text">ATK ${gameState.attackPower}%</span>
-            <div class="power-bar">
-              <div class="power-bar-fill" id="power-meter-fill" style="width: ${gameState.attackPower}%"></div>
-            </div>
-          </div>
-          <span class="combo-display" id="combo-display" style="display:none;"></span>
-        </div>
-        
-        <div class="battle-scene ${stage.bgClass} ${bossSceneClass}">
+
+        <!-- Pokemon battle field (two-tone background, Pokemon sprite layout) -->
+        <div class="pk-battle-scene ${stage.bgClass} ${bossSceneClass}">
           <div class="battle-cloud c1"></div>
           <div class="battle-cloud c2"></div>
-          <div class="battle-hero-pos" id="battle-hero">
-            ${heroSprite()}
+          ${isBoss ? '<div class="boss-aura"></div>' : ''}
+
+          <!-- Boss sprite: top-left -->
+          <div class="battle-boss-pos ${dragonClass}" id="battle-boss" style="${bossFilter}">
+            <svg viewBox="${bossViewBox}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;shape-rendering:crispEdges"><use href="#${stage.bossSprite}"/></svg>
           </div>
+
+          <!-- Slash / impact FX (positioned over boss) -->
           <div class="slash-fx" id="slash-fx">
             <svg viewBox="0 0 32 32" style="width:100%;height:100%;shape-rendering:crispEdges"><use href="#slash-sprite"/></svg>
           </div>
@@ -7741,38 +8583,75 @@ function renderGameScreen() {
               <polygon points="16,4 19,13 28,16 19,19 16,28 13,19 4,16 13,13" fill="#fff"/>
             </svg>
           </div>
-          ${isBoss ? '<div class="boss-aura"></div>' : ''}
-          <div class="battle-boss-pos ${dragonClass}" id="battle-boss" style="${bossFilter}">
-            <svg viewBox="${bossViewBox}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;shape-rendering:crispEdges"><use href="#${stage.bossSprite}"/></svg>
+
+          <!-- Enemy HP box: top-right (Pokemon style) -->
+          <div class="pk-enemy-hp-box">
+            <div class="pk-box-namerow">
+              <span class="pk-box-name">${stage.bossName}</span>
+              <span class="pk-box-level">Lv.${bossLvDisplay}</span>
+            </div>
+            <div class="pk-box-hprow">
+              <span class="pk-box-hp-label">HP</span>
+              <div class="pk-hp-track">
+                <div class="boss-hp-fill pk-hp-fill" id="hp-fill" style="width:${bossHpPct}%"></div>
+              </div>
+            </div>
+            <div class="pk-box-hp-nums" id="hp-text">${Math.round(gameState.bossHP)}/${gameState.bossMaxHP}</div>
+          </div>
+
+          <!-- Hero sprite: bottom-right -->
+          <div class="battle-hero-pos" id="battle-hero">${heroSprite()}</div>
+
+          <!-- Player HP box: bottom-left (Pokemon style) -->
+          <div class="pk-player-hp-box">
+            <div class="pk-box-namerow">
+              <span class="pk-box-name">Time Ranger</span>
+              <span class="pk-box-level">Lv.${player.level}</span>
+            </div>
+            <div class="pk-box-hprow">
+              <span class="pk-box-hp-label">HP</span>
+              <div class="pk-hp-track">
+                <div class="player-hp-fill pk-hp-fill" id="php-fill" style="width:${hpPct}%"></div>
+              </div>
+            </div>
+            <div class="pk-box-hp-nums" id="php-text">HP ${Math.round(gameState.playerHP)}/${gameState.playerMaxHP}</div>
           </div>
         </div>
-        
-        <div class="question-window">
+
+        <!-- ATK power strip (slim, Pokemon-style) -->
+        <div class="pk-power-strip">
+          <span class="pk-atk-label" id="power-meter-text">ATK ${gameState.attackPower}%</span>
+          <div class="pk-atk-track"><div class="pk-atk-fill" id="power-meter-fill" style="width:${gameState.attackPower}%"></div></div>
+          <span class="combo-display" id="combo-display" style="display:none;"></span>
+        </div>
+
+        <!-- Pokemon dialog box (question text) -->
+        <div class="pk-dialog">
           <div class="question-text" id="question-text">${formatQuestion(q.question)}</div>
         </div>
-        
-        <div class="choices-grid" id="choices-grid">
-          ${q.choices.map(c => 
-            `<button class="choice-btn" onclick="checkAnswer('${c.replace(/'/g, "\\'")}', this)">${c}</button>`
-          ).join('')}
-        </div>
-        
-        <div class="game-actions">
-          <button class="ff-btn ff-btn-small ff-btn-gold" id="item-btn" onclick="toggleItemBar()">🎒 ใช้ไอเทม</button>
-        </div>
-        
-        <div class="item-bar" id="item-bar" style="display:none;">
-          ${renderItemButtons()}
-        </div>
-        
-        <div class="hint-box" id="hint-box">
-          <div class="hint-title">
-            <div class="tbot-mini">${sprite('tbot-sprite')}</div>
-            ▶ T-BOT HINT
+
+        <!-- Pokemon moves panel: 2×2 grid + BAG button -->
+        <div class="pk-bottom-panel">
+          <div class="choices-grid pk-choices" id="choices-grid">
+            ${q.choices.map((c, i) =>
+              `<button class="choice-btn pk-move" onclick="checkAnswer('${c.replace(/'/g, "\\'")}', this)"><span class="pk-move-alpha">${'ABCD'[i]}</span>${c}</button>`
+            ).join('')}
           </div>
+          <div class="pk-bag-col">
+            <button class="ff-btn ff-btn-small ff-btn-gold" id="item-btn" onclick="toggleItemBar()">🎒<br><span style="font-size:0.4rem;">ITEM</span></button>
+          </div>
+        </div>
+
+        <!-- Item bar -->
+        <div class="item-bar" id="item-bar" style="display:none;">${renderItemButtons()}</div>
+
+        <!-- Hint box -->
+        <div class="hint-box" id="hint-box">
+          <div class="hint-title"><div class="tbot-mini">${sprite('tbot-sprite')}</div>▶ T-BOT HINT</div>
           <div id="hint-text" class="explanation-content"></div>
         </div>
-        
+
+        <!-- Explanation box -->
         <div class="explanation-box" id="explanation-box">
           <div class="explanation-inner">
             <div class="explanation-title" id="explanation-title">▶ EXPLANATION</div>
@@ -8420,6 +9299,8 @@ function renderResultScreen() {
     player.coins += gameState.earnedCoins;
     player.stats.coinsLifetime = (player.stats.coinsLifetime || 0) + gameState.earnedCoins;
     if (player.coins >= 500) unlockAchievement('coin_rich');
+    // Store pre-gain EXP fraction for bar animation
+    gameState.expAnimFrom = Math.min(100, (player.exp / expForLevel(player.level)) * 100);
     player.exp += gameState.earnedExp;
     const beforeSkills = Object.keys(player.skills).length;
     // Level up loop
@@ -8428,6 +9309,8 @@ function renderResultScreen() {
       player.level++;
       leveledUp = true;
     }
+    // Store post-gain EXP fraction for bar animation
+    gameState.expAnimTo = Math.min(100, (player.exp / expForLevel(player.level)) * 100);
     syncSkills();
     // Detect newly unlocked skill
     const newSkillKeys = Object.keys(player.skills);
@@ -8440,7 +9323,7 @@ function renderResultScreen() {
       itemDrop = dropKeys[Math.floor(Math.random() * dropKeys.length)];
       player.inventory[itemDrop] = (player.inventory[itemDrop] || 0) + 1;
     }
-    if (leveledUp) setTimeout(() => SoundFX.unlock(), 700);
+    // Sound handled by animateExpBar() after result screen renders
   }
   
   if (gameState.mode === 'student') {
@@ -8580,7 +9463,7 @@ function renderResultScreen() {
             <div class="reward-row"><span>💰 เหรียญที่ได้</span><span class="reward-val">+${gameState.earnedCoins}</span></div>
             <div class="reward-row"><span>✨ EXP ที่ได้</span><span class="reward-val">+${gameState.earnedExp}</span></div>
             <div class="reward-row"><span>🎖️ Level</span><span class="reward-val">${player.level}${leveledUp ? ' ⬆️ LEVEL UP!' : ''}</span></div>
-            <div class="exp-bar"><div class="exp-bar-fill" style="width:${Math.min(100, (player.exp / expForLevel(player.level)) * 100)}%"></div></div>
+            <div class="exp-bar"><div class="exp-bar-fill" id="exp-bar-fill" style="width:${gameState.expAnimFrom||0}%;transition:none;" data-to="${gameState.expAnimTo||0}" data-leveled="${leveledUp?'1':'0'}"></div></div>
             ${itemDrop ? `<div class="reward-row drop"><span>🎁 ไอเทมที่ได้</span><span class="reward-val">${ITEMS[itemDrop].icon} ${ITEMS[itemDrop].name}</span></div>` : ''}
             ${gameState.newSkill ? `<div class="reward-row drop"><span>🌟 สกิลใหม่!</span><span class="reward-val">${SKILLS[gameState.newSkill].icon} ${SKILLS[gameState.newSkill].name}</span></div>` : ''}
           </div>
@@ -8608,6 +9491,40 @@ function renderResultScreen() {
   `;
   
   if (pct >= 70) setTimeout(() => createConfetti(), 300);
+  if (gameState.mode === 'student') setTimeout(animateExpBar, 700);
+}
+
+/* ============================================
+   EXP BAR ANIMATION
+   ============================================ */
+function animateExpBar() {
+  const fill = document.getElementById('exp-bar-fill');
+  if (!fill) return;
+  const toPct  = parseFloat(fill.dataset.to)  || 0;
+  const leveled = fill.dataset.leveled === '1';
+
+  if (leveled) {
+    // 1) Animate fill → 100%
+    fill.style.transition = 'width 0.5s steps(6)';
+    fill.style.background = 'var(--pk-yellow)';
+    fill.style.width = '100%';
+    // 2) After bar fills: fanfare + flash + refill from 0
+    setTimeout(() => {
+      SoundFX.levelUpFanfare();
+      fill.style.transition = 'none';
+      fill.style.width = '3%';
+      setTimeout(() => {
+        fill.style.transition = 'width 0.7s steps(10)';
+        fill.style.background = '';
+        fill.style.width = toPct + '%';
+      }, 130);
+    }, 600);
+  } else {
+    // Simple fill animation
+    SoundFX.expGain();
+    fill.style.transition = 'width 0.8s steps(10)';
+    fill.style.width = toPct + '%';
+  }
 }
 
 /* ============================================
@@ -9134,6 +10051,13 @@ function toggleSound() {
   btn.classList.toggle('muted', !on);
 }
 
+function toggleTheme() {
+  const isDayMode = document.documentElement.classList.toggle('day-mode');
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = isDayMode ? '🌙' : '☀️';
+  try { localStorage.setItem('dayMode', isDayMode ? '1' : '0'); } catch(e) {}
+}
+
 document.getElementById('howto-modal').addEventListener('click', (e) => {
   if (e.target.id === 'howto-modal') closeModal();
 });
@@ -9151,6 +10075,14 @@ document.addEventListener('click', (e) => {
 }, true);
 
 loadProgress();
+// Restore day/night preference
+try {
+  if (localStorage.getItem('dayMode') === '1') {
+    document.documentElement.classList.add('day-mode');
+    const btn = document.getElementById('theme-toggle');
+    if (btn) btn.textContent = '🌙';
+  }
+} catch(e) {}
 renderStartScreen();
 </script>
 </body>
