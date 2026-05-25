@@ -11241,8 +11241,9 @@ function nextQuestion() {
 function renderResultScreen() {
   document.body.classList.remove('screen-danger');
   const stage = gameState.currentStage;
-  // For boss stages beaten via HP, base total on actual questions answered — not fixed pool size
-  const total = (stage.isBoss && gameState.bossDefeated)
+  // Base total on actual questions answered when boss was defeated early (any stage type)
+  // FIX: was stage.isBoss && bossDefeated — missed regular stages where high-lvl player kills mini-boss before Q5
+  const total = gameState.bossDefeated
     ? gameState.currentQuestionIndex + 1
     : gameState.activeQuestions.length;
   const maxScore = total * 100; // Combat v2: 100 pts per question (first correct)
