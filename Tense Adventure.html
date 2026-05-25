@@ -41,6 +41,7 @@
   --ff-text:          #f4e8c1;
   --ff-text-dim:      #a8a5b8;
   --ff-disabled:      #4a4e69;
+  --ff-light:         #e0e8e0; /* light text for dark dialog/lesson boxes — was undefined */
   
   /* Tile colors */
   --grass-1:          #38b764;
@@ -2547,8 +2548,15 @@ button:focus-visible {
 .krupp-quote-box { display:flex; align-items:flex-start; gap:12px; background:rgba(0,150,150,0.12); border:2px solid var(--ff-cyan); border-radius:6px; padding:10px 12px; margin:12px 0; }
 .krupp-quote-sprite { flex-shrink:0; width:36px; height:45px; }
 .krupp-quote-text { font-size:0.8rem; color:var(--ff-cream); line-height:1.6; }
+/* PATCH CONTRAST: krupp box on light bg (result screen) needs dark text */
+.result-container .krupp-quote-box { background:rgba(0,60,120,0.10); border-color:#2563eb; }
+.result-container .krupp-quote-text { color:#1e3a5f !important; }
 .grammar-tip-bar { background:rgba(56,183,100,0.12); border-left:3px solid var(--ff-green); padding:6px 10px; margin:6px 0; font-size:0.7rem; color:#a0e8a0; }
+/* PATCH CONTRAST: grammar tip on light result bg needs dark text */
+.result-container .grammar-tip-bar { background:rgba(0,100,60,0.10); border-left-color:#15803d; color:#14532d; }
 .replay-tip { text-align:center; font-size:0.65rem; color:var(--ff-gold); margin:6px 0; }
+/* PATCH CONTRAST: replay tip on light result bg — gold #ffcd75 is 1.24:1 on cream → use dark orange */
+.result-container .replay-tip { color:#92400e !important; }
 
 .result-stats {
   display: grid;
@@ -2680,11 +2688,11 @@ button:focus-visible {
   padding: 8px 10px;
   font-family: 'Press Start 2P', monospace;
   font-size: 0.55rem;
-  color: var(--ff-green);
+  color: #a8f0b8; /* PATCH CONTRAST: brighter green for readability on dark bg */
   font-style: italic;
   margin-bottom: 10px;
   line-height: 1.6;
-  border: 1px dashed var(--ff-green);
+  border: 1px dashed #38b764;
 }
 
 .tense-status {
@@ -3249,9 +3257,9 @@ html, body {
   box-shadow: 3px 3px 0 var(--pk-dark) !important;
 }
 .ff-btn-gold:hover { background: #f8d840 !important; }
-.ff-btn-red  { background: #e84848 !important; color: #fff !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; }
+.ff-btn-red  { background: #b13e53 !important; color: #fff !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; } /* PATCH CONTRAST: was #e84848=3.9:1 → #b13e53=5.65:1 with white */
 .ff-btn-cyan { background: #48b8e8 !important; color: var(--pk-dark) !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; }
-.ff-btn-purple { background: #9868e0 !important; color: #fff !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; }
+.ff-btn-purple { background: #7c3aed !important; color: #fff !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; } /* PATCH CONTRAST: was #9868e0=3.87:1 → #7c3aed=5.74:1 with white */
 .ff-btn::before { color: var(--pk-dark) !important; }
 
 /* Back button */
@@ -3284,7 +3292,8 @@ html, body {
 }
 .stage-card.locked { background: #c8c8b8 !important; opacity: 0.75 !important; }
 .stage-tense  { color: var(--pk-dark) !important; text-shadow: none !important; }
-.stage-world  { color: var(--pk-mid) !important; text-shadow: none !important; }
+.stage-world  { color: #4a4a40 !important; text-shadow: none !important; } /* PATCH CONTRAST: was --pk-mid #808070=3.52:1 → #4a4a40 ~6.7:1 on pk-white */
+.stage-score  { color: #1e40af !important; text-shadow: none !important; } /* PATCH CONTRAST: was --ff-cyan #41a6f6=2.28:1 → #1e40af ~6:1 on pk-white */
 .stage-num-badge {
   background: var(--pk-dark) !important;
   color: var(--pk-white) !important;
@@ -3682,12 +3691,12 @@ html, body {
 /* --- Shop / Achievement screens --- */
 .shop-item        { background: var(--pk-white) !important; border: 3px solid var(--pk-dark) !important; box-shadow: 3px 3px 0 var(--pk-dark) !important; color: var(--pk-dark) !important; }
 .shop-item-name   { color: var(--pk-dark) !important; text-shadow: none !important; }
-.shop-item-desc   { color: var(--pk-mid) !important; }
-.shop-item-owned  { color: var(--pk-blue) !important; }
+.shop-item-desc   { color: #4a4a40 !important; } /* PATCH CONTRAST: was --pk-mid #808070 = 3.1:1 fail → #4a4a40 ~6.7:1 pass */
+.shop-item-owned  { color: #1e40af !important; } /* PATCH CONTRAST: was --pk-blue #3858d0 = 4.25:1 → #1e40af ~6:1 pass */
 .shop-price       { color: var(--pk-dark) !important; text-shadow: none !important; }
 .wallet-coins     { color: var(--pk-dark) !important; text-shadow: none !important; }
-.wallet-level     { color: var(--pk-blue) !important; }
-.skills-title     { color: var(--pk-dark) !important; text-shadow: none !important; }
+.wallet-level     { color: #1e40af !important; } /* PATCH CONTRAST: same fix as shop-item-owned */
+.skills-title     { color: var(--pk-yellow) !important; text-shadow: 1px 1px 0 #000 !important; } /* PATCH CONTRAST: was --pk-dark #181818=1.1:1 on dark bg → --pk-yellow #e8b820 ~11:1 */
 
 /* --- Cutscene screen --- */
 .cutscene-dialog {
@@ -3811,16 +3820,17 @@ html, body {
   box-shadow: 0 0 0 2px #000 !important;
 }
 .cutscene-name { text-shadow: none !important; }
-.cutscene-name.hero { color: #80f080 !important; }
-.cutscene-name.boss { color: #ff8080 !important; }
-.cutscene-name.tbot { color: #80d8ff !important; }
+.cutscene-name.hero  { color: #80f080 !important; }
+.cutscene-name.boss  { color: #ff8080 !important; }
+.cutscene-name.tbot  { color: #80d8ff !important; }
+.cutscene-name.krupp { color: #ffe8a0 !important; } /* safety: krupp speaker → warm gold on dark bg ~12:1 */
 .cutscene-text  { color: var(--pk-white) !important; }
 .cutscene-hint  { color: #a0a080 !important; }
 
 /* ---- Victory / Result screen ---- */
 .result-screen { background: var(--pk-white) !important; }
 .result-title  { text-shadow: none !important; filter: none !important; }
-.result-title.gold   { color: #c07808 !important; }
+.result-title.gold   { color: #854d0e !important; } /* PATCH CONTRAST: was #c07808 = 3.07:1 on pk-white → #854d0e ~6:1 pass */
 .result-title.silver { color: #606060 !important; }
 .result-title.bronze { color: #904020 !important; }
 .result-title.fail   { color: var(--pk-red) !important; }
@@ -3830,7 +3840,7 @@ html, body {
   outline: none !important;
   box-shadow: 3px 3px 0 var(--pk-dark) !important;
 }
-.stat-label { color: var(--pk-blue) !important; }
+.stat-label { color: #1e40af !important; } /* PATCH CONTRAST: was --pk-blue #3858d0 = 4.25:1 → #1e40af ~6:1 on pk-panel */
 .stat-value { color: var(--pk-dark) !important; text-shadow: none !important; }
 .result-msg { color: var(--pk-mid) !important; }
 .reward-panel {
@@ -3847,6 +3857,10 @@ html, body {
 .exp-bar-track  { background: #303030 !important; border-color: var(--pk-dark) !important; }
 .exp-bar-fill   { background: var(--pk-yellow) !important; }
 .result-badge { color: var(--pk-mid) !important; }
+
+/* ---- Review screen tense cards ---- */
+.status-playable { color: var(--pk-dark) !important; } /* PATCH CONTRAST: was --ff-cream #f4e8c1=2.1:1 on green bg → pk-dark ~6.2:1 */
+.status-playable:hover { color: var(--pk-white) !important; background: var(--pk-dark) !important; }
 
 /* ---- Achievement gallery ---- */
 .ach-card {
@@ -8744,6 +8758,7 @@ function selectMode(mode) {
    MAP SCREEN
    ============================================ */
 function renderMapScreen() {
+  BGM.stop(); // PATCH BGM-EXIT: stop any battle/boss music when returning to map
   _currentScreen = 'map';
   // Defensive: during revival, force-remove stage 16 from unlockedStages
   if (gameState.tBotRevivalActive && gameState.mode !== 'teacher') {
@@ -8822,7 +8837,7 @@ function renderMapScreen() {
              ${!isLocked ? `onclick="renderLessonScreen(${stage.id})"` : ''}>
           <div class="stage-num-badge">${isBoss ? '👑' : stage.num}</div>
           ${isBoss && !isLocked ? `<div style="margin: 8px auto 4px; font-size: 1.8rem;">${stage.id === 5 ? '🐉' : stage.id === 10 ? '💀' : stage.id === 15 ? '👑' : stage.id === 16 ? '🤖' : '⚔'}</div>` : crystalSvg(stage.crystalColor)}
-          <div class="stage-tense">${stage.tense}${isBoss && stage.bossName ? '<br><span style="color:#ffe4a0;font-size:0.7em;">' + stage.bossName.toUpperCase() + '</span>' : ''}</div>
+          <div class="stage-tense">${stage.tense}${isBoss && stage.bossName ? '<br><span style="color:#92400e;font-size:0.7em;">' + stage.bossName.toUpperCase() + '</span>' : ''}</div><!-- PATCH CONTRAST: was #ffe4a0=1.3:1 on locked card bg → #92400e ~5.6:1 -->
           <div class="stage-world">${stage.world}</div>
           ${!stage.playable ? '<div class="coming-soon">COMING SOON</div>' : ''}
           ${stage.playable && isLocked && !isBoss ? '<div class="coming-soon">🔒 LOCKED</div>' : ''}
@@ -8854,7 +8869,7 @@ function renderMapScreen() {
         <div class="stage-card boss-card playable" onclick="startRevivalBattle(${sid})" style="border-color:#b13e53;background:#14050a;">
           <div class="stage-num-badge" style="background:#b13e53;">R</div>
           <div style="font-size:1.8rem;margin:6px auto;">${sid===5?'🐉':sid===10?'💀':'👑'}</div>
-          <div class="stage-tense">${rs.bossName}<br><span style="color:#ef7d57;font-size:0.65em;">REVIVED</span></div>
+          <div class="stage-tense"><span style="color:#f0d0a0;">${rs.bossName}</span><br><span style="color:#ef7d57;font-size:0.65em;">REVIVED</span></div><!-- PATCH CONTRAST: boss name on dark revival card → #f0d0a0 ~8:1 on #14050a -->
           ${rbIcon ? `<div class="stage-badge-icon">${rbIcon}</div>` : ''}
         </div>`;
     });
@@ -8970,7 +8985,7 @@ function renderLessonScreen(stageId) {
           </div>
           
           <div class="lesson-actions">
-            <button class="ff-btn ff-btn-gold" onclick="startGame(${stage.id})">⚔ เริ่มภารกิจ!</button>
+            <button class="ff-btn ff-btn-gold" onclick="SoundFX.click();renderPreBattleScreen(${stage.id})">🛡️ เตรียมตัว &amp; สู้!</button>
           </div>
         </div>
       </div>
@@ -8981,6 +8996,104 @@ function renderLessonScreen(stageId) {
   const _myLesson = _currentScreen;
   setTimeout(() => { if (_currentScreen === _myLesson) unlockAchievement('study_focus'); }, 30000);
   setTimeout(() => { if (_currentScreen === _myLesson) unlockAchievement('study_sleep'); }, 60000);
+}
+
+/* ============================================
+   PRE-BATTLE EQUIPMENT SETUP SCREEN
+   ============================================ */
+function renderPreBattleScreen(stageId) {
+  const stage = STAGES_DATA.find(s => s.id === stageId);
+  if (!stage) return;
+  if (!player.equipped) player.equipped = { weapon:null, armor:null, accessory:null, bag:null };
+
+  const SLOT_INFO = {
+    weapon:    { label:'⚔️ WEAPON',    emoji:'⚔️', empty:'ไม่มีอาวุธ' },
+    armor:     { label:'🧥 ARMOR',     emoji:'🧥', empty:'ไม่มีชุดเกราะ' },
+    accessory: { label:'💍 ACCESSORY', emoji:'💍', empty:'ไม่มีเครื่องประดับ' },
+    bag:       { label:'🎒 BAG',       emoji:'🎒', empty:'ไม่มีกระเป๋า' }
+  };
+
+  const slotsHTML = ['weapon','armor','accessory','bag'].map(slot => {
+    const equippedKey = player.equipped[slot];
+    const eq = equippedKey ? EQUIPMENT_CATALOG[equippedKey] : null;
+    const owned = Object.keys(EQUIPMENT_CATALOG).filter(k =>
+      EQUIPMENT_CATALOG[k].slot === slot && player.equipmentInventory && player.equipmentInventory[k]
+    );
+    const info = SLOT_INFO[slot];
+    const borderCol = eq ? '#38b764' : '#444';
+    return `
+      <div style="background:#1a2030;border:3px solid ${borderCol};padding:10px 12px;box-shadow:3px 3px 0 #0a0e27;">
+        <div style="font-family:'Press Start 2P',monospace;font-size:0.5rem;color:#9ca3af;margin-bottom:6px;">${info.label}</div>
+        ${eq ? `
+          <div style="font-size:1.6rem;text-align:center;margin-bottom:2px;">${eq.icon}</div>
+          <div style="font-family:'Press Start 2P',monospace;font-size:0.55rem;color:#a8f0b8;text-align:center;">${eq.name}</div>
+          <div style="font-size:0.68rem;color:#9ca3af;text-align:center;margin:3px 0 6px;">${eq.desc}</div>
+        ` : `
+          <div style="font-size:1.6rem;text-align:center;margin-bottom:2px;opacity:0.3;">—</div>
+          <div style="font-size:0.65rem;color:#6b7280;text-align:center;margin:3px 0 6px;">${info.empty}</div>
+        `}
+        ${owned.length > 0
+          ? `<button class="ff-btn ff-btn-small ${eq ? '' : 'ff-btn-gold'}" style="width:100%;font-size:0.5rem;" onclick="pbEquipCycle('${slot}',${stageId})">${eq ? '🔄 เปลี่ยน' : '✚ สวมใส่'}</button>`
+          : `<div style="font-size:0.55rem;color:#6b7280;text-align:center;">ซื้อที่ Shop</div>`
+        }
+      </div>`;
+  }).join('');
+
+  const baseHP = 100 + (player.skills && player.skills.hpUp ? 20 : 0);
+  const eBonus = player.equipBonus || {};
+  const totalHP = baseHP + (eBonus.hpBonus || 0);
+  const atkBonus = Math.round((eBonus.dmgPercent || 0) * 100);
+  const defBonus = Math.round((eBonus.defPercent || 0) * 100);
+
+  document.getElementById('app').innerHTML = `
+    <div class="screen active">
+      <div style="max-width:520px;margin:0 auto;padding:16px;">
+        <div class="ff-box-fancy">
+          <div style="text-align:center;margin-bottom:12px;">
+            <div style="font-family:'Press Start 2P',monospace;font-size:0.8rem;color:var(--pk-dark);">🛡️ เตรียมตัวก่อนสู้</div>
+            <div style="font-size:0.6rem;color:var(--pk-blue);margin-top:4px;">STAGE ${stage.num}: ${stage.tense.toUpperCase()}</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            ${slotsHTML}
+          </div>
+
+          <div style="background:#0d1220;border:2px solid #38b764;padding:8px 12px;margin-bottom:14px;font-family:'Press Start 2P',monospace;font-size:0.55rem;">
+            <div style="color:#a0e8a0;margin-bottom:4px;">⚡ พลังรวมของเจ้า</div>
+            <div style="color:#f0f0e0;">
+              ❤️ HP ${totalHP}${eBonus.hpBonus > 0 ? ' <span style="color:#80f080">(+'+eBonus.hpBonus+')</span>' : ''}
+              &nbsp;·&nbsp;
+              ⚔️ ATK +${atkBonus}%
+              ${defBonus > 0 ? ' &nbsp;·&nbsp; 🛡 DEF -'+defBonus+'%' : ''}
+              ${eBonus.freeShield ? ' &nbsp;·&nbsp; <span style="color:#41a6f6">🔰 Free Shield</span>' : ''}
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="ff-btn" onclick="SoundFX.click();renderLessonScreen(${stageId})">◀ กลับ</button>
+            <button class="ff-btn ff-btn-gold" onclick="SoundFX.click();startGame(${stageId})">⚔ เริ่มภารกิจ!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  _currentScreen = 'prebattle';
+}
+
+function pbEquipCycle(slot, stageId) {
+  if (!player.equipped) player.equipped = { weapon:null, armor:null, accessory:null, bag:null };
+  const owned = Object.keys(EQUIPMENT_CATALOG).filter(k =>
+    EQUIPMENT_CATALOG[k].slot === slot && player.equipmentInventory && player.equipmentInventory[k]
+  );
+  if (owned.length === 0) return;
+  const current = player.equipped[slot];
+  const idx = current ? owned.indexOf(current) : -1;
+  const nextIdx = idx + 1;
+  player.equipped[slot] = nextIdx < owned.length ? owned[nextIdx] : null; // cycle: owned[0]→...→null
+  applyEquipmentBonus(player);
+  SoundFX.click();
+  saveProgress();
+  renderPreBattleScreen(stageId);
 }
 
 /* ============================================
@@ -10204,7 +10317,7 @@ function renderEndCredits() {
           <div class="credits-item">ครูพีพี — ผู้ช่วยลึกลับ</div>
           <div class="credits-item">Time Dragon · Chrono Reaper · Time Emperor — Bosses</div>
           <hr class="credits-divider">
-          <div style="margin-top:30px;font-family:'Press Start 2P',monospace;font-size:0.55rem;color:#7c3aed;">
+          <div style="margin-top:30px;font-family:'Press Start 2P',monospace;font-size:0.55rem;color:#a78bfa;"><!-- PATCH CONTRAST: was #7c3aed=3.66:1 on black → #a78bfa ~7.8:1 pass -->
             ยังมี อาณาจักร Grammar อื่นๆ อีกมากมาย...<br>รอการผจญภัยครั้งต่อไป!
           </div>
           <div style="margin-top:24px;font-size:2.5rem;">🌟⭐🌟</div>
@@ -10261,9 +10374,9 @@ function renderGameScreen() {
   // Boss pattern warning banners
   const patternWarningHTML = (() => {
     if (!isBoss) return '';
-    if (gameState.chargeWarning && !isBossTurn)
+    if (gameState.chargeWarning && isBossTurn)  // PATCH CHARGE-WARN: show during boss defense phase only
       return `<div id="charge-warning-banner" style="background:#b13e53;color:#fff;text-align:center;padding:4px 10px;font-family:'Press Start 2P',monospace;font-size:0.45rem;letter-spacing:0.5px;">⚡ ระวัง! บอสกำลังชาร์จ — ตอบผิดจะโดนสองเท่า!</div>`;
-    if (gameState.bossPattern === 'GRAMMAR_TRAP' && !isBossTurn)
+    if (gameState.bossPattern === 'GRAMMAR_TRAP' && isBossTurn)  // PATCH CHARGE-WARN
       return `<div id="charge-warning-banner" style="background:#5e3a8a;color:#ffd700;text-align:center;padding:4px 10px;font-family:'Press Start 2P',monospace;font-size:0.45rem;letter-spacing:0.5px;">⚠️ กับดักไวยากรณ์! ดูให้ดี อย่าหลงกล!</div>`;
     if (gameState.bossPhase === 'final')
       return `<div id="charge-warning-banner" style="background:#7d2a2a;color:#ffd700;text-align:center;padding:4px 10px;font-family:'Press Start 2P',monospace;font-size:0.45rem;letter-spacing:0.5px;">💥 FINAL PHASE — บอสโกรธจัด! ระวังตัวให้ดี!</div>`;
@@ -10456,9 +10569,16 @@ function checkAnswer(answer, btn) {
       attemptNum, gameState.hintUsed, gameState.fiftyActiveThisQ, gameState.answerRevealed
     );
     // dmgUp (lv3) and dmgFlat (lv4): flat bonuses on top of formula
-    const finalDamage = damage
+    let finalDamage = damage
       + ((player.skills && player.skills.dmgUp)  ? 2 : 0)
       + ((player.skills && player.skills.dmgFlat) ? 2 : 0);
+    // PATCH REVIEW-DMG: in review mode use proportional damage so HP bar depletes to 0
+    // damagePerHit = bossMaxHP / numQuestions — scale by attempt quality
+    if (gameState.reviewMode) {
+      const dph = gameState.damagePerHit || 20;
+      const rvMult = gameState.answerRevealed ? 0 : gameState.hintUsed ? 0.5 : (attemptNum === 1 ? 1.0 : attemptNum === 2 ? 0.6 : 0.3);
+      finalDamage = Math.round(dph * rvMult);
+    }
 
     gameState.score += points;
     gameState.correctCount++;
@@ -11103,6 +11223,8 @@ function nextQuestion() {
       const total = gameState.activeQuestions.length;
       const pct = (gameState.score / (total * 100)) * 100; // maxScore = total * 100
       if (gameState.reviewMode) {
+        // PATCH REVIEW-HP: force HP to 0 on win so bar visually empties before cutscene
+        if (pct >= 50) { gameState.bossHP = 0; updateBossHP(); }
         pct >= 50 ? renderReviewWinCutscene() : renderReviewLoseCutscene();
       } else {
         renderResultScreen();
@@ -11125,6 +11247,10 @@ function renderResultScreen() {
     : gameState.activeQuestions.length;
   const maxScore = total * 100; // Combat v2: 100 pts per question (first correct)
   const pct = Math.min(100, (gameState.score / maxScore) * 100);
+  // PATCH ACCURACY: real accuracy = correct first-try answers / total questions
+  const accuracyPct = (total > 0)
+    ? Math.min(100, Math.round((gameState.correctCount || 0) / total * 100))
+    : 0;
 
   // Badge thresholds: Gold 90+, Silver 75+, Bronze 60+ (or special win conditions)
   let badge = '', medal = '', title = '', titleClass = '', msg = '';
@@ -11364,8 +11490,8 @@ function renderResultScreen() {
     : (TEACHER_CHEERS[stage.id] || 'ไม่เป็นไรเลย! กลับมาลองใหม่ได้เสมอ เราเชื่อในตัวเธอ!');
   const grammarTip = GRAMMAR_TIPS[stage.id] || '';
 
-  // Badge colour chip
-  const badgeColor = badge === 'gold' ? 'var(--ff-gold)' : badge === 'silver' ? '#b0c4de' : '#cd7f32';
+  // Badge colour chip — PATCH CONTRAST: dark colors for light result-screen bg
+  const badgeColor = badge === 'gold' ? '#92400e' : badge === 'silver' ? '#374151' : '#7c2d12'; // dark gold/silver/bronze on cream
   const badgeChip  = badge
     ? `<div style="text-align:center;margin:4px 0 8px;font-size:0.6rem;font-family:'Press Start 2P',monospace;color:${badgeColor};">${badge.toUpperCase()} CLEAR</div>`
     : '';
@@ -11373,19 +11499,22 @@ function renderResultScreen() {
   // Drops HTML
   let dropsHtml = '';
   if (drops.length > 0) {
+    // PATCH CONTRAST: darkened rarity text for light result-screen bg (~4.5:1+ on #f0f0e0)
+    const RARITY_DARK = { common:'#4b5563', uncommon:'#15803d', rare:'#1d4ed8', epic:'#9b1c1c', legendary:'#92400e' };
     const rowsHtml = drops.map(d => {
       const info  = d.type === 'item' ? ITEMS[d.key] : (EQUIPMENT_CATALOG[d.key] || {icon:'?',name:d.key});
       const col   = RARITY_COLOR[d.rarity] || '#9ca3af';
+      const textCol = RARITY_DARK[d.rarity] || '#4b5563'; // dark version for light bg
       const label = RARITY_LABEL[d.rarity] || d.rarity;
       return `<div class="drop-item-row">
         <span style="font-size:1.1rem;">${info.icon}</span>
-        <span style="flex:1;font-size:0.72rem;color:var(--ff-cream);">${info.name}</span>
-        <span class="drop-rarity-tag" style="background:${col}22;color:${col};border:1px solid ${col};">${label}</span>
+        <span style="flex:1;font-size:0.72rem;color:var(--pk-dark);">${info.name}</span>
+        <span class="drop-rarity-tag" style="background:${col}22;color:${textCol};border:1px solid ${col};">${label}</span>
       </div>`;
     }).join('');
     dropsHtml = `
       <div style="margin:10px 0;">
-        <div style="font-family:'Press Start 2P',monospace;font-size:0.6rem;color:var(--ff-gold);margin-bottom:5px;">🎁 DROPS</div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:0.6rem;color:#854d0e;margin-bottom:5px;">🎁 DROPS</div>
         ${rowsHtml}
       </div>`;
   }
@@ -11407,13 +11536,13 @@ function renderResultScreen() {
         <div class="ff-box-fancy">
           <div class="result-medal">${medal}</div>
           <h2 class="result-title ${titleClass}">${title}</h2>
-          <div style="text-align:center;font-size:0.7rem;color:var(--ff-cyan);margin-bottom:2px;">${stage.tense || ''}</div>
+          <div style="text-align:center;font-size:0.7rem;color:#1e40af;margin-bottom:2px;">${stage.tense || ''}</div><!-- PATCH CONTRAST: was var(--ff-cyan)=#41a6f6=2.28:1 on pk-white → #1e40af ~6:1 -->
           ${badgeChip}
 
           <div class="result-stats">
             <div class="stat-box">
               <div class="stat-label">ACCURACY</div>
-              <div class="stat-value">${Math.round(pct)}%</div>
+              <div class="stat-value">${accuracyPct}%</div>
             </div>
             <div class="stat-box">
               <div class="stat-label">SCORE</div>
