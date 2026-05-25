@@ -1126,6 +1126,7 @@ button:focus-visible {
 }
 
 .item-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+.item-limit-tag { display:block; font-size:0.45rem; color:var(--ff-orange); margin-top:1px; line-height:1; }
 
 .item-icon { font-size: 1.6rem; }
 .item-label {
@@ -2540,6 +2541,14 @@ button:focus-visible {
 .result-title.silver { color: #c0c0c0; }
 .result-title.bronze { color: var(--ff-orange); }
 .result-title.fail { color: var(--ff-red); }
+.result-title.retry { color: var(--ff-cyan); }
+.drop-item-row { display:flex; align-items:center; gap:8px; padding:5px 10px; border-radius:4px; margin:3px 0; background:rgba(255,255,255,0.05); }
+.drop-rarity-tag { font-size:0.55rem; padding:1px 5px; border-radius:3px; font-family:'Press Start 2P',monospace; letter-spacing:0.5px; }
+.krupp-quote-box { display:flex; align-items:flex-start; gap:12px; background:rgba(0,150,150,0.12); border:2px solid var(--ff-cyan); border-radius:6px; padding:10px 12px; margin:12px 0; }
+.krupp-quote-sprite { flex-shrink:0; width:36px; height:45px; }
+.krupp-quote-text { font-size:0.8rem; color:var(--ff-cream); line-height:1.6; }
+.grammar-tip-bar { background:rgba(56,183,100,0.12); border-left:3px solid var(--ff-green); padding:6px 10px; margin:6px 0; font-size:0.7rem; color:#a0e8a0; }
+.replay-tip { text-align:center; font-size:0.65rem; color:var(--ff-gold); margin:6px 0; }
 
 .result-stats {
   display: grid;
@@ -3953,10 +3962,421 @@ html.day-mode .result-title.gold   { color: #8a5800 !important; }
 html.day-mode .result-title.silver { color: #404040 !important; }
 html.day-mode .result-title.bronze { color: #6a2800 !important; }
 html.day-mode .result-title.fail   { color: var(--pk-red) !important; }
+html.day-mode .result-title.retry  { color: #006060 !important; }
 html.day-mode #theme-toggle {
   background: linear-gradient(180deg, #e8e060 0%, #c8a820 100%) !important;
   border-color: var(--pk-dark) !important;
   box-shadow: inset 0 0 0 var(--pixel) #c8a820, var(--pixel) var(--pixel) 0 var(--pk-dark) !important;
+}
+
+/* ============================================
+   🎨 WORLD MAP SECTION BACKGROUNDS
+   GBA-style per-world visual themes
+   ============================================ */
+
+/* Present Land — lush green */
+.world-present .ff-box-fancy {
+  background: linear-gradient(180deg, #071a07 0%, #0d2a10 100%);
+  border-color: #38b764;
+  box-shadow: inset 0 0 0 var(--pixel) #257a45,
+              inset 0 0 0 calc(var(--pixel)*2) #071a07,
+              var(--pixel) var(--pixel) 0 var(--ff-shadow);
+}
+/* grass-tile strip at bottom of box */
+.world-present .ff-box-fancy::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    #38b764 0px, #38b764 8px,
+    #257a45 8px, #257a45 16px
+  );
+  opacity: 0.35;
+  pointer-events: none;
+}
+.world-present .stage-card {
+  border-color: #38b764;
+  background: linear-gradient(180deg, #071a07 0%, #0a1f0a 100%);
+}
+.world-present .stage-card.playable:hover {
+  border-color: #5acc7f;
+  background: linear-gradient(180deg, #0d2a10 0%, #0a2010 100%);
+  box-shadow: inset 0 0 0 var(--pixel) #38b764,
+              calc(var(--pixel) + 2px) calc(var(--pixel) + 2px) 0 var(--ff-shadow);
+}
+
+/* Past Kingdom — warm amber/stone */
+.world-past .ff-box-fancy {
+  background: linear-gradient(180deg, #1a0f04 0%, #2a1a08 100%);
+  border-color: #ef7d57;
+  box-shadow: inset 0 0 0 var(--pixel) #a76d3f,
+              inset 0 0 0 calc(var(--pixel)*2) #1a0f04,
+              var(--pixel) var(--pixel) 0 var(--ff-shadow);
+}
+/* cobblestone strip */
+.world-past .ff-box-fancy::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    #7a4a2c 0px, #7a4a2c 10px,
+    #5a3520 10px, #5a3520 20px
+  );
+  opacity: 0.35;
+  pointer-events: none;
+}
+.world-past .stage-card {
+  border-color: #ef7d57;
+  background: linear-gradient(180deg, #1a0f04 0%, #201205 100%);
+}
+.world-past .stage-card.playable:hover {
+  border-color: #ffcd75;
+  background: linear-gradient(180deg, #2a1a08 0%, #201204 100%);
+  box-shadow: inset 0 0 0 var(--pixel) #ef7d57,
+              calc(var(--pixel) + 2px) calc(var(--pixel) + 2px) 0 var(--ff-shadow);
+}
+
+/* Future City — neon cyber grid */
+.world-future .ff-box-fancy {
+  background: linear-gradient(180deg, #030d1a 0%, #061020 100%);
+  border-color: #41a6f6;
+  box-shadow: inset 0 0 0 var(--pixel) #2a6db8,
+              inset 0 0 0 calc(var(--pixel)*2) #030d1a,
+              var(--pixel) var(--pixel) 0 var(--ff-shadow),
+              0 0 14px rgba(65,166,246,0.18);
+}
+/* cyber grid lines */
+.world-future .ff-box-fancy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(0deg, transparent calc(100% - 1px), rgba(65,166,246,0.14) 100%),
+    linear-gradient(90deg, transparent calc(100% - 1px), rgba(65,166,246,0.14) 100%);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+.world-future .stage-card {
+  border-color: #41a6f6;
+  background: linear-gradient(180deg, #030d1a 0%, #050f1e 100%);
+}
+.world-future .stage-card.playable:hover {
+  border-color: #73c4ff;
+  box-shadow: inset 0 0 0 var(--pixel) #41a6f6,
+              calc(var(--pixel) + 2px) calc(var(--pixel) + 2px) 0 var(--ff-shadow),
+              0 0 8px rgba(65,166,246,0.35);
+}
+
+/* Final Galaxy — deep space, pink neon */
+.world-galaxy .ff-box-fancy {
+  background: radial-gradient(ellipse at 50% 0%, #1a0530 0%, #0d0320 100%);
+  border-color: #ff69b4;
+  box-shadow: inset 0 0 0 var(--pixel) #7c3aed,
+              inset 0 0 0 calc(var(--pixel)*2) #0d0320,
+              var(--pixel) var(--pixel) 0 var(--ff-shadow),
+              0 0 18px rgba(124,58,237,0.25);
+}
+/* floating pixel stars */
+.world-galaxy .ff-box-fancy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 8%  18%, rgba(255,105,180,0.7), transparent),
+    radial-gradient(2px 2px at 28% 38%, rgba(124,58,237,0.6), transparent),
+    radial-gradient(1px 1px at 52% 12%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(2px 2px at 68% 55%, rgba(65,166,246,0.6), transparent),
+    radial-gradient(1px 1px at 83% 28%, rgba(255,205,117,0.7), transparent),
+    radial-gradient(1px 1px at 18% 72%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2px 2px at 44% 80%, rgba(255,105,180,0.5), transparent),
+    radial-gradient(1px 1px at 91% 68%, rgba(124,58,237,0.7), transparent);
+  pointer-events: none;
+  animation: starTwinkle 3s steps(4) infinite;
+}
+.world-galaxy .stage-card {
+  border-color: #ff69b4;
+  background: radial-gradient(ellipse at 50% 0%, #1a0530 0%, #0a0320 100%);
+}
+.world-galaxy .stage-card.playable:hover {
+  border-color: #ff9fd4;
+  box-shadow: inset 0 0 0 var(--pixel) #ff69b4,
+              calc(var(--pixel) + 2px) calc(var(--pixel) + 2px) 0 var(--ff-shadow),
+              0 0 10px rgba(255,105,180,0.4);
+}
+
+/* World-pulse dots beside world titles */
+.world-present .world-title::before,
+.world-past    .world-title::before,
+.world-future  .world-title::before,
+.world-galaxy  .world-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin-right: 6px;
+  flex-shrink: 0;
+  animation: pixelPulse 1.8s steps(3) infinite;
+}
+.world-present .world-title::before { background:#38b764; box-shadow:0 0 0 2px #257a45; }
+.world-past    .world-title::before { background:#ef7d57; box-shadow:0 0 0 2px #a76d3f; animation-duration:2.2s; }
+.world-future  .world-title::before { background:#41a6f6; box-shadow:0 0 0 2px #2a6db8; animation-duration:1.6s; }
+.world-galaxy  .world-title::before { background:#ff69b4; box-shadow:0 0 0 2px #7c3aed; animation-duration:1.2s; }
+
+@keyframes pixelPulse {
+  0%, 100% { transform: scale(1);   opacity: 1;   }
+  50%       { transform: scale(1.4); opacity: 0.6; }
+}
+
+/* Crystal drop-shadow tint per world */
+.world-present .crystal-sprite { filter: drop-shadow(0 0 5px #38b764); }
+.world-past    .crystal-sprite { filter: drop-shadow(0 0 5px #ef7d57); }
+.world-future  .crystal-sprite { filter: drop-shadow(0 0 5px #41a6f6); }
+.world-galaxy  .crystal-sprite { filter: drop-shadow(0 0 7px #ff69b4); animation-duration:1.4s; }
+
+/* Boss card pulse glow */
+.stage-card.boss-card.playable {
+  animation: bossCardPulse 2.2s steps(3) infinite;
+}
+@keyframes bossCardPulse {
+  0%, 100% { box-shadow: inset 0 0 0 var(--pixel) var(--ff-gold),
+                          var(--pixel) var(--pixel) 0 var(--ff-shadow); }
+  50%       { box-shadow: inset 0 0 0 var(--pixel) var(--ff-orange),
+                          var(--pixel) var(--pixel) 0 var(--ff-shadow),
+                          0 0 10px rgba(255,205,117,0.35); }
+}
+
+/* ============================================
+   🎨 PIXEL ICON — SVG symbol display class
+   Usage: <svg class="pixel-icon"><use href="#icon-hint"/></svg>
+   ============================================ */
+.pixel-icon {
+  display: inline-block;
+  width: 32px; height: 32px;
+  shape-rendering: crispEdges;
+  image-rendering: pixelated;
+  vertical-align: middle;
+}
+.pixel-icon-lg  { width: 48px; height: 48px; }
+.pixel-icon-sm  { width: 20px; height: 20px; }
+.pixel-icon-xl  { width: 64px; height: 64px; }
+
+/* icon wrapper chip in shop/inventory rows */
+.px-icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  background: rgba(0,0,0,0.35);
+  border: 2px solid rgba(255,255,255,0.12);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   🏆 BADGE + RESULT SCREEN POLISH
+   ============================================ */
+.result-title.gold   { animation: goldGlow 1.6s steps(4) infinite; }
+.result-title.silver { color: #b0c4de; }
+.result-title.bronze { color: #cd7f32; }
+.result-title.retry  { color: var(--ff-cyan); }
+
+@keyframes goldGlow {
+  0%, 100% { text-shadow: var(--pixel) var(--pixel) 0 #7a4a2c; }
+  50%       { text-shadow: var(--pixel) var(--pixel) 0 #7a4a2c,
+                            0 0 18px rgba(255,205,117,0.85); }
+}
+
+.badge-gold   { color: var(--ff-gold);  text-shadow: 0 0 6px rgba(255,205,117,0.6); }
+.badge-silver { color: #b0c4de;          text-shadow: 0 0 4px rgba(176,196,222,0.5); }
+.badge-bronze { color: #cd7f32;          text-shadow: 0 0 4px rgba(205,127,50,0.4); }
+
+/* stage badge icon in map card — right-align */
+.stage-badge-icon {
+  position: absolute;
+  top: 4px; right: 4px;
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 3px rgba(255,205,117,0.55));
+}
+
+/* ============================================
+   ⚔  BATTLE BACKGROUNDS — additional stages
+   ============================================ */
+
+/* Stage 1: Daily Village (Present Simple) — sunny morning */
+.battle-bg-village {
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 60%, #4a3010 60%, #2a1808 100%),
+    linear-gradient(180deg, #87ceeb 0%, #c8eeff 30%, #e8f8e0 55%, #6abf50 60%, #6abf50 100%);
+  position: relative;
+}
+.battle-bg-village::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(18px 18px at 84% 11%, #ffed6f, transparent),
+    radial-gradient(7px  7px  at 84% 11%, #fff, transparent),
+    radial-gradient(22px 9px at 22% 20%, rgba(255,255,255,0.88), transparent),
+    radial-gradient(16px 7px at 60% 15%, rgba(255,255,255,0.75), transparent);
+  pointer-events: none;
+}
+.battle-bg-village::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 40%;
+  background-image:
+    radial-gradient(3px 3px at 14% 60%, rgba(255,210,80,0.8), transparent),
+    radial-gradient(3px 3px at 86% 55%, rgba(255,210,80,0.8), transparent);
+  pointer-events: none;
+}
+
+/* Stage 2: Now Forest (Present Continuous) — deep green glow */
+.battle-bg-nowforest {
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 60%, #1a4020 60%, #0d2510 100%),
+    linear-gradient(180deg, #1a2a3a 0%, #2a5a30 40%, #3a7a40 58%, #2a6030 60%, #2a6030 100%);
+  position: relative;
+}
+.battle-bg-nowforest::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(3px 3px at 15% 25%, rgba(80,255,120,0.5), transparent),
+    radial-gradient(2px 2px at 38% 18%, rgba(120,255,80,0.4), transparent),
+    radial-gradient(3px 3px at 68% 30%, rgba(80,255,120,0.6), transparent),
+    radial-gradient(2px 2px at 90% 22%, rgba(120,255,80,0.4), transparent),
+    radial-gradient(1px 1px at 50% 40%, rgba(200,255,180,0.5), transparent);
+  pointer-events: none;
+  animation: forestGlow 3s steps(4) infinite;
+}
+@keyframes forestGlow {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 1; }
+}
+
+/* Stage 3–4: Memory Hills / Perfect zones — purple dusk */
+.battle-bg-hills {
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 60%, #2a1a30 60%, #1a0d20 100%),
+    linear-gradient(180deg, #3a2050 0%, #6040a0 25%, #8060c0 50%, #604080 60%, #604080 100%);
+  position: relative;
+}
+.battle-bg-hills::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 12% 12%, rgba(220,180,255,0.8), transparent),
+    radial-gradient(1px 1px at 38%  8%, rgba(255,200,255,0.7), transparent),
+    radial-gradient(2px 2px at 64% 18%, rgba(200,180,255,0.7), transparent),
+    radial-gradient(1px 1px at 80%  6%, rgba(255,200,255,0.6), transparent),
+    radial-gradient(2px 2px at 25% 35%, rgba(180,150,255,0.5), transparent);
+  pointer-events: none;
+  animation: starTwinkle 4s steps(4) infinite;
+}
+
+/* ============================================
+   DAY MODE overrides for world theming
+   ============================================ */
+html.day-mode .world-present .ff-box-fancy {
+  background: #c8e8b8 !important;
+  border-color: #206820 !important;
+  box-shadow: inset 0 0 0 4px #38b764, 4px 4px 0 #000 !important;
+}
+html.day-mode .world-past .ff-box-fancy {
+  background: #e8d0b0 !important;
+  border-color: #804010 !important;
+  box-shadow: inset 0 0 0 4px #a76d3f, 4px 4px 0 #000 !important;
+}
+html.day-mode .world-future .ff-box-fancy {
+  background: #b0c8e8 !important;
+  border-color: #183880 !important;
+  box-shadow: inset 0 0 0 4px #3b5dc9, 4px 4px 0 #000 !important;
+}
+html.day-mode .world-galaxy .ff-box-fancy {
+  background: #d8b8e0 !important;
+  border-color: #602060 !important;
+  box-shadow: inset 0 0 0 4px #7c3aed, 4px 4px 0 #000 !important;
+}
+html.day-mode .world-present .stage-card { border-color:#206820 !important; background:#d8f0c8 !important; }
+html.day-mode .world-past    .stage-card { border-color:#804010 !important; background:#f0dcc0 !important; }
+html.day-mode .world-future  .stage-card { border-color:#183880 !important; background:#c8d8f0 !important; }
+html.day-mode .world-galaxy  .stage-card { border-color:#602060 !important; background:#e8d0f0 !important; }
+html.day-mode .world-present .world-title::before { background:#206820 !important; }
+html.day-mode .world-past    .world-title::before { background:#804010 !important; }
+html.day-mode .world-future  .world-title::before { background:#183880 !important; }
+html.day-mode .world-galaxy  .world-title::before { background:#602060 !important; }
+html.day-mode .stage-card.boss-card.playable { animation: none !important; }
+
+/* ============================================
+   AUDIO VOLUME PANEL
+   ============================================ */
+.audio-wrap {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.audio-wrap .sound-toggle {
+  position: static; /* override fixed positioning since parent is fixed */
+}
+.audio-panel {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  background: linear-gradient(180deg, var(--ff-navy) 0%, var(--ff-bg-deep) 100%);
+  border: var(--pixel) solid var(--ff-white);
+  outline: var(--pixel) solid var(--ff-shadow);
+  box-shadow: var(--pixel) var(--pixel) 0 var(--ff-shadow);
+  padding: 10px 12px;
+  min-width: 160px;
+  border-radius: 0;
+}
+.audio-panel.open { display: flex; }
+.audio-panel label {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: var(--ff-white);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.audio-panel input[type="range"] {
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  background: var(--ff-blue);
+  border: 1px solid var(--ff-white);
+  cursor: pointer;
+}
+.audio-panel input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--ff-white);
+  border: 2px solid var(--ff-shadow);
+  cursor: pointer;
+}
+.audio-panel .audio-panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.audio-panel .vol-label {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: var(--ff-yellow);
+  min-width: 26px;
+  text-align: right;
 }
 
 </style>
@@ -3967,7 +4387,26 @@ html.day-mode #theme-toggle {
 
 <div class="teacher-badge">▶ TEACHER MODE</div>
 
-<button class="sound-toggle" id="sound-toggle" onclick="toggleSound()" aria-label="เปิด/ปิดเสียง">🔊</button>
+<div class="audio-wrap" id="audio-wrap">
+  <div class="audio-panel" id="audio-panel">
+    <label>🎵 BGM
+      <div class="audio-panel-row">
+        <input type="range" id="music-vol-slider" min="0" max="100" value="55" oninput="AudioUI.setMusicVol(this.value)">
+        <span class="vol-label" id="music-vol-label">55</span>
+      </div>
+    </label>
+    <label>🔊 SFX
+      <div class="audio-panel-row">
+        <input type="range" id="sfx-vol-slider" min="0" max="100" value="70" oninput="AudioUI.setSfxVol(this.value)">
+        <span class="vol-label" id="sfx-vol-label">70</span>
+      </div>
+    </label>
+  </div>
+  <button class="sound-toggle" id="sound-toggle"
+    onclick="toggleSound()"
+    oncontextmenu="event.preventDefault(); toggleAudioPanel();"
+    aria-label="เปิด/ปิดเสียง (คลิกขวา = ปรับระดับเสียง)">🔊</button>
+</div>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="สลับธีม Day/Night">☀️</button>
 
 <div id="app"></div>
@@ -5226,6 +5665,433 @@ html.day-mode #theme-toggle {
       <rect x="12" y="8" width="6" height="2" fill="#ef7d57"/>
       <rect x="20" y="14" width="6" height="2" fill="#ef7d57"/>
     </symbol>
+
+    <!-- ==========================================
+         ITEM ICONS — 20×24 viewBox pixel art
+         ========================================== -->
+
+    <!-- Hint Potion: blue flask, ? symbol -->
+    <symbol id="icon-hint" viewBox="0 0 20 24">
+      <rect x="8"  y="0"  width="4" height="3" fill="#7a4a2c"/><!-- cork -->
+      <rect x="7"  y="1"  width="6" height="1" fill="#a76d3f"/>
+      <rect x="8"  y="3"  width="4" height="2" fill="#b8e0ff"/><!-- neck -->
+      <rect x="6"  y="5"  width="8" height="1" fill="#5a9de8"/><!-- shoulder -->
+      <rect x="4"  y="6"  width="12" height="11" fill="#3b5dc9"/><!-- bottle body -->
+      <rect x="5"  y="7"  width="10" height="9"  fill="#41a6f6"/><!-- liquid -->
+      <rect x="5"  y="7"  width="2"  height="9"  fill="#73c4ff"/><!-- shine -->
+      <rect x="5"  y="7"  width="10" height="1"  fill="#a8e4ff"/>
+      <!-- ? mark -->
+      <rect x="8"  y="9"  width="4" height="1" fill="#fff"/>
+      <rect x="7"  y="10" width="1" height="1" fill="#fff"/>
+      <rect x="11" y="10" width="1" height="2" fill="#fff"/>
+      <rect x="9"  y="12" width="2" height="1" fill="#fff"/>
+      <rect x="9"  y="13" width="2" height="1" fill="#fff"/>
+      <rect x="9"  y="15" width="2" height="1" fill="#fff"/><!-- dot -->
+      <rect x="4"  y="17" width="12" height="1" fill="#2a3f7a"/><!-- rim -->
+      <rect x="5"  y="18" width="10" height="1" fill="#1a2a5a"/>
+    </symbol>
+
+    <!-- 50:50 Crystal: purple diamond -->
+    <symbol id="icon-fifty" viewBox="0 0 20 22">
+      <rect x="9"  y="1"  width="2" height="2" fill="#b08fff"/><!-- tip -->
+      <rect x="7"  y="3"  width="6" height="2" fill="#9d6dff"/>
+      <rect x="5"  y="5"  width="10" height="6" fill="#7c3aed"/><!-- body -->
+      <rect x="5"  y="5"  width="10" height="1" fill="#c0a0ff"/><!-- highlight -->
+      <rect x="5"  y="5"  width="1"  height="5" fill="#b08fff"/>
+      <rect x="7"  y="11" width="6" height="2" fill="#5b21b6"/><!-- lower -->
+      <rect x="9"  y="13" width="2" height="2" fill="#4a1a9a"/><!-- bottom tip -->
+      <rect x="7"  y="6"  width="2" height="2" fill="#d0b8ff" opacity="0.55"/><!-- facet -->
+      <!-- "50" pixel text inside -->
+      <rect x="6"  y="7"  width="3" height="1" fill="#fff"/><!-- 5-top -->
+      <rect x="6"  y="8"  width="1" height="1" fill="#fff"/>
+      <rect x="6"  y="9"  width="3" height="1" fill="#fff"/>
+      <rect x="8"  y="9"  width="1" height="1" fill="#fff"/>
+      <rect x="6"  y="10" width="3" height="1" fill="#fff"/><!-- 5-bot -->
+      <rect x="10" y="7"  width="3" height="1" fill="#fff"/><!-- 0-top -->
+      <rect x="10" y="7"  width="1" height="4" fill="#fff"/>
+      <rect x="12" y="7"  width="1" height="4" fill="#fff"/>
+      <rect x="10" y="11" width="3" height="1" fill="#fff"/><!-- 0-bot -->
+    </symbol>
+
+    <!-- Heal Potion: red flask, heart -->
+    <symbol id="icon-heal" viewBox="0 0 20 24">
+      <rect x="8"  y="0"  width="4" height="3" fill="#7a4a2c"/>
+      <rect x="7"  y="1"  width="6" height="1" fill="#a76d3f"/>
+      <rect x="8"  y="3"  width="4" height="2" fill="#ffb0c0"/>
+      <rect x="6"  y="5"  width="8" height="1" fill="#d44060"/>
+      <rect x="4"  y="6"  width="12" height="11" fill="#b13e53"/>
+      <rect x="5"  y="7"  width="10" height="9"  fill="#ef7d57"/>
+      <rect x="5"  y="7"  width="2"  height="9"  fill="#ff9d8d"/>
+      <rect x="5"  y="7"  width="10" height="1"  fill="#ffbdb0"/>
+      <!-- heart shape -->
+      <rect x="7"  y="10" width="2" height="1" fill="#fff"/>
+      <rect x="11" y="10" width="2" height="1" fill="#fff"/>
+      <rect x="6"  y="11" width="8" height="1" fill="#fff"/>
+      <rect x="7"  y="12" width="6" height="1" fill="#fff"/>
+      <rect x="8"  y="13" width="4" height="1" fill="#fff"/>
+      <rect x="9"  y="14" width="2" height="1" fill="#fff"/>
+      <rect x="4"  y="17" width="12" height="1" fill="#7d2a3a"/>
+      <rect x="5"  y="18" width="10" height="1" fill="#5a1a28"/>
+    </symbol>
+
+    <!-- Power Strike: red orb, lightning bolt -->
+    <symbol id="icon-power" viewBox="0 0 20 22">
+      <rect x="3"  y="3"  width="14" height="16" fill="#b13e53"/>
+      <rect x="2"  y="5"  width="16" height="12" fill="#b13e53"/>
+      <rect x="4"  y="2"  width="12" height="18" fill="#b13e53"/>
+      <rect x="4"  y="2"  width="12" height="1"  fill="#ef7d57"/><!-- top shine -->
+      <rect x="3"  y="3"  width="1"  height="14" fill="#ef7d57"/>
+      <!-- lightning bolt (yellow) -->
+      <rect x="11" y="3"  width="4" height="1" fill="#ffcd75"/>
+      <rect x="9"  y="5"  width="4" height="1" fill="#ffcd75"/>
+      <rect x="7"  y="7"  width="6" height="2" fill="#fff"/><!-- bright centre -->
+      <rect x="9"  y="9"  width="4" height="1" fill="#ffcd75"/>
+      <rect x="10" y="11" width="4" height="1" fill="#ffcd75"/>
+      <rect x="11" y="13" width="4" height="1" fill="#ffcd75"/>
+      <!-- spark dots -->
+      <rect x="4"  y="5"  width="1" height="1" fill="#ffcd75" opacity="0.8"/>
+      <rect x="15" y="14" width="1" height="1" fill="#ffcd75" opacity="0.8"/>
+      <rect x="3"  y="18" width="14" height="1" fill="#7d2a3a"/>
+    </symbol>
+
+    <!-- Shield Potion: blue flask, shield icon -->
+    <symbol id="icon-shield" viewBox="0 0 20 24">
+      <rect x="8"  y="0"  width="4" height="3" fill="#7a4a2c"/>
+      <rect x="7"  y="1"  width="6" height="1" fill="#a76d3f"/>
+      <rect x="8"  y="3"  width="4" height="2" fill="#c8e8ff"/>
+      <rect x="6"  y="5"  width="8" height="1" fill="#5a8ad8"/>
+      <rect x="4"  y="6"  width="12" height="11" fill="#3b5dc9"/>
+      <rect x="5"  y="7"  width="10" height="9"  fill="#41a6f6"/>
+      <rect x="5"  y="7"  width="2"  height="9"  fill="#80c8ff"/>
+      <rect x="5"  y="7"  width="10" height="1"  fill="#b0dcff"/>
+      <!-- shield shape -->
+      <rect x="7"  y="9"  width="6" height="1" fill="#fff"/><!-- top bar -->
+      <rect x="6"  y="10" width="1" height="4" fill="#fff"/><!-- left side -->
+      <rect x="13" y="10" width="1" height="4" fill="#fff"/><!-- right side -->
+      <rect x="7"  y="14" width="2" height="1" fill="#fff"/><!-- lower-left -->
+      <rect x="11" y="14" width="2" height="1" fill="#fff"/><!-- lower-right -->
+      <rect x="9"  y="15" width="2" height="1" fill="#fff"/><!-- bottom point -->
+      <rect x="9"  y="10" width="2" height="4" fill="#fff"/><!-- centre vert -->
+      <rect x="8"  y="12" width="4" height="1" fill="#fff"/><!-- centre horiz -->
+      <rect x="4"  y="17" width="12" height="1" fill="#2a3f7a"/>
+      <rect x="5"  y="18" width="10" height="1" fill="#1a2a5a"/>
+    </symbol>
+
+    <!-- Mega Heal: gold capsule, cross symbol -->
+    <symbol id="icon-mega" viewBox="0 0 20 24">
+      <rect x="7"  y="2"  width="6" height="20" fill="#ffcd75"/><!-- capsule top half -->
+      <rect x="5"  y="4"  width="10" height="16" fill="#ffcd75"/>
+      <rect x="6"  y="3"  width="8" height="18" fill="#ffcd75"/>
+      <rect x="7"  y="2"  width="6" height="1"  fill="#fff"/><!-- shine top -->
+      <rect x="6"  y="3"  width="2" height="14" fill="#ffe9b0"/><!-- left shine -->
+      <!-- orange lower half -->
+      <rect x="7"  y="12" width="6" height="10" fill="#ef7d57"/>
+      <rect x="5"  y="13" width="10" height="8" fill="#ef7d57"/>
+      <rect x="6"  y="12" width="8" height="10" fill="#ef7d57"/>
+      <rect x="6"  y="12" width="1" height="9"  fill="#ff9d5a"/><!-- shine -->
+      <!-- dividing line -->
+      <rect x="5"  y="12" width="10" height="1" fill="#fff"/>
+      <!-- cross on gold half -->
+      <rect x="9"  y="5"  width="2" height="5" fill="#fff"/>
+      <rect x="8"  y="7"  width="4" height="2" fill="#fff"/>
+      <!-- cross on orange half -->
+      <rect x="9"  y="14" width="2" height="4" fill="#fff"/>
+      <rect x="8"  y="15" width="4" height="2" fill="#fff"/>
+      <!-- border outline -->
+      <rect x="5"  y="3"  width="1" height="18" fill="#a76d3f"/>
+      <rect x="14" y="3"  width="1" height="18" fill="#7a4a2c"/>
+      <rect x="6"  y="2"  width="8" height="1"  fill="#a76d3f"/>
+      <rect x="6"  y="21" width="8" height="1"  fill="#7a4a2c"/>
+    </symbol>
+
+    <!-- ==========================================
+         WEAPON ICONS — 12×28 viewBox
+         ========================================== -->
+
+    <!-- Iron Sword: gray blade, brown hilt -->
+    <symbol id="icon-iron-sword" viewBox="0 0 12 28">
+      <rect x="5"  y="0"  width="2" height="18" fill="#a8a5b8"/><!-- blade -->
+      <rect x="4"  y="1"  width="1" height="16" fill="#d0cce0"/><!-- highlight -->
+      <rect x="6"  y="1"  width="1" height="16" fill="#8a8898"/><!-- shadow -->
+      <rect x="5"  y="0"  width="2" height="1"  fill="#e8e4f0"/><!-- tip -->
+      <rect x="2"  y="18" width="8" height="2"  fill="#7a4a2c"/><!-- guard -->
+      <rect x="2"  y="18" width="8" height="1"  fill="#a76d3f"/><!-- guard shine -->
+      <rect x="5"  y="20" width="2" height="5"  fill="#5a3a1a"/><!-- grip -->
+      <rect x="5"  y="21" width="1" height="1"  fill="#7a4a2c"/><!-- grip detail -->
+      <rect x="5"  y="23" width="1" height="1"  fill="#7a4a2c"/>
+      <rect x="4"  y="25" width="4" height="2"  fill="#7a4a2c"/><!-- pommel -->
+      <rect x="4"  y="25" width="4" height="1"  fill="#a76d3f"/>
+    </symbol>
+
+    <!-- Crystal Staff: purple orb, wooden pole -->
+    <symbol id="icon-crystal-staff" viewBox="0 0 14 30">
+      <rect x="4"  y="1"  width="6" height="5"  fill="#7c3aed"/><!-- orb -->
+      <rect x="3"  y="2"  width="8" height="4"  fill="#9d6dff"/>
+      <rect x="4"  y="1"  width="6" height="1"  fill="#c0a0ff"/><!-- orb shine -->
+      <rect x="3"  y="2"  width="2" height="2"  fill="#c0a0ff"/>
+      <rect x="4"  y="2"  width="2" height="2"  fill="#e0d0ff" opacity="0.65"/><!-- sparkle -->
+      <rect x="6"  y="6"  width="2" height="2"  fill="#5b21b6"/><!-- connector -->
+      <rect x="6"  y="8"  width="2" height="19" fill="#7a4a2c"/><!-- pole -->
+      <rect x="6"  y="8"  width="1" height="19" fill="#a76d3f"/><!-- pole shine -->
+      <rect x="5"  y="27" width="4" height="2"  fill="#5a3a1a"/><!-- butt -->
+      <!-- star sparkles beside orb -->
+      <rect x="1"  y="2"  width="1" height="1" fill="#ffcd75"/>
+      <rect x="12" y="1"  width="1" height="1" fill="#ffcd75"/>
+      <rect x="12" y="5"  width="1" height="1" fill="#c0a0ff"/>
+    </symbol>
+
+    <!-- Time Blade: cyan futuristic sword -->
+    <symbol id="icon-time-blade" viewBox="0 0 14 28">
+      <rect x="6"  y="0"  width="2" height="16" fill="#41a6f6"/><!-- blade -->
+      <rect x="5"  y="2"  width="1" height="12" fill="#73c4ff"/><!-- left shine -->
+      <rect x="7"  y="1"  width="1" height="14" fill="#2a6db8"/><!-- right shadow -->
+      <rect x="6"  y="0"  width="2" height="1"  fill="#fff"/><!-- tip glow -->
+      <rect x="5"  y="5"  width="1" height="1"  fill="#a8e4ff"/><!-- circuit dot -->
+      <rect x="8"  y="9"  width="1" height="1"  fill="#a8e4ff"/>
+      <rect x="2"  y="16" width="10" height="2" fill="#3b5dc9"/><!-- guard -->
+      <rect x="3"  y="16" width="8"  height="1" fill="#5a7ce8"/><!-- guard shine -->
+      <rect x="5"  y="18" width="4" height="5"  fill="#1a1f3a"/><!-- grip (dark) -->
+      <rect x="5"  y="19" width="1" height="1"  fill="#41a6f6"/><!-- circuit lines -->
+      <rect x="5"  y="21" width="1" height="1"  fill="#41a6f6"/>
+      <rect x="5"  y="23" width="1" height="1"  fill="#41a6f6"/>
+      <rect x="4"  y="23" width="6" height="3"  fill="#3b5dc9"/><!-- pommel -->
+      <rect x="5"  y="23" width="4" height="1"  fill="#5a7ce8"/>
+    </symbol>
+
+    <!-- ==========================================
+         ARMOR ICONS — 20×20 viewBox
+         ========================================== -->
+
+    <!-- Leather Armor: brown chest plate -->
+    <symbol id="icon-leather-armor" viewBox="0 0 20 20">
+      <rect x="4"  y="2"  width="12" height="14" fill="#7a4a2c"/>
+      <rect x="2"  y="4"  width="16" height="10" fill="#7a4a2c"/>
+      <rect x="4"  y="2"  width="12" height="2"  fill="#a76d3f"/><!-- top shine -->
+      <rect x="4"  y="2"  width="2"  height="12" fill="#a76d3f"/><!-- left shine -->
+      <rect x="2"  y="3"  width="3"  height="4"  fill="#5a3a1a"/><!-- L shoulder -->
+      <rect x="15" y="3"  width="3"  height="4"  fill="#5a3a1a"/><!-- R shoulder -->
+      <rect x="2"  y="3"  width="3"  height="1"  fill="#7a4a2c"/>
+      <rect x="15" y="3"  width="3"  height="1"  fill="#7a4a2c"/>
+      <rect x="8"  y="2"  width="4"  height="2"  fill="#1a1f3a"/><!-- neck gap -->
+      <rect x="8"  y="12" width="4"  height="2"  fill="#ffcd75"/><!-- buckle -->
+      <rect x="9"  y="13" width="2"  height="1"  fill="#a76d3f"/><!-- buckle hole -->
+      <rect x="6"  y="6"  width="8"  height="1"  fill="#5a3a1a"/><!-- stitching -->
+      <rect x="6"  y="9"  width="8"  height="1"  fill="#5a3a1a"/>
+      <rect x="4"  y="15" width="12" height="1"  fill="#5a3a1a"/><!-- bottom trim -->
+    </symbol>
+
+    <!-- Time Robe: blue robe, golden collar -->
+    <symbol id="icon-time-robe" viewBox="0 0 20 22">
+      <rect x="5"  y="3"  width="10" height="16" fill="#3b5dc9"/>
+      <rect x="3"  y="6"  width="14" height="12" fill="#3b5dc9"/>
+      <rect x="4"  y="4"  width="12" height="14" fill="#3b5dc9"/>
+      <rect x="5"  y="3"  width="10" height="1"  fill="#5a7ce8"/><!-- top shine -->
+      <rect x="4"  y="4"  width="2"  height="12" fill="#5a7ce8"/><!-- left shine -->
+      <rect x="7"  y="3"  width="6"  height="1"  fill="#ffcd75"/><!-- collar gold -->
+      <rect x="7"  y="4"  width="6"  height="1"  fill="#1a1f3a"/><!-- collar dark -->
+      <!-- star/rune pattern -->
+      <rect x="9"  y="7"  width="2" height="6" fill="#41a6f6"/><!-- vert -->
+      <rect x="7"  y="9"  width="6" height="2" fill="#41a6f6"/><!-- horiz -->
+      <rect x="7"  y="7"  width="2" height="2" fill="#41a6f6" opacity="0.6"/><!-- diag -->
+      <rect x="11" y="7"  width="2" height="2" fill="#41a6f6" opacity="0.6"/>
+      <rect x="7"  y="11" width="2" height="2" fill="#41a6f6" opacity="0.6"/>
+      <rect x="11" y="11" width="2" height="2" fill="#41a6f6" opacity="0.6"/>
+      <rect x="5"  y="14" width="10" height="1" fill="#ffcd75"/><!-- belt -->
+      <rect x="3"  y="17" width="14" height="1" fill="#2a3f7a"/><!-- hem -->
+      <rect x="2"  y="18" width="16" height="1" fill="#1a2a5a"/>
+    </symbol>
+
+    <!-- Dragon Scale Armor: dark scales, red gem -->
+    <symbol id="icon-dragon-scale" viewBox="0 0 20 20">
+      <rect x="3"  y="2"  width="14" height="14" fill="#1a1f3a"/>
+      <rect x="2"  y="4"  width="16" height="10" fill="#1a1f3a"/>
+      <!-- scale rows (each scale = small rect) -->
+      <rect x="4"  y="4"  width="4"  height="3"  fill="#2a3f7a"/>
+      <rect x="8"  y="4"  width="4"  height="3"  fill="#2a3f7a"/>
+      <rect x="12" y="4"  width="3"  height="3"  fill="#2a3f7a"/>
+      <rect x="6"  y="7"  width="4"  height="3"  fill="#2a3f7a"/>
+      <rect x="10" y="7"  width="4"  height="3"  fill="#2a3f7a"/>
+      <rect x="4"  y="7"  width="2"  height="3"  fill="#2a3f7a"/>
+      <rect x="4"  y="10" width="4"  height="3"  fill="#2a3f7a"/>
+      <rect x="8"  y="10" width="4"  height="3"  fill="#2a3f7a"/>
+      <rect x="12" y="10" width="3"  height="3"  fill="#2a3f7a"/>
+      <!-- scale highlight lines -->
+      <rect x="4"  y="4"  width="4"  height="1"  fill="#3b5dc9" opacity="0.6"/>
+      <rect x="8"  y="4"  width="4"  height="1"  fill="#3b5dc9" opacity="0.6"/>
+      <rect x="6"  y="7"  width="4"  height="1"  fill="#3b5dc9" opacity="0.6"/>
+      <rect x="4"  y="10" width="4"  height="1"  fill="#3b5dc9" opacity="0.6"/>
+      <!-- dragon gem (red) -->
+      <rect x="9"  y="7"  width="2"  height="2"  fill="#b13e53"/>
+      <rect x="9"  y="7"  width="1"  height="1"  fill="#ef7d57"/>
+      <!-- shoulder spikes -->
+      <rect x="2"  y="3"  width="2"  height="5"  fill="#0a0e27"/>
+      <rect x="16" y="3"  width="2"  height="5"  fill="#0a0e27"/>
+      <rect x="2"  y="3"  width="2"  height="1"  fill="#41a6f6"/>
+      <rect x="16" y="3"  width="2"  height="1"  fill="#41a6f6"/>
+      <!-- border shine -->
+      <rect x="3"  y="2"  width="14" height="1"  fill="#3b5dc9"/>
+      <rect x="3"  y="2"  width="1"  height="12" fill="#3b5dc9"/>
+    </symbol>
+
+    <!-- ==========================================
+         ACCESSORY ICONS — 16×16 / 16×20
+         ========================================== -->
+
+    <!-- Lucky Charm: gold 5-pointed star -->
+    <symbol id="icon-lucky-charm" viewBox="0 0 16 16">
+      <rect x="7"  y="1"  width="2" height="3" fill="#ffcd75"/><!-- top point -->
+      <rect x="7"  y="5"  width="2" height="6" fill="#ffcd75"/><!-- centre vert -->
+      <rect x="4"  y="7"  width="8" height="2" fill="#ffcd75"/><!-- centre horiz -->
+      <rect x="7"  y="11" width="2" height="3" fill="#ffcd75"/><!-- bottom point -->
+      <rect x="1"  y="7"  width="3" height="2" fill="#ffcd75"/><!-- left point -->
+      <rect x="12" y="7"  width="3" height="2" fill="#ffcd75"/><!-- right point -->
+      <rect x="4"  y="4"  width="2" height="2" fill="#ffcd75"/><!-- diag fills -->
+      <rect x="10" y="4"  width="2" height="2" fill="#ffcd75"/>
+      <rect x="4"  y="10" width="2" height="2" fill="#ffcd75"/>
+      <rect x="10" y="10" width="2" height="2" fill="#ffcd75"/>
+      <!-- highlights -->
+      <rect x="7"  y="1"  width="1" height="2" fill="#fff"/>
+      <rect x="7"  y="5"  width="2" height="2" fill="#ffe9b0"/>
+      <!-- shadow tips -->
+      <rect x="7"  y="13" width="2" height="1" fill="#a76d3f"/>
+      <rect x="4"  y="11" width="2" height="1" fill="#a76d3f"/>
+      <rect x="10" y="11" width="2" height="1" fill="#a76d3f"/>
+    </symbol>
+
+    <!-- Focus Ring: blue band, cyan gem on top -->
+    <symbol id="icon-focus-ring" viewBox="0 0 16 18">
+      <!-- ring band -->
+      <rect x="3"  y="6"  width="10" height="8" fill="#3b5dc9"/>
+      <rect x="5"  y="4"  width="6"  height="12" fill="#3b5dc9"/>
+      <rect x="4"  y="5"  width="8"  height="10" fill="#3b5dc9"/>
+      <!-- inner hole -->
+      <rect x="5"  y="7"  width="6" height="6" fill="#1a1f3a"/>
+      <rect x="6"  y="6"  width="4" height="8" fill="#1a1f3a"/>
+      <!-- ring shine -->
+      <rect x="4"  y="5"  width="8" height="1" fill="#5a7ce8"/>
+      <rect x="4"  y="5"  width="1" height="8" fill="#5a7ce8"/>
+      <!-- gem (cyan, on top) -->
+      <rect x="6"  y="1"  width="4" height="4" fill="#41a6f6"/>
+      <rect x="5"  y="2"  width="6" height="3" fill="#41a6f6"/>
+      <rect x="6"  y="1"  width="4" height="1" fill="#fff"/><!-- gem shine -->
+      <rect x="6"  y="2"  width="2" height="1" fill="#a8e4ff"/>
+      <rect x="5"  y="2"  width="1" height="1" fill="#73c4ff"/>
+    </symbol>
+
+    <!-- EXP Amulet: gold disc, orange sun rays -->
+    <symbol id="icon-exp-amulet" viewBox="0 0 16 20">
+      <!-- chain -->
+      <rect x="7"  y="0"  width="2" height="3" fill="#a8a5b8"/>
+      <!-- disc (gold) -->
+      <rect x="3"  y="3"  width="10" height="10" fill="#ffcd75"/>
+      <rect x="2"  y="4"  width="12" height="8"  fill="#ffcd75"/>
+      <rect x="4"  y="2"  width="8"  height="12" fill="#ffcd75"/>
+      <!-- shine -->
+      <rect x="4"  y="3"  width="8" height="1" fill="#fff"/>
+      <rect x="3"  y="4"  width="2" height="6" fill="#ffe9b0"/>
+      <!-- sun rays (orange) -->
+      <rect x="7"  y="4"  width="2" height="8" fill="#ef7d57"/><!-- vert -->
+      <rect x="4"  y="7"  width="8" height="2" fill="#ef7d57"/><!-- horiz -->
+      <rect x="5"  y="5"  width="2" height="2" fill="#ef7d57"/><!-- diag -->
+      <rect x="9"  y="5"  width="2" height="2" fill="#ef7d57"/>
+      <rect x="5"  y="9"  width="2" height="2" fill="#ef7d57"/>
+      <rect x="9"  y="9"  width="2" height="2" fill="#ef7d57"/>
+      <!-- centre gem -->
+      <rect x="7"  y="7"  width="2" height="2" fill="#fff"/>
+      <!-- bottom border -->
+      <rect x="3"  y="13" width="10" height="1" fill="#a76d3f"/>
+      <rect x="2"  y="12" width="12" height="1" fill="#a76d3f" opacity="0.5"/>
+    </symbol>
+
+    <!-- ==========================================
+         BAG ICONS — 16×18 / 18×20 / 20×22
+         ========================================== -->
+
+    <!-- Small Pouch: brown drawstring bag -->
+    <symbol id="icon-small-pouch" viewBox="0 0 16 18">
+      <!-- drawstring -->
+      <rect x="5"  y="0"  width="6" height="1" fill="#7a4a2c"/>
+      <rect x="4"  y="1"  width="1" height="2" fill="#7a4a2c"/>
+      <rect x="11" y="1"  width="1" height="2" fill="#7a4a2c"/>
+      <rect x="5"  y="1"  width="6" height="2" fill="#a76d3f"/><!-- knot -->
+      <rect x="7"  y="1"  width="2" height="2" fill="#7a4a2c"/><!-- knot shadow -->
+      <!-- bag body -->
+      <rect x="2"  y="3"  width="12" height="12" fill="#a76d3f"/>
+      <rect x="3"  y="2"  width="10" height="14" fill="#a76d3f"/>
+      <rect x="4"  y="2"  width="8"  height="14" fill="#a76d3f"/>
+      <!-- shine -->
+      <rect x="3"  y="3"  width="10" height="1"  fill="#c8904a"/>
+      <rect x="3"  y="3"  width="2"  height="10" fill="#c8904a"/>
+      <!-- coin bulge centre -->
+      <rect x="5"  y="6"  width="6" height="6" fill="#8a5c30"/>
+      <rect x="6"  y="5"  width="4" height="8" fill="#8a5c30"/>
+      <!-- gold glint -->
+      <rect x="7"  y="7"  width="2" height="2" fill="#ffcd75"/>
+      <!-- bottom -->
+      <rect x="3"  y="15" width="10" height="1" fill="#7a4a2c"/>
+    </symbol>
+
+    <!-- Item Bag: green bag, gold clasp -->
+    <symbol id="icon-item-bag" viewBox="0 0 18 20">
+      <!-- handle -->
+      <rect x="5"  y="0"  width="8" height="2" fill="#257a45"/>
+      <rect x="4"  y="1"  width="1" height="3" fill="#257a45"/>
+      <rect x="13" y="1"  width="1" height="3" fill="#257a45"/>
+      <!-- body -->
+      <rect x="2"  y="4"  width="14" height="14" fill="#38b764"/>
+      <rect x="3"  y="3"  width="12" height="15" fill="#38b764"/>
+      <!-- flap -->
+      <rect x="2"  y="4"  width="14" height="5"  fill="#257a45"/>
+      <rect x="3"  y="3"  width="12" height="5"  fill="#257a45"/>
+      <!-- shine -->
+      <rect x="3"  y="3"  width="12" height="1"  fill="#5acc7f"/>
+      <rect x="3"  y="3"  width="1"  height="15" fill="#5acc7f"/>
+      <!-- gold clasp -->
+      <rect x="7"  y="7"  width="4" height="3"  fill="#ffcd75"/>
+      <rect x="8"  y="8"  width="2" height="1"  fill="#a76d3f"/>
+      <!-- lower pocket -->
+      <rect x="4"  y="11" width="10" height="5"  fill="#2a6a3a"/>
+      <rect x="4"  y="11" width="10" height="1"  fill="#38b764"/>
+      <rect x="5"  y="12" width="8"  height="1"  fill="#257a45"/><!-- zipper -->
+      <!-- bottom -->
+      <rect x="3"  y="17" width="12" height="1"  fill="#1a5a2a"/>
+    </symbol>
+
+    <!-- Time Satchel: purple bag, clock face -->
+    <symbol id="icon-time-satchel" viewBox="0 0 20 22">
+      <!-- strap -->
+      <rect x="7"  y="0"  width="6" height="2" fill="#5b21b6"/>
+      <rect x="6"  y="1"  width="1" height="3" fill="#5b21b6"/>
+      <rect x="13" y="1"  width="1" height="3" fill="#5b21b6"/>
+      <!-- body -->
+      <rect x="2"  y="4"  width="16" height="16" fill="#7c3aed"/>
+      <rect x="3"  y="3"  width="14" height="17" fill="#7c3aed"/>
+      <!-- flap -->
+      <rect x="2"  y="4"  width="16" height="6"  fill="#5b21b6"/>
+      <rect x="3"  y="3"  width="14" height="6"  fill="#5b21b6"/>
+      <!-- shine -->
+      <rect x="3"  y="3"  width="14" height="1"  fill="#9d6dff"/>
+      <rect x="3"  y="3"  width="1"  height="16" fill="#9d6dff"/>
+      <!-- gold clasp -->
+      <rect x="8"  y="8"  width="4" height="3"  fill="#ffcd75"/>
+      <rect x="9"  y="9"  width="2" height="1"  fill="#a76d3f"/>
+      <!-- clock face area -->
+      <rect x="5"  y="12" width="10" height="8"  fill="#4a1a8a"/>
+      <rect x="6"  y="11" width="8"  height="10" fill="#4a1a8a"/>
+      <rect x="6"  y="11" width="8"  height="1"  fill="#9d6dff"/><!-- top -->
+      <rect x="7"  y="13" width="6"  height="6"  fill="#1a0530"/><!-- clock bg -->
+      <rect x="8"  y="12" width="4"  height="8"  fill="#1a0530"/>
+      <!-- clock hands (cyan) -->
+      <rect x="9"  y="14" width="2"  height="1"  fill="#41a6f6"/><!-- hour -->
+      <rect x="10" y="14" width="1"  height="3"  fill="#41a6f6"/><!-- minute -->
+      <rect x="9"  y="15" width="1"  height="1"  fill="#fff"/><!-- centre -->
+      <!-- clock hour dots -->
+      <rect x="9"  y="13" width="1"  height="1"  fill="#a8a5b8"/><!-- 12 -->
+      <rect x="9"  y="18" width="1"  height="1"  fill="#a8a5b8"/><!-- 6 -->
+      <rect x="7"  y="15" width="1"  height="1"  fill="#a8a5b8"/><!-- 9 -->
+      <rect x="12" y="15" width="1"  height="1"  fill="#a8a5b8"/><!-- 3 -->
+    </symbol>
+
   </defs>
 </svg>
 
@@ -5503,7 +6369,8 @@ const STAGES_DATA = [
     winCutscene: [
       { speaker: "boss", name: "Time Dragon", text: "GROAAR...! ข้าพ่ายแล้ว... คริสตัลแห่ง Present Tense... เจ้าได้มันไปแล้ว Time Ranger..." },
       { speaker: "hero", name: "Time Ranger", text: "ข้าชนะแล้ว! คริสตัลดวงที่ 5 กลับคืนมาแล้ว! Present World ปลอดภัยแล้ว!" },
-      { speaker: "tbot", name: "T-Bot", text: "สุดยอด Ranger! ประตู Past Kingdom เปิดแล้ว! การเดินทางของเรายังไม่จบ ไปต่อกันเลย!" }
+      { speaker: "krupp", name: "ครูพีพี", text: "ยอดเยี่ยมมาก Ranger! เธอเข้าใจ Present Tense ทั้ง 4 แล้ว! ต่อไปคือ Past Kingdom รอดูสิ่งที่เกิดในอดีตกันเถอะ!" },
+      { speaker: "tbot", name: "T-Bot", text: "สุดยอด! ประตู Past Kingdom เปิดแล้ว! ไปต่อกัน— [WARNING] ตรวจพบสัญญาณแปลก ๆ จาก Past Kingdom... มีบางอย่างไม่ปกติ..." }
     ],
     explanation: "ทบทวน Present Tense ทั้ง 4 รูปแบบ — Simple, Continuous, Perfect, Perfect Continuous",
     formula: "Simple: S + V1<br>Continuous: S + is/am/are + V-ing<br>Perfect: S + have/has + V3<br>Perfect Cont.: S + have/has been + V-ing",
@@ -5785,7 +6652,9 @@ const STAGES_DATA = [
     winCutscene: [
       { speaker: "boss", name: "Chrono Reaper", text: "AWOOO... ข้า... ข้าพ่ายแล้ว... ความทรงจำแห่งอดีตทั้งหมด... ฝากไว้กับเจ้านะ Time Ranger..." },
       { speaker: "hero", name: "Time Ranger", text: "ข้าจะดูแลอดีตให้ดี! คริสตัลดวงที่ 10 อยู่กับข้าแล้ว! Past Kingdom ได้รับการปลดปล่อยแล้ว!" },
-      { speaker: "tbot", name: "T-Bot", text: "ยอดเยี่ยมมาก! Past Kingdom เป็นอิสระแล้ว! ประตู Future City เปิดรอเราอยู่ ไปสู้ต่อกันเลย!" }
+      { speaker: "krupp", name: "ครูพีพี", text: "เก่งมากเลย Ranger! Past Tense ทั้ง 4 แม่นแล้ว! ต่อไปคือ Future City ซึ่งซับซ้อนยิ่งกว่า — เราพร้อมด้วยกัน!" },
+      { speaker: "tbot", name: "T-Bot", text: "Past Kingdom เป็นอิสระแล้ว! ประตู Future City เปิดรอเราอยู่ ไปต่อ—" },
+      { speaker: "boss", name: "Chrono Reaper", text: "...หยุดก่อน Time Ranger... เจ้าคิดว่าข้าคือศัตรูงั้นหรือ... ระวังผู้ช่วยของเจ้าไว้ให้ดีนะ..." }
     ],
     explanation: "ทบทวน Past Tense ทั้ง 4 รูปแบบ — Simple, Continuous, Perfect, Perfect Continuous",
     formula: "Simple: S + V2<br>Continuous: S + was/were + V-ing<br>Perfect: S + had + V3<br>Perfect Cont.: S + had been + V-ing",
@@ -6179,7 +7048,9 @@ const STAGES_DATA = [
 const SoundFX = {
   ctx: null,
   enabled: true,
-  
+  sfxVol: 0.7,
+  musicVol: 0.55,
+
   init() {
     if (!this.ctx) {
       try {
@@ -6200,7 +7071,8 @@ const SoundFX = {
     const gain = this.ctx.createGain();
     osc.type = type;
     osc.frequency.setValueAtTime(freq, t);
-    gain.gain.setValueAtTime(volume, t);
+    const vol = Math.max(0.0001, volume * (this.sfxVol !== undefined ? this.sfxVol : 1));
+    gain.gain.setValueAtTime(vol, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -6298,7 +7170,140 @@ const SoundFX = {
   toggle() {
     this.enabled = !this.enabled;
     if (this.enabled) { this.init(); this.click(); }
+    this.saveSettings();
     return this.enabled;
+  },
+
+  saveSettings() {
+    try {
+      localStorage.setItem('tenseGameAudio', JSON.stringify({
+        enabled: this.enabled,
+        sfxVol: this.sfxVol,
+        musicVol: this.musicVol
+      }));
+    } catch(e) {}
+  },
+
+  loadSettings() {
+    try {
+      const s = JSON.parse(localStorage.getItem('tenseGameAudio') || 'null');
+      if (s) {
+        if (typeof s.enabled  === 'boolean') this.enabled  = s.enabled;
+        if (typeof s.sfxVol   === 'number')  this.sfxVol   = s.sfxVol;
+        if (typeof s.musicVol === 'number')  this.musicVol = s.musicVol;
+      }
+    } catch(e) {}
+  },
+
+  /* --- Missing SFX: win / glitch / coin / badge / item --- */
+  win() {
+    this.init();
+    this.sequence([[523,0.07],[659,0.07],[784,0.07],[1047,0.18]], 'square', 0.12);
+  },
+  glitch() {
+    this.init();
+    this.sequence([[880,0.04],[440,0.04],[660,0.03],[220,0.06]], 'sawtooth', 0.12);
+  },
+  evilTBotGlitch() {
+    this.init();
+    this.sequence([[110,0.06],[220,0.04],[440,0.03],[110,0.08],[55,0.12]], 'sawtooth', 0.16);
+  },
+  coin() {
+    this.init();
+    this.sequence([[1047,0.04],[1319,0.06]], 'square', 0.10);
+  },
+  coins() {
+    this.init();
+    this.sequence([[784,0.04],[1047,0.04],[1319,0.04],[1568,0.07]], 'square', 0.11);
+  },
+  badgeBronze() {
+    this.init();
+    this.sequence([[392,0.08],[523,0.08],[659,0.16]], 'square', 0.13);
+  },
+  badgeSilver() {
+    this.init();
+    this.sequence([[523,0.07],[659,0.07],[784,0.07],[988,0.2]], 'square', 0.14);
+  },
+  badgeGold() {
+    this.init();
+    // Triumphant two-voice chord
+    this.sequence([[523,0.08],[659,0.08],[784,0.08],[1047,0.08],[1319,0.3]], 'square', 0.15);
+    setTimeout(() => {
+      if (this.enabled && this.ctx)
+        this.sequence([[392,0.08],[494,0.08],[587,0.08],[784,0.08],[988,0.3]], 'triangle', 0.07);
+    }, 20);
+  },
+  badgeEarned(badge) {
+    if      (badge === 'gold')   this.badgeGold();
+    else if (badge === 'silver') this.badgeSilver();
+    else if (badge === 'bronze') this.badgeBronze();
+  },
+  itemDrop(rarity) {
+    this.init();
+    if (rarity === 'rare' || rarity === 'legendary') {
+      this.sequence([[659,0.06],[784,0.06],[988,0.06],[1319,0.15]], 'square', 0.13);
+    } else {
+      this.sequence([[523,0.07],[659,0.12]], 'square', 0.10);
+    }
+  },
+
+  /* --- Item use SFX --- */
+  hint() {
+    this.init();
+    this.sequence([[880,0.04],[1047,0.07]], 'sine', 0.11);
+  },
+  fifty() {
+    this.init();
+    this.sequence([[659,0.04],[0,0.04],[988,0.06]], 'square', 0.12);
+  },
+  powerStrike() {
+    this.init();
+    this.tone(196, 0.06, 'sawtooth', 0.14);
+    this.sequence([[392,0.04],[588,0.04],[784,0.08]], 'square', 0.13, 0.06);
+  },
+  shieldPotion() {
+    this.init();
+    this.sequence([[330,0.06],[440,0.06],[660,0.08],[880,0.12]], 'sine', 0.12);
+  },
+  megaHeal() {
+    this.init();
+    this.sequence([[523,0.07],[659,0.07],[784,0.07],[988,0.07],[1175,0.18]], 'sine', 0.13);
+    setTimeout(() => {
+      if (this.enabled && this.ctx)
+        this.tone(1568, 0.22, 'sine', 0.07, 0);
+    }, 30);
+  },
+
+  /* --- UI SFX --- */
+  mapSelect()  { this.init(); this.sequence([[440,0.05],[554,0.05],[659,0.08]], 'square', 0.09); },
+  stageLocked(){ this.init(); this.sequence([[220,0.08],[196,0.12]], 'sawtooth', 0.10); },
+  menuOpen()   { this.init(); this.sequence([[440,0.04],[523,0.06]], 'square', 0.08); },
+  menuClose()  { this.init(); this.sequence([[523,0.04],[440,0.06]], 'square', 0.08); },
+
+  /* --- Dialogue blips --- */
+  teacherBlip() { this.init(); this.tone(660, 0.03, 'triangle', 0.07); },
+  tBotBlip()    { this.init(); this.tone(880, 0.02, 'square',   0.07); },
+
+  /* --- Boss events --- */
+  bossDefeat() {
+    this.init();
+    this.sequence([[392,0.1],[330,0.1],[262,0.1],[196,0.1],[131,0.2]], 'sawtooth', 0.14);
+    setTimeout(() => {
+      if (this.enabled && this.ctx)
+        this.sequence([[523,0.12],[659,0.12],[784,0.12],[1047,0.3]], 'square', 0.16);
+    }, 700);
+  },
+  tension() {
+    this.init();
+    this.sequence([[110,0.1],[0,0.05],[110,0.1],[0,0.05],[131,0.2]], 'sawtooth', 0.13);
+  },
+  tensionFanfare() {
+    this.init();
+    this.sequence([[196,0.08],[220,0.08],[247,0.08],[262,0.08],[294,0.08],[330,0.16]], 'square', 0.14);
+  },
+  phaseShift() {
+    this.init();
+    this.sequence([[440,0.04],[880,0.04],[440,0.04],[220,0.04],[440,0.08]], 'square', 0.11);
   }
 };
 
@@ -6319,14 +7324,25 @@ const BGM = {
     future:  { tempo: 145, type: 'square',   vol: 0.05,
       melody: [784,784,0,880,0,988,0,880, 784,659,0,784,523,659,784,0] },
     boss:    { tempo: 165, type: 'sawtooth', vol: 0.045,
-      melody: [196,196,0,220,247,0,220,196, 165,165,0,196,220,0,196,165] }
+      melody: [196,196,0,220,247,0,220,196, 165,165,0,196,220,0,196,165] },
+    galaxy:  { tempo: 115, type: 'square',   vol: 0.048,
+      melody: [392,0,440,0,392,370,0,392, 440,494,0,440,392,0,330,0] },
+    teacher: { tempo: 80,  type: 'triangle', vol: 0.052,
+      melody: [523,0,659,0,784,0,659,523, 0,523,659,784,880,784,659,0] },
+    victory: { tempo: 130, type: 'square',   vol: 0.055,
+      melody: [784,784,784,659,0,784,0,988, 880,0,784,0,659,784,880,1047] }
   },
 
   play(worldType, isBoss) {
     if (!SoundFX.enabled) return;
     SoundFX.init();
     if (!SoundFX.ctx) return;
-    const key = isBoss ? 'boss' : (worldType || 'present');
+    let key;
+    if (isBoss) {
+      key = (worldType === 'galaxy') ? 'galaxy' : 'boss';
+    } else {
+      key = (worldType && this.THEMES[worldType]) ? worldType : 'present';
+    }
     if (this.currentTheme === key && this.playing) return;
     this.stop();
     this.currentTheme = key;
@@ -6342,6 +7358,7 @@ const BGM = {
     const beatSec = 60 / t.tempo / 2;
     let startTime = ctx.currentTime + 0.05;
     let totalDur = 0;
+    const mVol = (SoundFX.musicVol !== undefined) ? SoundFX.musicVol : 1;
     t.melody.forEach(freq => {
       if (freq > 0) {
         try {
@@ -6349,7 +7366,8 @@ const BGM = {
           const gain = ctx.createGain();
           osc.type = t.type;
           osc.frequency.value = freq;
-          gain.gain.setValueAtTime(t.vol, startTime);
+          const vol = Math.max(0.0001, t.vol * mVol);
+          gain.gain.setValueAtTime(vol, startTime);
           gain.gain.linearRampToValueAtTime(0.001, startTime + beatSec * 0.85);
           osc.connect(gain);
           gain.connect(ctx.destination);
@@ -6373,6 +7391,51 @@ const BGM = {
     this.oscNodes.forEach(o => { try { o.stop(0); } catch(e) {} });
     this.oscNodes = [];
     this.currentTheme = null;
+  }
+};
+
+/* ============================================
+   AUDIO UI — volume sliders + panel toggle
+   ============================================ */
+const AudioUI = {
+  togglePanel() {
+    const panel = document.getElementById('audio-panel');
+    if (!panel) return;
+    panel.classList.toggle('open');
+  },
+  setMusicVol(val) {
+    const v = Number(val) / 100;
+    SoundFX.musicVol = v;
+    const lbl = document.getElementById('music-vol-label');
+    if (lbl) lbl.textContent = val;
+    SoundFX.saveSettings();
+    // Restart BGM at new volume immediately if playing
+    if (BGM.playing && BGM.currentTheme) {
+      const key = BGM.currentTheme;
+      BGM.stop();
+      BGM.currentTheme = key;
+      BGM.playing = true;
+      BGM._loop(key);
+    }
+  },
+  setSfxVol(val) {
+    const v = Number(val) / 100;
+    SoundFX.sfxVol = v;
+    const lbl = document.getElementById('sfx-vol-label');
+    if (lbl) lbl.textContent = val;
+    SoundFX.saveSettings();
+  },
+  syncSliders() {
+    const ms = document.getElementById('music-vol-slider');
+    const ss = document.getElementById('sfx-vol-slider');
+    const ml = document.getElementById('music-vol-label');
+    const sl = document.getElementById('sfx-vol-label');
+    const mVal = Math.round(SoundFX.musicVol * 100);
+    const sVal = Math.round(SoundFX.sfxVol  * 100);
+    if (ms) ms.value = mVal;
+    if (ss) ss.value = sVal;
+    if (ml) ml.textContent = mVal;
+    if (sl) sl.textContent = sVal;
   }
 };
 
@@ -6406,7 +7469,9 @@ const gameState = {
   powerStrike: false,    // next correct hit is x2 (from item)
   shieldActive: false,   // next boss attack does 0 damage
   earnedCoins: 0,        // coins earned this stage
-  earnedExp: 0,          // exp earned this stage
+  earnedExp: 0,          // exp earned this stage (from correct answers)
+  effortExp: 0,          // exp from wrong-answer effort (1 per wrong)
+  clearedStages: [],     // stage IDs cleared at least once (for replay bonus)
   bossMaxHP: 100,        // boss max HP (200 for boss stages)
   usedDefenseQuestions: new Set(), // prevent defense-phase question repeats
   // --- Turn-based phase ---
@@ -6428,10 +7493,26 @@ const player = {
   level: 1,
   exp: 0,
   coins: 0,
-  inventory: { hint: 1, fifty: 1, heal: 0, power: 0, shield: 0 },
+  crystals: 0,         // rare currency (for future use)
+  inventory: { hint: 1, fifty: 1, heal: 0, power: 0, shield: 0, megaHeal: 0 },
   skills: {},          // { skillKey: true } once unlocked
   ownedCosmetics: {},  // { cosmeticKey: true } once bought
   achievements: {},    // { achievementId: timestamp } once earned
+  // Equipment system
+  equipped: { weapon: null, armor: null, accessory: null, bag: null },
+  equipmentInventory: {},  // { equipKey: true } once bought
+  keyItems: [],            // story key items (future use)
+  equipBonus: {            // aggregated bonuses — recomputed by applyEquipmentBonus()
+    dmgPercent: 0,         // multiplier bonus to damage (capped at 0.25)
+    hpBonus: 0,            // flat HP bonus added to playerMaxHP
+    defPercent: 0,         // incoming damage reduction
+    critBonus: 0,          // added to crit chance
+    expBonus: 0,           // multiplier bonus to EXP gained
+    freeShield: false,     // Time Robe: start battle with shield
+    comboShield: false,    // Focus Ring: prevent first combo break per stage
+    itemLimitBonus: 0,     // extra item uses per boss (added to 5-item cap)
+    cooldownReduce: 0      // reduces item cooldown by N questions
+  },
   stats: {             // lifetime stats for achievement tracking
     coinsLifetime: 0,
     shopVisits: 0,
@@ -6849,15 +7930,24 @@ function heroSprite(cls = '', ap = null) {
   return `<svg class="${cls}" viewBox="0 0 32 48" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;shape-rendering:crispEdges">${heroSpriteContent(ap)}</svg>`;
 }
 
-// EXP needed to reach next level (index = current level)
-function expForLevel(lvl) { return 50 + (lvl - 1) * 30; }
+// EXP needed to reach next level
+function expForLevel(lvl) {
+  if (lvl <= 5)  return 100 * lvl;
+  if (lvl <= 15) return 500 + (lvl - 5) * 200;
+  return 2500 + Math.floor(Math.pow(lvl - 15, 1.8) * 100);
+}
 
 // Skill tree — unlocked automatically when reaching the level
 const SKILLS = {
-  hpUp:    { level: 2, icon: '❤️', name: 'Max HP +20',   desc: 'พลังชีวิตสูงสุด +20' },
-  dmgUp:   { level: 3, icon: '⚔️', name: 'Damage +10%',  desc: 'พลังโจมตี +10%' },
-  guard:   { level: 5, icon: '🛡️', name: 'Guard',        desc: 'ลดดาเมจบอส 50% (1 ครั้ง/ด่าน)' },
-  critUp:  { level: 7, icon: '💥', name: 'Crit +15%',    desc: 'โอกาสคริติคอล +15%' }
+  hpUp:               { level: 2,  icon: '❤️',  name: 'Max HP +20',        desc: 'พลังชีวิตสูงสุด +20' },
+  dmgUp:              { level: 3,  icon: '⚔️',  name: 'Damage +10%',       desc: 'พลังโจมตี +10%' },
+  dmgFlat:            { level: 4,  icon: '💢',  name: 'Damage Flat +2',    desc: 'โจมตีเพิ่ม +2 ทุกครั้ง' },
+  guard:              { level: 5,  icon: '🛡️',  name: 'Guard',             desc: 'ลดดาเมจบอส 50% (1 ครั้ง/ด่าน)' },
+  expBonus:           { level: 6,  icon: '✨',  name: 'EXP Bonus +20%',    desc: 'รับ EXP เพิ่มขึ้น 20%' },
+  critUp:             { level: 7,  icon: '💥',  name: 'Crit +15%',         desc: 'โอกาสคริติคอล +15%' },
+  healBonus:          { level: 8,  icon: '💖',  name: 'Heal Bonus',        desc: 'ยา Heal ฟื้น HP เพิ่มอีก +10' },
+  comboShield:        { level: 9,  icon: '🌀',  name: 'Combo Shield',      desc: 'คอมโบไม่หายเมื่อตอบผิดครั้งแรก (1 ครั้ง/ด่าน)' },
+  tenseBreakerUnlock: { level: 10, icon: '⚡',  name: 'Tense Breaker',     desc: 'ปลดล็อก Ultimate: โจมตีบอส 25% HP ที่เหลือ (1 ครั้ง/บอส)' }
 };
 
 // Apply level-based skill unlocks
@@ -6867,14 +7957,219 @@ function syncSkills() {
   });
 }
 
+// Aggregate all equipment bonuses into player.equipBonus (cap dmgPercent at 25%)
+function applyEquipmentBonus(p) {
+  const bonus = { dmgPercent:0, hpBonus:0, defPercent:0, critBonus:0, expBonus:0,
+                  freeShield:false, comboShield:false, itemLimitBonus:0, cooldownReduce:0 };
+  const slots = ['weapon','armor','accessory','bag'];
+  slots.forEach(slot => {
+    const key = p.equipped && p.equipped[slot];
+    if (!key) return;
+    const eq = EQUIPMENT_CATALOG[key];
+    if (!eq) return;
+    if (eq.dmgPercent)    bonus.dmgPercent    += eq.dmgPercent;
+    if (eq.hpBonus)       bonus.hpBonus       += eq.hpBonus;
+    if (eq.defPercent)    bonus.defPercent    += eq.defPercent;
+    if (eq.critBonus)     bonus.critBonus     += eq.critBonus;
+    if (eq.expBonus)      bonus.expBonus      += eq.expBonus;
+    if (eq.freeShield)    bonus.freeShield    = true;
+    if (eq.comboShield)   bonus.comboShield   = true;
+    if (eq.itemLimitBonus) bonus.itemLimitBonus += eq.itemLimitBonus;
+    if (eq.cooldownReduce) bonus.cooldownReduce += eq.cooldownReduce;
+  });
+  bonus.dmgPercent = Math.min(0.25, bonus.dmgPercent); // cap at +25%
+  p.equipBonus = bonus;
+}
+
+// Initialize / reset per-battle item tracking (call at start of each battle)
+function resetBattleItemLimits() {
+  return { totalBossItems: 0, cooldownTurns: 0, hint: 0, fifty: 0, heal: 0, power: 0, shield: 0, megaHeal: 0 }; // PATCH G fix: added hint/fifty keys
+}
+
+// Can the player use an item right now?
+function canUseItem(key) {
+  if ((player.inventory[key] || 0) <= 0) return false;
+  // PATCH E BUG-005: Mega Heal only usable when HP <= 30%
+  if (key === 'megaHeal') {
+    const hpPct = gameState.playerHP / (gameState.playerMaxHP || 100);
+    if (hpPct > 0.30) return false;
+  }
+  const isBoss = gameState.currentStage && gameState.currentStage.isBoss;
+  if (!isBoss) return true; // no limits outside boss battles
+  const lim = gameState.battleItemLimits;
+  if (!lim) return true;
+  // Global boss limit (default 5, +bag bonus) — applies only to items with a cooldown (skip hint/fifty)
+  const cfg = ITEMS[key];
+  const hasCooldown = cfg && cfg.cooldown > 0;
+  if (hasCooldown) {
+    const globalCap = 5 + ((player.equipBonus && player.equipBonus.itemLimitBonus) || 0);
+    if (lim.totalBossItems >= globalCap) return false;
+    // Cooldown check — only for items with cooldown > 0
+    if (lim.cooldownTurns > 0) return false;
+  }
+  // Per-item boss limit — applies to ALL items (including hint/fifty) — PATCH G BUG-008
+  if (cfg && cfg.bossLimit > 0 && (lim[key] || 0) >= cfg.bossLimit) return false;
+  return true;
+}
+
+// Tense Breaker Ultimate: deal 25% of boss remaining HP, bypass damage cap (Lv10)
+function useTenseBreaker() {
+  if (!player.skills.tenseBreakerUnlock) return;
+  if (!(gameState.currentStage && gameState.currentStage.isBoss)) return;
+  if (gameState.tenseBreakerUsed) return;
+  if (gameState.phase !== 'player') return;
+  if (gameState.hasAnswered) return;
+  gameState.tenseBreakerUsed = true;
+
+  const dmg = Math.max(1, Math.round(gameState.bossHP * 0.25));
+  gameState.bossHP = Math.max(0, gameState.bossHP - dmg);
+  updateBossHP();
+  SoundFX.combo();
+  fxSparks('50%', '40%', 12); // PATCH D BUG-004
+
+  // Damage number FX
+  const scene = document.querySelector('.pk-battle-scene') || document.querySelector('.battle-scene');
+  if (scene) {
+    const el = document.createElement('div');
+    el.className = 'damage-num';
+    el.textContent = '⚡ BREAK! -' + dmg;
+    el.style.cssText = 'left:25%;top:18%;color:var(--ff-yellow);font-size:1.1rem;';
+    scene.appendChild(el);
+    setTimeout(() => el.remove(), 1100);
+  }
+
+  // Refresh bag column button
+  const btn = document.getElementById('tense-breaker-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
+
+  if (gameState.bossHP <= 0) {
+    gameState.bossDefeated = true;
+    setTimeout(() => { BGM.stop(); renderWinCutscene(); }, 900);
+  }
+}
+
 // Item catalog (shared definitions)
+// bossLimit: max uses per boss battle (0 = no per-item limit)
+// cooldown:  questions to wait before using another item (in boss battles)
 const ITEMS = {
-  hint:   { icon: '🧪', name: 'Hint Potion',    desc: 'เผยคำใบ้ ไม่เสียคะแนน',                    price: 30 },
-  fifty:  { icon: '🔮', name: '50:50 Crystal',   desc: 'ตัดตัวเลือกผิด 2 ตัว',                    price: 40 },
-  heal:   { icon: '❤️', name: 'Heal Potion',     desc: 'ฟื้น HP 30 หน่วย',                         price: 50 },
-  power:  { icon: '⚡', name: 'Power Strike',    desc: 'ตอบถูกครั้งถัดไป x2',                      price: 60 },
-  shield: { icon: '🛡️', name: 'Shield Potion',   desc: 'บอสโจมตี 0 แม้ตอบผิด (1 เทิร์น)',        price: 55 }
+  hint:     { icon: '🧪', name: 'Hint Potion',    desc: 'เผยคำใบ้ ไม่เสียคะแนน',                  price: 50,  bossLimit: 3, cooldown: 0 }, // PATCH G BUG-008
+  fifty:    { icon: '🔮', name: '50:50 Crystal',   desc: 'ตัดตัวเลือกผิด 2 ตัว',                  price: 100, bossLimit: 2, cooldown: 0 }, // PATCH G BUG-008
+  heal:     { icon: '❤️', name: 'Heal Potion',     desc: 'ฟื้น HP 30 หน่วย',                       price: 80,  bossLimit: 2, cooldown: 1 },
+  power:    { icon: '⚡', name: 'Power Strike',    desc: 'ตอบถูกครั้งถัดไป x2',                    price: 150, bossLimit: 2, cooldown: 1 },
+  shield:   { icon: '🛡️', name: 'Shield Potion',   desc: 'บอสโจมตี 0 แม้ตอบผิด (1 เทิร์น)',      price: 120, bossLimit: 2, cooldown: 1 },
+  megaHeal: { icon: '💊', name: 'Mega Heal',       desc: 'ฟื้น HP ทั้งหมด',                         price: 300, bossLimit: 1, cooldown: 2 }
 };
+
+// Equipment catalog — provides gameplay bonuses (separate from cosmetics)
+// Slots: weapon | armor | accessory | bag
+const EQUIPMENT_CATALOG = {
+  // ── Weapons (boost damage) ──────────────────────────────────
+  ironSword:    { slot:'weapon',    icon:'⚔️',  name:'Iron Sword',    price:150, dmgPercent:0.08,              desc:'+8% พลังโจมตี' },
+  crystalStaff: { slot:'weapon',    icon:'🔮',  name:'Crystal Staff', price:280, dmgPercent:0.12, critBonus:0.05, desc:'+12% โจมตี · +5% คริติคอล' },
+  timeBlade:    { slot:'weapon',    icon:'⚡',  name:'Time Blade',    price:500, dmgPercent:0.20,              desc:'+20% พลังโจมตี' },
+  // ── Armor (boost HP / defense) ──────────────────────────────
+  leatherArmor: { slot:'armor',     icon:'🧥',  name:'Leather Armor', price:120, hpBonus:15,                   desc:'HP สูงสุด +15' },
+  timeRobe:     { slot:'armor',     icon:'🌀',  name:'Time Robe',     price:280, hpBonus:10, freeShield:true,  desc:'HP+10 · เริ่มต้นด้วย Shield ฟรี' },
+  dragonScale:  { slot:'armor',     icon:'🐉',  name:'Dragon Scale',  price:450, hpBonus:25, defPercent:0.05,  desc:'HP+25 · รับดาเมจน้อยลง 5%' },
+  // ── Accessories (special effects) ───────────────────────────
+  luckyCharm:   { slot:'accessory', icon:'🍀',  name:'Lucky Charm',   price:100, critBonus:0.05,               desc:'+5% คริติคอล' },
+  focusRing:    { slot:'accessory', icon:'💍',  name:'Focus Ring',    price:250, comboShield:true,             desc:'คอมโบไม่หายเมื่อตอบผิดครั้งแรก/ด่าน' },
+  expAmulet:    { slot:'accessory', icon:'✨',  name:'EXP Amulet',   price:200, expBonus:0.10,                desc:'+10% EXP ที่ได้รับ' },
+  // ── Bags (item utility) ──────────────────────────────────────
+  smallPouch:   { slot:'bag',       icon:'👜',  name:'Small Pouch',   price:180, itemLimitBonus:1,             desc:'ใช้ไอเทมได้เพิ่ม +1 ครั้ง/ด่านบอส' },
+  itemBag:      { slot:'bag',       icon:'🎒',  name:'Item Bag',      price:280, cooldownReduce:1,             desc:'ลด Item Cooldown 1 เทิร์น' },
+  timeSatchel:  { slot:'bag',       icon:'🌟',  name:'Time Satchel',  price:450, itemLimitBonus:2, cooldownReduce:1, desc:'+2 ใช้ไอเทม/ด่านบอส · ลด Cooldown 1 เทิร์น' }
+};
+
+// ── Item & Equipment Rarity / Drop System ────────────────────────────
+const ITEM_RARITY = {
+  hint: 'common', fifty: 'common',
+  heal: 'uncommon', power: 'uncommon', shield: 'uncommon',
+  megaHeal: 'rare'
+};
+const EQUIPMENT_RARITY = {
+  ironSword: 'common', leatherArmor: 'common', luckyCharm: 'common', smallPouch: 'common',
+  crystalStaff: 'uncommon', timeRobe: 'uncommon', expAmulet: 'uncommon', itemBag: 'uncommon',
+  dragonScale: 'rare', focusRing: 'rare', timeSatchel: 'rare',
+  timeBlade: 'epic'
+};
+const RARITY_ORDER  = ['common','uncommon','rare','epic','legendary'];
+const RARITY_LABEL  = { common:'Common', uncommon:'Uncommon', rare:'🔵 Rare', epic:'🔴 Epic', legendary:'✨ Legendary' };
+const RARITY_COLOR  = { common:'#9ca3af', uncommon:'#38b764', rare:'#41a6f6', epic:'#b13e53', legendary:'#ffcd75' };
+// Drop rates per rarity tier: [common, uncommon, rare, epic, legendary]
+const ITEM_DROP_RATES  = {
+  normal: [0.30, 0.10, 0.02, 0.00, 0.00],
+  world:  [0.80, 0.50, 0.25, 0.10, 0.02],
+  final:  [1.00, 0.80, 0.50, 0.25, 0.10]
+};
+const EQUIP_DROP_RATES = {
+  normal: [0.15, 0.05, 0.01, 0.00, 0.00],
+  world:  [0.50, 0.35, 0.15, 0.05, 0.01],
+  final:  [0.00, 0.60, 0.35, 0.20, 0.05]
+};
+
+// Roll item + equipment drops after a win
+function rollDrops(bossType) {
+  const drops = [];
+  const iRates = ITEM_DROP_RATES[bossType]  || ITEM_DROP_RATES.normal;
+  const eRates = EQUIP_DROP_RATES[bossType] || EQUIP_DROP_RATES.normal;
+  RARITY_ORDER.forEach((rarity, i) => {
+    if (Math.random() < iRates[i]) {
+      const pool = Object.keys(ITEM_RARITY).filter(k => ITEM_RARITY[k] === rarity);
+      if (pool.length) drops.push({ type:'item', key: pool[Math.floor(Math.random()*pool.length)], rarity });
+    }
+    if (Math.random() < eRates[i]) {
+      const pool = Object.keys(EQUIPMENT_RARITY).filter(k =>
+        EQUIPMENT_RARITY[k] === rarity && !(player.equipmentInventory && player.equipmentInventory[k])
+      );
+      if (pool.length) drops.push({ type:'equip', key: pool[Math.floor(Math.random()*pool.length)], rarity });
+    }
+  });
+  return drops;
+}
+
+/* ============================================
+   🎨 PIXEL ICON LOOKUP + HELPER
+   Maps item/equip keys → SVG symbol IDs.
+   Usage: pixelIcon('item','hint','pixel-icon-lg')
+   ============================================ */
+const ITEM_ICON_ID = {
+  hint:     'icon-hint',
+  fifty:    'icon-fifty',
+  heal:     'icon-heal',
+  power:    'icon-power',
+  shield:   'icon-shield',
+  megaHeal: 'icon-mega'
+};
+const EQUIP_ICON_ID = {
+  ironSword:    'icon-iron-sword',
+  crystalStaff: 'icon-crystal-staff',
+  timeBlade:    'icon-time-blade',
+  leatherArmor: 'icon-leather-armor',
+  timeRobe:     'icon-time-robe',
+  dragonScale:  'icon-dragon-scale',
+  luckyCharm:   'icon-lucky-charm',
+  focusRing:    'icon-focus-ring',
+  expAmulet:    'icon-exp-amulet',
+  smallPouch:   'icon-small-pouch',
+  itemBag:      'icon-item-bag',
+  timeSatchel:  'icon-time-satchel'
+};
+
+/**
+ * Returns an SVG pixel icon element, falling back to emoji.
+ * @param {'item'|'equip'} type
+ * @param {string} key   — ITEMS or EQUIPMENT_CATALOG key
+ * @param {string} cls   — extra CSS class (e.g. 'pixel-icon-lg')
+ */
+function pixelIcon(type, key, cls = '') {
+  const id = type === 'item' ? ITEM_ICON_ID[key] : EQUIP_ICON_ID[key];
+  if (!id) {
+    const info = type === 'item' ? ITEMS[key] : EQUIPMENT_CATALOG[key];
+    return `<span style="font-size:1.8rem;line-height:1;">${info ? info.icon : '?'}</span>`;
+  }
+  return `<svg class="pixel-icon ${cls}" preserveAspectRatio="xMidYMid meet" style="shape-rendering:crispEdges;"><use href="#${id}"/></svg>`;
+}
 
 // Cosmetic catalog (Gen-Z character accessories, purchased from shop)
 const COSMETICS = {
@@ -6961,7 +8256,23 @@ function saveProgress() {
     localStorage.setItem('tenseGamePlayer', JSON.stringify(player));
     localStorage.setItem('tenseGameRevival', gameState.tBotRevivalActive ? '1' : '0');
     localStorage.setItem('tenseGameRevivalDone', gameState.tBotRevivalCompleted ? '1' : '0');
+    localStorage.setItem('tenseGameClearedStages', JSON.stringify(gameState.clearedStages || []));
   } catch(e) {}
+}
+
+// Migrate/normalize a raw saved player object to include all new fields
+function normalizeSaveData(saved) {
+  if (!saved) return saved;
+  // inventory: ensure megaHeal exists
+  if (saved.inventory && saved.inventory.megaHeal === undefined) saved.inventory.megaHeal = 0;
+  // equipment system defaults
+  if (!saved.equipped) saved.equipped = { weapon:null, armor:null, accessory:null, bag:null };
+  if (!saved.equipmentInventory) saved.equipmentInventory = {};
+  if (!Array.isArray(saved.keyItems)) saved.keyItems = [];
+  if (saved.crystals === undefined) saved.crystals = 0;
+  if (!saved.equipBonus) saved.equipBonus = { dmgPercent:0, hpBonus:0, defPercent:0, critBonus:0,
+    expBonus:0, freeShield:false, comboShield:false, itemLimitBonus:0, cooldownReduce:0 };
+  return saved;
 }
 
 function loadProgress() {
@@ -6975,15 +8286,21 @@ function loadProgress() {
     if (b) gameState.badges = JSON.parse(b);
     gameState.tBotRevivalActive = localStorage.getItem('tenseGameRevival') === '1';
     gameState.tBotRevivalCompleted = localStorage.getItem('tenseGameRevivalDone') === '1';
+    const cs = localStorage.getItem('tenseGameClearedStages');
+    gameState.clearedStages = cs ? JSON.parse(cs) : [];
     if (p) {
-      const saved = JSON.parse(p);
-      player.level = saved.level || 1;
+      const saved = normalizeSaveData(JSON.parse(p));
+      player.level = Math.min(10, saved.level || 1);
       player.exp = saved.exp || 0;
       player.coins = saved.coins || 0;
-      player.inventory = Object.assign({ hint:0, fifty:0, heal:0, power:0, shield:0 }, saved.inventory || {});
+      player.crystals = saved.crystals || 0;
+      player.inventory = Object.assign({ hint:0, fifty:0, heal:0, power:0, shield:0, megaHeal:0 }, saved.inventory || {});
       player.skills = saved.skills || {};
       player.ownedCosmetics = saved.ownedCosmetics || {};
       player.achievements = saved.achievements || {};
+      player.equipped = Object.assign({ weapon:null, armor:null, accessory:null, bag:null }, saved.equipped || {});
+      player.equipmentInventory = saved.equipmentInventory || {};
+      player.keyItems = saved.keyItems || [];
       player.stats = Object.assign(
         { coinsLifetime:0, shopVisits:0, maxCombo:0, totalLosses:0, itemsBoughtSet:{}, reviewModeEntered:false },
         saved.stats || {}
@@ -6991,6 +8308,7 @@ function loadProgress() {
       if (saved.appearance) player.appearance = Object.assign(player.appearance, saved.appearance);
     }
     syncSkills();
+    applyEquipmentBonus(player);
   } catch(e) {}
 }
 
@@ -7001,17 +8319,29 @@ function resetProgress() {
       localStorage.removeItem('tenseGameBestScores');
       localStorage.removeItem('tenseGameBadges');
       localStorage.removeItem('tenseGamePlayer');
+      localStorage.removeItem('tenseGameClearedStages');
+      localStorage.removeItem('tenseGameRevival');       // PATCH C BUG-003
+      localStorage.removeItem('tenseGameRevivalDone');   // PATCH C BUG-003
     } catch(e) {}
     gameState.unlockedStages = [1];
     gameState.bestScores = {};
     gameState.badges = {};
+    gameState.clearedStages = [];
+    gameState.tBotRevivalActive = false;      // PATCH C BUG-003
+    gameState.tBotRevivalCompleted = false;   // PATCH C BUG-003
     player.level = 1;
     player.exp = 0;
     player.coins = 0;
-    player.inventory = { hint: 1, fifty: 1, heal: 0, power: 0, shield: 0 };
+    player.crystals = 0;
+    player.inventory = { hint: 1, fifty: 1, heal: 0, power: 0, shield: 0, megaHeal: 0 };
     player.skills = {};
     player.ownedCosmetics = {};
     player.achievements = {};
+    player.equipped = { weapon: null, armor: null, accessory: null, bag: null };
+    player.equipmentInventory = {};
+    player.keyItems = [];
+    player.equipBonus = { dmgPercent:0, hpBonus:0, defPercent:0, critBonus:0, expBonus:0,
+      freeShield:false, comboShield:false, itemLimitBonus:0, cooldownReduce:0 };
     player.stats = { coinsLifetime:0, shopVisits:0, maxCombo:0, totalLosses:0, itemsBoughtSet:{}, reviewModeEntered:false };
     player.appearance = { gender:'boy', outfit:'green', weapon:'sword', eyes:'normal', mouth:'smile', hat:'hood', bag:'backpack' };
     renderMapScreen();
@@ -7360,9 +8690,10 @@ function startRevivalBattle(stageId) {
   gameState.score = 0;
   gameState.playerMaxHP = 100 + (player.skills.hpUp ? 20 : 0);
   gameState.playerHP = gameState.playerMaxHP;
-  gameState.bossMaxHP = 200;
+  gameState.bossType = getBossType(stage); // world boss (250 HP)
+  gameState.bossMaxHP = BOSS_TYPE_CONFIG[gameState.bossType].hp;
   gameState.bossHP = gameState.bossMaxHP;
-  gameState.damagePerHit = gameState.bossMaxHP / gameState.activeQuestions.length;
+  gameState.damagePerHit = 10; // legacy reference
   gameState.bossDefeated = false;
   gameState.shieldActive = false;
   gameState.usedDefenseQuestions = new Set();
@@ -7376,6 +8707,7 @@ function startRevivalBattle(stageId) {
   gameState.powerStrike = false;
   gameState.earnedCoins = 0;
   gameState.earnedExp = 0;
+  gameState.effortExp = 0;
   gameState.phase = 'player';
   gameState.guardUsed = false;
   gameState.usedAttackQuestions = new Set();
@@ -7383,13 +8715,29 @@ function startRevivalBattle(stageId) {
   gameState.prevQWrongCount = 0;
   gameState.fiftyActiveThisQ = false;
   gameState.totalWrongThisBattle = 0;
+  // Combat v2 state
+  gameState.bossPhase = 'normal';
+  gameState.bossPattern = 'NORMAL';
+  gameState.chargeWarning = false;
+  gameState.cursed = false;
+  gameState.attackDebuffTurns = 0;
+  gameState.attackDebuff = 1.0;
+  gameState.finalStandActive = false;
+  gameState.finalStandTurns = 0;
+  gameState.wrongQuestionsPool = [];
+  gameState.answerRevealed = false;
+  gameState.finalStandBronze = false;
   renderRevivalCutscene(stage);
 }
 
 function selectMode(mode) {
   gameState.mode = mode;
   document.body.classList.toggle('teacher-mode-active', mode === 'teacher');
-  renderMapScreen();
+  if (mode === 'student' && !localStorage.getItem('tenseOpeningPlayed')) {
+    renderOpeningCutscene();
+  } else {
+    renderMapScreen();
+  }
 }
 
 /* ============================================
@@ -7639,6 +8987,19 @@ function renderLessonScreen(stageId) {
    GAMEPLAY SCREEN
    ============================================ */
 // Fisher-Yates shuffle (returns a new array, doesn't mutate input)
+/**
+ * getChoiceText(btn) — ดึงข้อความ choice จริงออกจากปุ่ม
+ * ตัด pk-move-alpha span (A/B/C/D) ออกก่อนเปรียบเทียบ
+ * ใช้แทน btn.textContent เพื่อหลีกเลี่ยง BUG-002
+ */
+function getChoiceText(btn) {
+  if (!btn) return '';
+  const clone = btn.cloneNode(true);
+  const alpha = clone.querySelector('.pk-move-alpha');
+  if (alpha) alpha.remove();
+  return clone.textContent.trim();
+}
+
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -7666,6 +9027,150 @@ function buildActiveQuestions(stage) {
   return picked.map(q => ({ ...q, choices: shuffle(q.choices) }));
 }
 
+/* ============================================
+   COMBAT SYSTEM v2 — Balance & Boss Patterns
+   ============================================ */
+
+const BOSS_TYPE_CONFIG = {
+  normal: { hp: 30,  dmgCorrect: 0, dmgWrong: 5,  dmgCharge: 10, dmgFinalCharge: 10 },
+  world:  { hp: 120, dmgCorrect: 2, dmgWrong: 15, dmgCharge: 30, dmgFinalCharge: 30 }, // PATCH F BAL-001: 250→120
+  final:  { hp: 280, dmgCorrect: 3, dmgWrong: 20, dmgCharge: 40, dmgFinalCharge: 50 }  // PATCH F BAL-001: 500→280
+};
+
+// Equipment multiplier hook — always 1.0 until equipment system is implemented
+function getEquipMult() { return 1.0; }
+
+function getBossType(stage) {
+  if (!stage) return 'normal';
+  if (stage.id === 16) return 'final';
+  if (stage.isBoss) return 'world';
+  return 'normal';
+}
+
+function getComboMult(count) {
+  if (count >= 10) return 1.75;
+  if (count >= 7)  return 1.50;
+  if (count >= 5)  return 1.30;
+  if (count >= 3)  return 1.15;
+  return 1.00;
+}
+
+// Final Damage = Base × AttemptMult × ComboMult × CritMult × EquipMult × ItemMult
+// Cap: damage per hit ≤ 25% of boss max HP
+function calculateDamage(attemptNum, hintUsed, answerRevealed) {
+  const BASE = 10;
+
+  let attemptMult;
+  if (answerRevealed)        attemptMult = 0;
+  else if (hintUsed)         attemptMult = 0.5;
+  else if (attemptNum === 1) attemptMult = 1.0;
+  else if (attemptNum === 2) attemptMult = 0.6;
+  else                       attemptMult = 0.3;
+
+  const comboMult = getComboMult(gameState.comboCount); // combo already incremented before call
+
+  let critMult = 1.0, isCrit = false;
+  if (attemptNum === 1 && !hintUsed && !answerRevealed) {
+    const critCap = Math.min(0.25, 0.10 + ((player.skills && player.skills.critUp) ? 0.15 : 0));
+    if (Math.random() < critCap) { isCrit = true; critMult = 1.5; }
+  }
+
+  const equipMult = 1.0 + ((player.equipBonus && player.equipBonus.dmgPercent) || 0); // equipment bonus
+
+  let itemMult = 1.0;
+  if (gameState.powerStrike) { itemMult = 2.0; gameState.powerStrike = false; }
+
+  // CURSE debuff: 50% damage reduction for attackDebuffTurns turns
+  const debuffMult = (gameState.attackDebuffTurns > 0) ? (gameState.attackDebuff || 0.5) : 1.0;
+
+  const raw = BASE * attemptMult * comboMult * critMult * equipMult * itemMult * debuffMult;
+  const cap = (gameState.bossMaxHP || 100) * 0.25;
+  const damage = Math.round(Math.min(raw, cap));
+
+  return { damage, isCrit, comboMult, attemptMult };
+}
+
+// Score per question — measures learning, separate from damage
+function calculateScore(attemptNum, hintUsed, used5050, answerRevealed) {
+  if (answerRevealed) return 0;
+  if (hintUsed)       return 50;
+  if (used5050) {
+    if (attemptNum === 1) return 70;
+    if (attemptNum === 2) return 42;
+    return 21;
+  }
+  if (attemptNum === 1) return 100;
+  if (attemptNum === 2) return 60;
+  if (attemptNum === 3) return 30;
+  return 0;
+}
+
+// Boss damage to player (Defense turn)
+function bossAttackDamage(bossType, answeredCorrect, isCharge) {
+  const cfg = BOSS_TYPE_CONFIG[bossType] || BOSS_TYPE_CONFIG.normal;
+  const isInFinalPhase = (gameState.bossPhase === 'final');
+  if (answeredCorrect) return cfg.dmgCorrect;
+  if (isCharge) return isInFinalPhase ? cfg.dmgFinalCharge : cfg.dmgCharge;
+  let dmg = cfg.dmgWrong;
+  if (isInFinalPhase) dmg = Math.round(dmg * 1.5);
+  return dmg;
+}
+
+// Select attack pattern for upcoming boss turn
+function selectBossPattern() {
+  const bossType = gameState.bossType || 'normal';
+  const hpPct = (gameState.bossHP / (gameState.bossMaxHP || 1)) * 100;
+
+  if (hpPct < 30) {
+    gameState.bossPhase = 'final';
+    const r = Math.random();
+    if (r < 0.45) return 'CHARGE';
+    if (r < 0.65) return 'GRAMMAR_TRAP';
+    if (r < 0.80) return 'CURSE';
+    return 'NORMAL';
+  }
+  if (bossType === 'normal') return 'NORMAL';
+
+  const r = Math.random();
+  if (r < 0.35) return 'NORMAL';
+  if (r < 0.55) return 'CHARGE';
+  if (r < 0.70) return 'CURSE';
+  if (r < 0.85) return 'GRAMMAR_TRAP';
+  return 'NORMAL';
+}
+
+// Enter Overtime / Final Stand when boss stage questions run out but boss alive
+function enterFinalStand() {
+  gameState.finalStandActive = true;
+  gameState.finalStandTurns = 0;
+  const scene = document.querySelector('.pk-battle-scene');
+  if (scene) {
+    const msg = document.createElement('div');
+    msg.className = 'damage-num crit';
+    msg.textContent = '⚔️ FINAL STAND!';
+    msg.style.cssText = 'left:50%;top:8%;transform:translateX(-50%);font-size:1.05rem;color:var(--ff-gold);z-index:50;pointer-events:none;';
+    scene.appendChild(msg);
+    setTimeout(() => msg.remove(), 2500);
+  }
+}
+
+// Draw question for Final Stand (wrong questions first, then stage pool)
+function getReviewQuestion() {
+  const pool = gameState.wrongQuestionsPool;
+  if (pool && pool.length > 0) {
+    const idx = Math.floor(Math.random() * pool.length);
+    const q = pool.splice(idx, 1)[0];
+    return { ...q, choices: shuffle([...q.choices]) };
+  }
+  const stagePool = gameState.currentStage.questions;
+  const used = gameState.usedAttackQuestions || (gameState.usedAttackQuestions = new Set());
+  let candidates = stagePool.filter(q => !used.has(q.question));
+  if (candidates.length === 0) { used.clear(); candidates = [...stagePool]; }
+  const q = shuffle(candidates)[0];
+  used.add(q.question);
+  return { ...q, choices: shuffle(q.choices) };
+}
+
 function startGame(stageId) {
   const stage = STAGES_DATA.find(s => s.id === stageId);
   if (!stage) return;
@@ -7684,12 +9189,16 @@ function startGame(stageId) {
   gameState.activeQuestions = buildActiveQuestions(stage);
   gameState.currentQuestionIndex = 0;
   gameState.score = 0;
-  // HP system + HP-up skill
-  gameState.playerMaxHP = 100 + (player.skills.hpUp ? 20 : 0);
+  // Apply equipment bonuses (recompute in case player changed gear in shop)
+  applyEquipmentBonus(player);
+  // HP system + HP-up skill + equipment armor bonus
+  gameState.playerMaxHP = 100 + (player.skills.hpUp ? 20 : 0) + ((player.equipBonus && player.equipBonus.hpBonus) || 0);
   gameState.playerHP = gameState.playerMaxHP;
-  gameState.bossMaxHP = stage.id === 16 ? 300 : (stage.isBoss ? 200 : 100);
+  // Boss HP by type (Combat v2)
+  gameState.bossType = getBossType(stage);
+  gameState.bossMaxHP = BOSS_TYPE_CONFIG[gameState.bossType].hp;
   gameState.bossHP = gameState.bossMaxHP;
-  gameState.damagePerHit = gameState.bossMaxHP / gameState.activeQuestions.length;
+  gameState.damagePerHit = 10; // legacy reference — not used in new formula
   gameState.bossDefeated = false;
   gameState.shieldActive = false;
   gameState.usedDefenseQuestions = new Set();
@@ -7705,12 +9214,31 @@ function startGame(stageId) {
   gameState.powerStrike = false;
   gameState.earnedCoins = 0;
   gameState.earnedExp = 0;
+  gameState.effortExp = 0;
   gameState.phase = 'player';
   gameState.guardUsed = false;
   gameState.wrongCountThisQ = 0;
   gameState.prevQWrongCount = 0;
   gameState.fiftyActiveThisQ = false;
   gameState.totalWrongThisBattle = 0;
+  // Combat v2 state
+  gameState.bossPhase = 'normal';
+  gameState.bossPattern = 'NORMAL';
+  gameState.chargeWarning = false;
+  gameState.cursed = false;
+  gameState.attackDebuffTurns = 0;
+  gameState.attackDebuff = 1.0;
+  gameState.finalStandActive = false;
+  gameState.finalStandTurns = 0;
+  gameState.wrongQuestionsPool = [];
+  gameState.answerRevealed = false;
+  gameState.finalStandBronze = false;
+  // Item limits & ultimate
+  gameState.battleItemLimits = resetBattleItemLimits();
+  gameState.tenseBreakerUsed = false;
+  gameState.comboShieldUsed = false;
+  // Equipment: Time Robe grants a free shield at battle start
+  if (player.equipBonus && player.equipBonus.freeShield) gameState.shieldActive = true;
 
   // Boss stages with a cutscene play the dialogue first
   // Stage 16: pick correct opening cutscene
@@ -7821,6 +9349,60 @@ function renderTBotRevengeTaunt(stage) {
 }
 
 /* ============================================
+   STORY DATA — Opening Cutscene, Grammar Tips, Teacher Cheers
+   ============================================ */
+const STORY_DATA = {
+  opening: [
+    { speaker: "tbot",  name: "T-Bot",       text: "[ALERT] ตรวจพบความผิดปกติร้ายแรง! คริสตัลเวลาทั้ง 12 ดวงถูกทำให้เสียสมดุล เวลากำลังปั่นป่วนทั่วทุกโลก!" },
+    { speaker: "tbot",  name: "T-Bot",       text: "[ANALYSIS] Present World ติดอยู่ในกิจวัตรซ้ำ | Past Kingdom จำอดีตสับสน | Future City คำนวณผิดพลาด — ต้องแก้ไขด่วน!" },
+    { speaker: "krupp", name: "ครูพีพี",     text: "โอ้! นั่นน่ากลัวมากเลย T-Bot... แต่ฉันเชื่อว่ามีคนคนหนึ่งที่ช่วยได้ — คนที่เรียนรู้ 12 Tenses จนแม่นจะมีพลังควบคุมคริสตัลเวลาได้!" },
+    { speaker: "hero",  name: "???",          text: "...ฉัน? ฉันแค่นักเรียนธรรมดา ๆ จะทำได้จริงเหรอ?" },
+    { speaker: "krupp", name: "ครูพีพี",     text: "ได้แน่นอน! ไม่มีใครเกิดมาเก่งทุกอย่าง เราต้องค่อย ๆ เรียนรู้ทีละก้าว เธอคือ Time Ranger ที่ถูกเลือก — ฉันจะอยู่เคียงข้างเธอตลอด!" },
+    { speaker: "hero",  name: "Time Ranger",  text: "โอเค! ฉันจะเรียน 12 Tenses แล้วนำพลังคริสตัลกลับคืนมา! ..." },
+    { speaker: "tbot",  name: "T-Bot",        text: "[CONFIRMED] Time Ranger ถูกระบุแล้ว ภารกิจเริ่มต้น: กู้คืนคริสตัลเวลา 12 ดวง เพื่อฟื้นฟูสมดุลของกาลเวลาทั้งหมด!" },
+    { speaker: "hero",  name: "Time Ranger",  text: "Time Ranger... พร้อมแล้ว!" }
+  ]
+};
+
+const GRAMMAR_TIPS = {
+  1:  "สูตร: He/She/It + V+s/es เช่น She works, He plays — ดู keyword: every day, always, usually",
+  2:  "สูตร: am/is/are + V-ing — ดู keyword: now, right now, at the moment, Look!, Listen!",
+  3:  "สูตร: have/has + V3 เช่น eaten, gone, finished — ดู: already, yet, just, ever, never, since, for",
+  4:  "สูตร: have/has been + V-ing — ดู keyword: for, since (ทำมานานและยังไม่หยุด)",
+  5:  "ดู keyword ก่อนเลือก — every day→Simple | now→Continuous | already/yet→Perfect",
+  6:  "สูตร: V2 เช่น went, ate, ran — ดู keyword: yesterday, last night, ago, in 2020",
+  7:  "สูตร: was/were + V-ing — ดู keyword: while, when (มีเหตุการณ์ขัดจังหวะ)",
+  8:  "สูตร: had + V3 — เหตุการณ์ที่เกิดก่อนสุดในอดีต — ดู: before, after, by the time",
+  9:  "สูตร: had been + V-ing — ทำต่อเนื่องก่อนเหตุการณ์ในอดีต — ดู: for, since, before",
+  10: "ดูลำดับเวลา: อะไรเกิดก่อน→had+V3 | กำลังเกิดตอนนั้น→was/were+V-ing | จบแล้ว→V2",
+  11: "สูตร: will + V1 (ทุกประธานเหมือนกัน) — ดู keyword: tomorrow, next week, soon, later",
+  12: "สูตร: will be + V-ing — กำลังทำในช่วงเวลาอนาคต — ดู: at this time tomorrow, at 8pm",
+  13: "สูตร: will have + V3 — เสร็จก่อนเวลาในอนาคต — ดู: by tomorrow, by next week, by the time",
+  14: "สูตร: will have been + V-ing — ทำต่อเนื่องจนถึงเวลาในอนาคต — ดู: by 5pm, for + จำนวน",
+  15: "ดู keyword: tomorrow→will | at 8pm tomorrow→will be | by next week→will have",
+  16: "ทบทวน keyword ทุก Tense — every day→Simple | now→Cont | already→Perfect | yesterday→Past"
+};
+
+const TEACHER_CHEERS = {
+  1:  "ไม่เป็นไรเลย Ranger! แพ้ครั้งนี้ไม่ได้แปลว่าเราไม่เก่ง มันแปลว่าเราเจอจุดที่ต้องฝึกแล้ว — ลองทบทวนแล้วกลับมาสู้ใหม่ได้เลย!",
+  2:  "ใจเย็น ๆ นะ! ING Spider แค่ยากขึ้นนิดหน่อย ลองอีกครั้งแล้วจะเก่งขึ้นแน่นอน!",
+  3:  "เกือบได้แล้ว! Have-Has Wizard ยากแต่เราเก่งกว่านั้น ถ้าฝึกอีกนิด — เชื่อในตัวเอง!",
+  4:  "ยอดเยี่ยมที่ลองสู้! Forever Phoenix ยากก็จริง แต่ไม่ได้แพ้ตลอดไปนะ — กลับมาใหม่ได้เลย!",
+  5:  "ไม่เป็นไรเลย Ranger! Present Tense มี 4 รูปแบบ ดูแค่ keyword แล้วจะง่ายขึ้นมาก!",
+  6:  "V2 ยากนิดหน่อย แต่ท่องไปเรื่อย ๆ จะจำได้เอง go→went, eat→ate, see→saw — เดี๋ยวก็คล่อง!",
+  7:  "ใจเย็น ๆ! Past Continuous ต้องดูบริบทให้ดี ถ้าเห็น while หรือ when ให้หยุดคิดก่อน — เราทำได้!",
+  8:  "Past Perfect ยากหน่อย แต่พอเข้าใจว่า 'อะไรเกิดก่อน' แล้วจะง่ายขึ้นมากเลย — อย่าเพิ่งท้อ!",
+  9:  "อย่าเพิ่งท้อนะ! had been + V-ing ยากแต่ไม่เกินความสามารถของเรา — ลองทบทวนอีกครั้ง!",
+  10: "ใจเย็น ๆ นะ Ranger! Past Tense เหมือนการเล่าเรื่อง ดูก่อนว่าอะไรเกิดก่อน อะไรเกิดหลัง — แล้วจะง่ายขึ้นเอง!",
+  11: "Future Simple ไม่ยากเลยถ้าจำ will + V1 ไว้! ทุกประธานใช้ will เหมือนกันหมด — มาลองใหม่กัน!",
+  12: "will be + V-ing ดูยากแต่ถ้าจำ 'กำลังทำในอนาคต' ไว้ก็ชนะได้แน่! — เชื่อในตัวเอง!",
+  13: "By + เวลา = will have + V3 จำแค่นี้ก็ง่ายขึ้นมากเลย — ลองอีกครั้งนะ!",
+  14: "will have been + V-ing ยากแต่ไม่เกินไป! ฝึกอีกนิดแล้วชนะได้แน่ — อย่าเพิ่งยอมแพ้!",
+  15: "อนาคตเปลี่ยนได้แน่นอน! ดู keyword ให้ดี แม่น will + V1 ก่อน เรื่องยากกว่านี้ก็จะง่ายขึ้น!",
+  16: "การแพ้ Final Boss ไม่ได้ลบทุกอย่างที่เธอเรียนมา เธอชนะมาแล้ว 12 ด่าน แปลว่าเธอทำได้! คราวนี้กลับไปทบทวน แล้วเราจะปิดบัญชี Evil T-Bot ด้วยกัน!"
+};
+
+/* ============================================
    REVIVAL CUTSCENE (boss thanks Evil T-Bot, mocks player)
    ============================================ */
 const REVIVAL_INTRO = {
@@ -7879,6 +9461,100 @@ const REVIVAL_LOSE = {
     { speaker: "hero", name: "Time Ranger",   text: "ข้าจะฝึกฝนให้แก่กล้ากว่านี้ แล้วจะกลับมา!!" }
   ]
 };
+
+/* ============================================
+   OPENING CUTSCENE (first play only)
+   ============================================ */
+function renderOpeningCutscene() {
+  const lines = STORY_DATA.opening;
+  gameState.winCutsceneLines = lines;
+  gameState.winCutsceneIndex = 0;
+  gameState.cutsceneTyping = false;
+
+  document.getElementById('app').innerHTML = `
+    <div class="cutscene cutscene-bg-present" id="cutscene" onclick="advanceOpeningCutscene()">
+      <div class="cutscene-stage">
+        <div class="cutscene-char hero" id="cs-hero">${heroSprite()}</div>
+        <div class="cutscene-char tbot" id="cs-tbot">${sprite('tbot-sprite')}</div>
+      </div>
+      <div class="cutscene-box">
+        <div class="cutscene-name" id="cs-name"></div>
+        <div class="cutscene-text" id="cs-text"></div>
+        <div class="cutscene-hint" id="cs-hint">▶ แตะเพื่ออ่านต่อ</div>
+        <div id="cs-fight"></div>
+      </div>
+    </div>
+  `;
+  showOpeningLine();
+}
+
+function showOpeningLine() {
+  const lines = gameState.winCutsceneLines;
+  const line = lines[gameState.winCutsceneIndex];
+  const nameEl = document.getElementById('cs-name');
+  const textEl = document.getElementById('cs-text');
+  if (!nameEl || !textEl || !line) return;
+
+  // Swap tbot slot sprite based on speaker
+  const tbotEl = document.getElementById('cs-tbot');
+  if (tbotEl) {
+    const isKrupp = line.speaker === 'krupp';
+    tbotEl.innerHTML = isKrupp
+      ? `<svg viewBox="0 0 32 48" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;shape-rendering:crispEdges"><use href="#krupp-sprite"/></svg>`
+      : sprite('tbot-sprite');
+  }
+
+  const slotSpeaker = (line.speaker === 'krupp') ? 'tbot' : line.speaker;
+  ['hero', 'tbot'].forEach(who => {
+    const el = document.getElementById('cs-' + who);
+    if (el) el.classList.toggle('speaking', who === slotSpeaker);
+  });
+
+  nameEl.className = 'cutscene-name ' + (line.speaker === 'krupp' ? 'tbot' : line.speaker);
+  nameEl.textContent = line.name;
+  textEl.textContent = '';
+  gameState.cutsceneTyping = true;
+  let i = 0;
+  clearInterval(gameState.cutsceneTimer);
+  gameState.cutsceneTimer = setInterval(() => {
+    if (i < line.text.length) {
+      textEl.textContent += line.text[i];
+      if (i % 2 === 0) SoundFX.textBlip();
+      i++;
+    } else {
+      clearInterval(gameState.cutsceneTimer);
+      gameState.cutsceneTyping = false;
+    }
+  }, 28);
+}
+
+function advanceOpeningCutscene() {
+  const lines = gameState.winCutsceneLines;
+  if (!lines) return;
+  if (gameState.cutsceneTyping) {
+    clearInterval(gameState.cutsceneTimer);
+    const el = document.getElementById('cs-text');
+    if (el) el.textContent = lines[gameState.winCutsceneIndex].text;
+    gameState.cutsceneTyping = false;
+    return;
+  }
+  gameState.winCutsceneIndex++;
+  if (gameState.winCutsceneIndex >= lines.length) {
+    document.getElementById('cs-hint').style.display = 'none';
+    document.getElementById('cs-fight').innerHTML = `
+      <button class="ff-btn ff-btn-gold cutscene-fight-btn"
+        onclick="event.stopPropagation();SoundFX.click();
+        localStorage.setItem('tenseOpeningPlayed','1');renderMapScreen();">
+        ▶ เริ่มผจญภัย!
+      </button>`;
+    const cs = document.getElementById('cutscene');
+    if (cs) cs.onclick = null;
+    SoundFX.victory();
+    return;
+  }
+  SoundFX.click();
+  showOpeningLine();
+}
 
 function renderRevivalCutscene(stage) {
   const lines = REVIVAL_INTRO[stage.id] || stage.cutscene;
@@ -8155,7 +9831,12 @@ function renderLoseCutscene() {
         { speaker: "hero", name: "Time Ranger", text: "ข้าจะกลับมา! ข้าจะฝึกฝนจนแกร่งกว่านี้แน่นอน!" }
       ];
 
-  gameState.winCutsceneLines = loseLines;
+  // Append Kru PP cheer-up + grammar tip lines
+  const kruPPLines = [
+    { speaker: "krupp", name: "ครูพีพี", text: TEACHER_CHEERS[stage.id] || "ไม่เป็นไรเลย! กลับมาลองใหม่ได้เสมอ เราเชื่อในตัวเธอ!" },
+    { speaker: "krupp", name: "ครูพีพี", text: "💡 " + (GRAMMAR_TIPS[stage.id] || "ทบทวนบทเรียนอีกครั้ง แล้วกลับมาสู้ใหม่ได้เลย!") }
+  ];
+  gameState.winCutsceneLines = [...loseLines, ...kruPPLines];
   gameState.winCutsceneIndex = 0;
 
   const revivalNotice = stage.id === 16
@@ -8198,27 +9879,45 @@ function advanceLoseCutscene() {
     document.getElementById('cs-hint').style.display = 'none';
     const fightDiv = document.getElementById('cs-fight');
     const stageId = gameState.currentStage.id;
-    const retryFn = gameState.tBotRevivalActive && [5,10,15].includes(stageId)
-      ? `startRevivalBattle(${stageId})`
-      : `renderLessonScreen(${stageId})`;
-    fightDiv.innerHTML += `<button class="ff-btn ff-btn-red cutscene-fight-btn" onclick="event.stopPropagation();SoundFX.click();renderMapScreen();">◀ MAP</button>
-      <button class="ff-btn ff-btn-gold cutscene-fight-btn" onclick="event.stopPropagation();SoundFX.click();${retryFn};">🔄 ลองใหม่!</button>`;
+    const isRevival = gameState.tBotRevivalActive && [5,10,15].includes(stageId);
+    const studyFn  = isRevival ? `startRevivalBattle(${stageId})` : `renderLessonScreen(${stageId})`;
+    const retryFn  = isRevival ? `startRevivalBattle(${stageId})` : `startGame(${stageId})`;
+    fightDiv.innerHTML += `
+      <button class="ff-btn ff-btn-red    cutscene-fight-btn" onclick="event.stopPropagation();SoundFX.click();renderMapScreen();">◀ MAP</button>
+      <button class="ff-btn ff-btn-cyan   cutscene-fight-btn" onclick="event.stopPropagation();SoundFX.click();${studyFn};">📚 เรียนกับครูพีพี</button>
+      <button class="ff-btn ff-btn-gold   cutscene-fight-btn" onclick="event.stopPropagation();SoundFX.click();${retryFn};">⚔️ สู้ใหม่!</button>`;
     const cs = document.getElementById('cutscene');
     if (cs) cs.onclick = null;
     return;
   }
   SoundFX.click();
-  // Highlight correct speaker
   const line = lines[gameState.winCutsceneIndex];
-  ['hero','tbot','boss'].forEach(who => {
-    const el = document.getElementById('cs-' + who);
-    if (!el) return;
-    if (who === 'hero' || who === 'tbot') {
-      el.style.opacity = line.speaker === who ? '1' : '0.2';
-      el.style.filter = line.speaker === who ? '' : 'grayscale(1)';
+
+  // Kru PP speaker: swap tbot slot → krupp sprite, restore opacity
+  if (line.speaker === 'krupp') {
+    const tbotEl = document.getElementById('cs-tbot');
+    if (tbotEl && !tbotEl.dataset.kruppSwapped) {
+      tbotEl.innerHTML = `<svg viewBox="0 0 32 48" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;shape-rendering:crispEdges"><use href="#krupp-sprite"/></svg>`;
+      tbotEl.dataset.kruppSwapped = '1';
+      SoundFX.unlock();
     }
-    el.classList.toggle('speaking', who === line.speaker);
-  });
+    if (tbotEl) { tbotEl.style.opacity = '1'; tbotEl.style.filter = ''; tbotEl.classList.add('speaking'); }
+    const heroEl = document.getElementById('cs-hero');
+    const bossEl = document.getElementById('cs-boss');
+    if (heroEl) { heroEl.style.opacity = '0.15'; heroEl.style.filter = 'grayscale(1)'; heroEl.classList.remove('speaking'); }
+    if (bossEl) { bossEl.classList.remove('speaking'); }
+  } else {
+    // Standard speaker highlight
+    ['hero','tbot','boss'].forEach(who => {
+      const el = document.getElementById('cs-' + who);
+      if (!el) return;
+      if (who === 'hero' || who === 'tbot') {
+        el.style.opacity = line.speaker === who ? '1' : '0.2';
+        el.style.filter = line.speaker === who ? '' : 'grayscale(1)';
+      }
+      el.classList.toggle('speaking', who === line.speaker);
+    });
+  }
   showWinCutsceneLine();
 }
 
@@ -8259,9 +9958,26 @@ function renderWinCutscene() {
     return;
   }
 
+  // World-restore flavor text per stage
+  const WORLD_RESTORE = {
+    1:  "นาฬิกาหมู่บ้านเริ่มเดินอีกครั้งแล้ว! Daily Village ปลอดภัยแล้ว!",
+    2:  "ผู้คนและสัตว์ในป่ากลับมาเคลื่อนไหวได้อีกครั้ง! Now Forest เป็นอิสระแล้ว!",
+    3:  "Memory Crystal สว่างขึ้นแล้ว! Memory Hills ฟื้นคืนความทรงจำแล้ว!",
+    4:  "กิจกรรมต่อเนื่องทั้งหมดกลับมาสมบูรณ์! Forever Plains เป็นปกติแล้ว!",
+    6:  "หนังสือประวัติศาสตร์กลับมาถูกหน้าแล้ว! Yesterday Town บันทึกอดีตได้อีกครั้ง!",
+    7:  "ภาพในอดีตกลับมาเรียงลำดับแล้ว! Echo Valley ฟื้นคืนเสียงสะท้อนแห่งอดีต!",
+    8:  "เหตุการณ์ก่อน-หลังเรียงถูกต้องแล้ว! Old Castle ฟื้นคืนลำดับประวัติศาสตร์!",
+    9:  "เรื่องราวต่อเนื่องในอดีตกลับมาสมบูรณ์แล้ว! Time Ruins ได้รับการฟื้นฟู!",
+    11: "เครื่องทำนายอนาคตกลับมาทำงานได้แล้ว! Tomorrow City คำนวณอนาคตได้อีกครั้ง!",
+    12: "แผนกิจกรรมอนาคตกลับมาถูกต้องแล้ว! Star Station พร้อมออกเดินทางอีกครั้ง!",
+    13: "แผนอนาคตเสร็จสมบูรณ์แล้ว! Galaxy Gate เปิดประตูสู่อนาคตได้อีกครั้ง!",
+    14: "เส้นเวลาอนาคตกลับมาสมดุลแล้ว! Infinity Core ทำงานได้ตามปกติอีกครั้ง!"
+  };
+  const worldRestore = WORLD_RESTORE[stage.id] || `${stage.world} ได้รับการฟื้นฟูแล้ว!`;
   const defaultLines = [
     { speaker: "hero", name: "Time Ranger", text: `${stage.bossName} พ่ายแล้ว! คริสตัลแห่ง ${stage.tense} กลับคืนมาแล้ว!` },
-    { speaker: "tbot", name: "T-Bot", text: "ยอดเยี่ยมมาก! ข้าภูมิใจใน Time Ranger มาก! ภารกิจนี้สำเร็จแล้ว!" }
+    { speaker: "tbot", name: "T-Bot", text: `[CONFIRMED] ${worldRestore} ไปด่านถัดไปกันเลย!` },
+    { speaker: "krupp", name: "ครูพีพี", text: `เก่งมากเลย! จำไว้นะ — ${GRAMMAR_TIPS[stage.id] || 'ฝึกต่อไปเรื่อย ๆ แล้วจะเก่งขึ้นเอง!'}` }
   ];
   const lines = stage.winCutscene || defaultLines;
   gameState.winCutsceneLines = lines;
@@ -8312,7 +10028,7 @@ function showWinCutsceneLine() {
     const el = document.getElementById('cs-' + who);
     if (el) el.classList.toggle('speaking', who === slotSpeaker);
   });
-  nameEl.className = 'cutscene-name ' + line.speaker;
+  nameEl.className = 'cutscene-name ' + (line.speaker === 'krupp' ? 'tbot' : line.speaker);
   nameEl.textContent = line.name;
   textEl.textContent = '';
   gameState.cutsceneTyping = true;
@@ -8395,8 +10111,8 @@ function advanceWinCutscene() {
     document.getElementById('cs-hint').style.display = 'none';
     const fightDiv = document.getElementById('cs-fight');
     if (stage && stage.id === 16) {
-      // Stage 16 win → End Credits
-      fightDiv.innerHTML = `<button class="ff-btn ff-btn-gold cutscene-fight-btn" onclick="event.stopPropagation();SoundFX.click();renderEndCredits();">🌟 END CREDITS</button>`;
+      // Stage 16 win → Results first (awards EXP/coins/badge/save), then End Credits from result screen
+      fightDiv.innerHTML = `<button class="ff-btn ff-btn-gold cutscene-fight-btn" onclick="event.stopPropagation();SoundFX.click();renderResultScreen();">🏆 RESULTS!</button>`;
     } else if (stage && stage.id === 15) {
       if (!gameState.unlockedStages.includes(16)) gameState.unlockedStages.push(16);
       saveProgress();
@@ -8410,15 +10126,25 @@ function advanceWinCutscene() {
     return;
   }
   SoundFX.click();
-  // Highlight correct speaker for stage 16
+  const line = lines[gameState.winCutsceneIndex];
+  // Highlight correct speaker for stage 16 (manual because tbot slot is hidden initially)
   if (stage && stage.id === 16) {
-    const line = lines[gameState.winCutsceneIndex];
     const heroEl = document.getElementById('cs-hero');
     const bossEl = document.getElementById('cs-boss');
     const tbotEl = document.getElementById('cs-tbot');
     if (heroEl) heroEl.classList.toggle('speaking', line.speaker === 'hero');
     if (bossEl) bossEl.classList.toggle('speaking', line.speaker === 'boss');
     if (tbotEl) tbotEl.classList.toggle('speaking', line.speaker === 'krupp');
+  }
+  // All stages: swap tbot slot to Kru PP sprite when krupp speaker line arrives
+  if (line.speaker === 'krupp') {
+    const tbotEl = document.getElementById('cs-tbot');
+    if (tbotEl && !tbotEl.dataset.kruppSwapped) {
+      tbotEl.style.display = '';
+      tbotEl.innerHTML = `<svg viewBox="0 0 32 48" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;shape-rendering:crispEdges"><use href="#krupp-sprite"/></svg>`;
+      tbotEl.dataset.kruppSwapped = '1';
+      if (stage && stage.id !== 16) SoundFX.unlock();
+    }
   }
   showWinCutsceneLine();
 }
@@ -8532,6 +10258,20 @@ function renderGameScreen() {
   };
   const bossViewBox = BOSS_VIEWBOX[stage.bossSprite] || '0 0 44 44';
   
+  // Boss pattern warning banners
+  const patternWarningHTML = (() => {
+    if (!isBoss) return '';
+    if (gameState.chargeWarning && !isBossTurn)
+      return `<div id="charge-warning-banner" style="background:#b13e53;color:#fff;text-align:center;padding:4px 10px;font-family:'Press Start 2P',monospace;font-size:0.45rem;letter-spacing:0.5px;">⚡ ระวัง! บอสกำลังชาร์จ — ตอบผิดจะโดนสองเท่า!</div>`;
+    if (gameState.bossPattern === 'GRAMMAR_TRAP' && !isBossTurn)
+      return `<div id="charge-warning-banner" style="background:#5e3a8a;color:#ffd700;text-align:center;padding:4px 10px;font-family:'Press Start 2P',monospace;font-size:0.45rem;letter-spacing:0.5px;">⚠️ กับดักไวยากรณ์! ดูให้ดี อย่าหลงกล!</div>`;
+    if (gameState.bossPhase === 'final')
+      return `<div id="charge-warning-banner" style="background:#7d2a2a;color:#ffd700;text-align:center;padding:4px 10px;font-family:'Press Start 2P',monospace;font-size:0.45rem;letter-spacing:0.5px;">💥 FINAL PHASE — บอสโกรธจัด! ระวังตัวให้ดี!</div>`;
+    if (gameState.finalStandActive)
+      return `<div id="charge-warning-banner" style="background:#3a5a00;color:#ffe4a0;text-align:center;padding:4px 10px;font-family:'Press Start 2P',monospace;font-size:0.45rem;letter-spacing:0.5px;">⚔️ FINAL STAND! เทิร์นที่ ${gameState.finalStandTurns}/10 — สู้ต่อ!</div>`;
+    return '';
+  })();
+
   // Show boss intro banner on first question of boss stage
   const showBossIntro = isBoss && gameState.currentQuestionIndex === 0 && !stage.cutscene;
   const bossIntroHTML = showBossIntro ? `
@@ -8548,6 +10288,7 @@ function renderGameScreen() {
 
   document.getElementById('app').innerHTML = `
     <div class="screen active ${teacherClass}">
+      ${patternWarningHTML}
       ${bossIntroHTML}
       <button class="back-btn" onclick="renderMapScreen()">◀ EXIT</button>
       <div class="gameplay-container" id="gameplay-container">
@@ -8639,6 +10380,12 @@ function renderGameScreen() {
           </div>
           <div class="pk-bag-col">
             <button class="ff-btn ff-btn-small ff-btn-gold" id="item-btn" onclick="toggleItemBar()">🎒<br><span style="font-size:0.4rem;">ITEM</span></button>
+            ${(player.skills && player.skills.tenseBreakerUnlock && isBoss && !gameState.tenseBreakerUsed)
+              ? `<button class="ff-btn ff-btn-small" id="tense-breaker-btn" onclick="useTenseBreaker()" style="margin-top:3px;background:var(--ff-yellow);color:var(--ff-dark);border-color:var(--ff-orange);">⚡<br><span style="font-size:0.4rem;">BREAK</span></button>`
+              : (player.skills && player.skills.tenseBreakerUnlock && isBoss && gameState.tenseBreakerUsed)
+                ? `<button class="ff-btn ff-btn-small" disabled style="margin-top:3px;opacity:0.4;">⚡<br><span style="font-size:0.4rem;">USED</span></button>`
+                : ''
+            }
           </div>
         </div>
 
@@ -8695,29 +10442,35 @@ function checkAnswer(answer, btn) {
     btn.classList.add('correct');
     SoundFX.correct();
     
-    let power = gameState.attackPower;
+    const attemptNum = gameState.wrongTries + 1;
     gameState.comboCount++;
-    // Update max combo stat + first x5 achievement
+    // Combo stat + first x5 achievement
     if (gameState.comboCount > (player.stats.maxCombo || 0)) player.stats.maxCombo = gameState.comboCount;
     if (gameState.comboCount === 5) unlockAchievement('first_x5_combo');
-    let isCrit = false;
-    const critChance = 0.2 + (player.skills.critUp ? 0.15 : 0);
-    if (gameState.wrongTries === 0 && Math.random() < critChance) isCrit = true;
 
-    let points = Math.round((gameState.hintUsed ? 5 : 10) * (power / 100));
-    if (isCrit) points *= 2;
+    // ---- Combat v2 Formulas ----
+    const { damage, isCrit, comboMult } = calculateDamage(
+      attemptNum, gameState.hintUsed, gameState.answerRevealed
+    );
+    const points = calculateScore(
+      attemptNum, gameState.hintUsed, gameState.fiftyActiveThisQ, gameState.answerRevealed
+    );
+    // dmgUp (lv3) and dmgFlat (lv4): flat bonuses on top of formula
+    const finalDamage = damage
+      + ((player.skills && player.skills.dmgUp)  ? 2 : 0)
+      + ((player.skills && player.skills.dmgFlat) ? 2 : 0);
+
     gameState.score += points;
     gameState.correctCount++;
-    gameState.earnedCoins += Math.max(1, Math.round(points / 2));
-    gameState.earnedExp += points;
+    // EXP / coins scaled to preserve old economy (÷10 and ÷20)
+    gameState.earnedCoins += Math.max(1, Math.round(points / 20));
+    gameState.earnedExp   += Math.round(points / 10);
 
-    // Boss damage: +10% per combo count, capped at x2
-    let dmgMult = power / 100;
-    if (player.skills.dmgUp) dmgMult *= 1.1;
-    if (gameState.powerStrike) { dmgMult *= 2; gameState.powerStrike = false; }
-    if (isCrit) dmgMult *= 2;
-    dmgMult *= (1 + Math.min(1.0, gameState.comboCount * 0.1));
-    const damage = gameState.damagePerHit * dmgMult;
+    // Decrement CURSE debuff turn counter
+    if (gameState.attackDebuffTurns > 0) gameState.attackDebuffTurns--;
+
+    // Update ATK power display (visual only — not used in damage formula)
+    const power = gameState.attackPower;
     
     updateComboDisplay();
     document.getElementById('battle-hero').classList.add('attack');
@@ -8738,9 +10491,10 @@ function checkAnswer(answer, btn) {
       fxSparks('70%', '45%', isCrit ? 14 : 7);
       const dmg = document.createElement('div');
       dmg.className = 'damage-num' + (isCrit ? ' crit' : '');
-      dmg.textContent = (isCrit ? 'CRIT! -' : '-') + Math.round(damage);
+      dmg.textContent = (isCrit ? 'CRIT! -' : '-') + finalDamage;
       dmg.style.left = '70%'; dmg.style.top = '40%';
-      document.querySelector('.battle-scene').appendChild(dmg);
+      const bsEl = document.querySelector('.pk-battle-scene') || document.querySelector('.battle-scene');
+      if (bsEl) bsEl.appendChild(dmg);
       setTimeout(() => dmg.remove(), 1000);
       const boss = document.getElementById('battle-boss');
       boss.classList.add('flash-white');
@@ -8748,7 +10502,7 @@ function checkAnswer(answer, btn) {
     }, 350);
     
     setTimeout(() => {
-      gameState.bossHP = Math.max(0, gameState.bossHP - damage);
+      gameState.bossHP = Math.max(0, gameState.bossHP - finalDamage);
       updateBossHP();
       const boss = document.getElementById('battle-boss');
       boss.classList.add('hit-recoil');
@@ -8770,16 +10524,16 @@ function checkAnswer(answer, btn) {
       if (isCrit) label = '▶ ⚡ CRITICAL HIT!';
       if (gameState.comboCount >= 5) label = '▶ 🔥 COMBO BONUS!';
       expTitle.innerHTML = label;
-      const comboPct = Math.round(Math.min(100, gameState.comboCount * 10));
-      const comboTxt = gameState.comboCount >= 2 ? ` <span style="color:var(--ff-orange)">COMBO x${gameState.comboCount} (+${comboPct}% ATK)!</span>` : '';
+      const comboBonus = Math.round((getComboMult(gameState.comboCount) - 1) * 100);
+      const comboTxt = gameState.comboCount >= 3 ? ` <span style="color:var(--ff-orange)">COMBO x${gameState.comboCount} (+${comboBonus}% DMG)!</span>` : '';
       // Educational feedback: connect "correct answer" to "attack strength"
       let attackLine;
       if (isCrit) {
-        attackLine = `<span style="color:var(--ff-gold)">⚡ ตอบถูกตั้งแต่แรก + คริติคอล! โจมตีแรงเป็นพิเศษ!</span>`;
-      } else if (gameState.attackPower >= 100) {
-        attackLine = `<span style="color:var(--ff-green)">⚔️ ตอบถูกตั้งแต่แรก จึงโจมตีอย่างเต็มพลัง!</span>`;
+        attackLine = `<span style="color:var(--ff-gold)">⚡ ตอบถูกตั้งแต่แรก + CRITICAL HIT! โจมตีแรงเป็นพิเศษ!</span>`;
+      } else if (attemptNum === 1 && !gameState.hintUsed) {
+        attackLine = `<span style="color:var(--ff-green)">⚔️ ตอบถูกตั้งแต่แรก จึงโจมตีอย่างเต็มพลัง! (-${finalDamage} HP)</span>`;
       } else {
-        attackLine = `<span style="color:var(--ff-orange)">⚔️ ตอบถูกแล้ว! แต่เพราะตอบผิดมาก่อน พลังโจมตีเหลือ ${gameState.attackPower}%</span>`;
+        attackLine = `<span style="color:var(--ff-orange)">⚔️ ตอบถูกแล้ว! พลังโจมตีลดลงเพราะตอบผิดก่อนหน้า (-${finalDamage} HP)</span>`;
       }
       document.getElementById('explanation-text').innerHTML = `${q.explanation}<br><br><strong style="color:var(--ff-green)">+${points} POINTS</strong>${comboTxt}<br>${attackLine}`;
       document.getElementById('battle-hero').classList.remove('attack');
@@ -8789,7 +10543,18 @@ function checkAnswer(answer, btn) {
   } else {
     // WRONG during player turn: Damage Decay
     gameState.wrongTries++;
-    gameState.comboCount = 0;
+    gameState.effortExp = (gameState.effortExp || 0) + 1; // 1 Effort EXP per wrong answer
+    // Combo Shield (skill lv9 or Focus Ring): prevent first combo break per stage
+    const hasComboShield = (player.skills && player.skills.comboShield) ||
+                            (player.equipBonus && player.equipBonus.comboShield);
+    if (hasComboShield && !gameState.comboShieldUsed) {
+      gameState.comboShieldUsed = true;
+      // Flash cyan to signal protection
+      const cd = document.getElementById('combo-display');
+      if (cd) { cd.style.color = 'var(--ff-cyan)'; setTimeout(() => { if(cd) cd.style.color = ''; }, 1000); }
+    } else {
+      gameState.comboCount = 0;
+    }
     gameState.wrongCountThisQ++;
     gameState.totalWrongThisBattle = (gameState.totalWrongThisBattle || 0) + 1;
     // 50:50 then wrong achievement
@@ -8816,9 +10581,12 @@ function checkAnswer(answer, btn) {
     const remaining = [...document.querySelectorAll('.choice-btn')].filter(b => b.style.visibility !== 'hidden' && !b.disabled);
     if (gameState.wrongTries >= 3 || remaining.length <= 1) {
       gameState.hasAnswered = true;
+      gameState.answerRevealed = true;  // score = 0 on next correct (if any)
+      // Track this as a wrong question for Final Stand review pool
+      if (gameState.wrongQuestionsPool) gameState.wrongQuestionsPool.push({ ...q });
       document.querySelectorAll('.choice-btn').forEach(b => {
         b.disabled = true;
-        if (b.textContent === q.answer) b.classList.add('show-correct');
+        if (getChoiceText(b) === q.answer) b.classList.add('show-correct');
       });
       { const hb=document.getElementById('hint-btn'); if(hb) hb.disabled=true; }
       setTimeout(() => {
@@ -8829,7 +10597,7 @@ function checkAnswer(answer, btn) {
       }, 450);
       return;
     }
-    
+
     setTimeout(() => {
       btn.style.visibility = 'hidden';
       const nudge = document.createElement('div');
@@ -8837,7 +10605,7 @@ function checkAnswer(answer, btn) {
       nudge.textContent = 'TRY AGAIN!';
       nudge.style.left = '12%'; nudge.style.top = '30%';
       nudge.style.color = 'var(--ff-orange)';
-      const scene = document.querySelector('.battle-scene');
+      const scene = document.querySelector('.pk-battle-scene') || document.querySelector('.battle-scene');
       if (scene) { scene.appendChild(nudge); setTimeout(() => nudge.remove(), 900); }
     }, 450);
   }
@@ -8853,10 +10621,28 @@ function checkDefenseAnswer(answer, btn) {
   document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
   { const hb=document.getElementById('hint-btn'); if(hb) hb.disabled=true; }
   
-  const isBossStage = gameState.currentStage.isBoss === true;
-  let dmg = isCorrect ? (isBossStage ? 15 : 10) : (isBossStage ? 40 : 25);
+  const bossType = gameState.bossType || getBossType(gameState.currentStage);
+  const isCharge = (gameState.bossPattern === 'CHARGE' && gameState.chargeWarning);
+  let dmg = bossAttackDamage(bossType, isCorrect, isCharge);
   let guarded = false;
   let shielded = false;
+
+  // CURSE pattern: wrong answer → debuff player attack for 2 turns
+  if (!isCorrect && gameState.bossPattern === 'CURSE') {
+    gameState.attackDebuffTurns = 2;
+    gameState.attackDebuff = 0.5;
+  }
+  // GRAMMAR_TRAP pattern: wrong answer → also resets combo
+  if (!isCorrect && gameState.bossPattern === 'GRAMMAR_TRAP') {
+    gameState.comboCount = 0;
+  }
+  // Clear charge warning after this boss turn
+  gameState.chargeWarning = false;
+
+  // Equipment: Dragon Scale defPercent reduction
+  if ((player.equipBonus && player.equipBonus.defPercent) && dmg > 0) {
+    dmg = Math.max(0, Math.round(dmg * (1 - player.equipBonus.defPercent)));
+  }
   // Shield Potion: nullify all damage this turn
   if (gameState.shieldActive) {
     dmg = 0;
@@ -8876,10 +10662,18 @@ function checkDefenseAnswer(answer, btn) {
   } else {
     btn.classList.add('wrong');
     document.querySelectorAll('.choice-btn').forEach(b => {
-      if (b.textContent === q.answer) b.classList.add('show-correct');
+      if (getChoiceText(b) === q.answer) b.classList.add('show-correct');
     });
     SoundFX.wrong();
-    gameState.comboCount = 0;
+    const hasComboShieldDef = (player.skills && player.skills.comboShield) ||
+                               (player.equipBonus && player.equipBonus.comboShield);
+    if (hasComboShieldDef && !gameState.comboShieldUsed) {
+      gameState.comboShieldUsed = true;
+      const cd = document.getElementById('combo-display');
+      if (cd) { cd.style.color = 'var(--ff-cyan)'; setTimeout(() => { if(cd) cd.style.color = ''; }, 1000); }
+    } else {
+      gameState.comboCount = 0;
+    }
     gameState.totalWrongThisBattle = (gameState.totalWrongThisBattle || 0) + 1;
     updateComboDisplay();
   }
@@ -8911,7 +10705,7 @@ function checkDefenseAnswer(answer, btn) {
     d.className = 'damage-num crit';
     d.textContent = shielded ? '🛡️ SHIELD!' : (guarded ? '🛡️-' : '-') + dmg;
     d.style.left = '12%'; d.style.top = '30%';
-    const scene = document.querySelector('.battle-scene');
+    const scene = document.querySelector('.pk-battle-scene') || document.querySelector('.battle-scene');
     if (scene) { scene.appendChild(d); setTimeout(() => d.remove(), 1000); }
     setTimeout(() => {
       document.getElementById('battle-hero').classList.remove('flash-white', 'shake');
@@ -8937,9 +10731,18 @@ function checkDefenseAnswer(answer, btn) {
       if (guarded) {
         expTitle.innerHTML = '▶ 🛡️ GUARD SKILL!';
         defenseLine = `<span style="color:var(--ff-gold)">🛡️ ตอบผิด แต่สกิล Guard ช่วยลดความเสียหายไว้ครึ่งหนึ่ง!</span>`;
+      } else if (isCharge) {
+        expTitle.innerHTML = '▶ ⚡ CHARGE ATTACK!';
+        defenseLine = `<span style="color:var(--ff-red)">⚡ บอสปล่อยพลังชาร์จ! ตอบผิดจึงโดนสองเท่า!</span>`;
+      } else if (gameState.bossPattern === 'CURSE') {
+        expTitle.innerHTML = '▶ 💜 CURSED!';
+        defenseLine = `<span style="color:#b060ff">💜 บอสสาปแช่ง! พลังโจมตีของเธอลดลง 50% เป็นเวลา 2 เทิร์น!</span>`;
+      } else if (gameState.bossPattern === 'GRAMMAR_TRAP') {
+        expTitle.innerHTML = '▶ 🕸️ GRAMMAR TRAP!';
+        defenseLine = `<span style="color:var(--ff-orange)">🕸️ หลงกลกับดักไวยากรณ์! Combo Reset ด้วย!</span>`;
       } else {
         expTitle.innerHTML = '▶ 💥 เกราะแตก!';
-        defenseLine = `<span style="color:var(--ff-red)">💥 ตอบผิด เกราะจึงแตก! ${isBossStage ? 'บอสโจมตีหนักมาก!' : 'บอสโจมตีเข้าเต็ม ๆ'}</span>`;
+        defenseLine = `<span style="color:var(--ff-red)">💥 ตอบผิด เกราะจึงแตก! บอสโจมตีเข้าเต็ม ๆ</span>`;
       }
     }
     document.getElementById('explanation-text').innerHTML = `${q.explanation}<br><br>${defenseLine}<br><strong style="color:var(--ff-red)">บอสโจมตี -${dmg} HP</strong>`;
@@ -8958,7 +10761,7 @@ function fxFlashCrit() {
   ex.classList.remove('active'); void ex.offsetWidth; ex.classList.add('active');
 }
 function fxSparks(x, y, count = 8) {
-  const scene = document.querySelector('.battle-scene');
+  const scene = document.querySelector('.pk-battle-scene') || document.querySelector('.battle-scene');
   if (!scene) return;
   for (let i = 0; i < count; i++) {
     const s = document.createElement('div');
@@ -9057,14 +10860,29 @@ function showHint() {
    ITEM SYSTEM (in-battle)
    ============================================ */
 function renderItemButtons() {
+  const isBoss = gameState.currentStage && gameState.currentStage.isBoss;
+  const lim = gameState.battleItemLimits || {};
+  const globalCap = 5 + ((player.equipBonus && player.equipBonus.itemLimitBonus) || 0);
+  const cooldownTurns = lim.cooldownTurns || 0;
+  const globalHit = isBoss && (lim.totalBossItems || 0) >= globalCap;
+
   return Object.keys(ITEMS).map(key => {
     const item = ITEMS[key];
     const count = player.inventory[key] || 0;
-    const disabled = count <= 0 ? 'disabled' : '';
-    return `<button class="item-btn ${disabled}" ${disabled} onclick="useItem('${key}')" title="${item.desc}">
+    let reason = '';
+    let usable = true;
+    if (count <= 0) { usable = false; }
+    else if (isBoss) {
+      if (globalHit) { usable = false; reason = 'LIMIT'; }
+      else if (cooldownTurns > 0 && item.cooldown > 0) { usable = false; reason = `CD:${cooldownTurns}`; }
+      else if (item.bossLimit > 0 && (lim[key] || 0) >= item.bossLimit) { usable = false; reason = 'MAX'; }
+    }
+    const disAttr = usable ? '' : 'disabled';
+    const limitTag = reason ? `<span class="item-limit-tag">${reason}</span>` : '';
+    return `<button class="item-btn ${usable ? '' : 'disabled'}" ${disAttr} onclick="useItem('${key}')" title="${item.desc}">
       <span class="item-icon">${item.icon}</span>
       <span class="item-label">${item.name}</span>
-      <span class="item-count">x${count}</span>
+      <span class="item-count">x${count}</span>${limitTag}
     </button>`;
   }).join('');
 }
@@ -9078,7 +10896,8 @@ function toggleItemBar() {
 // Show confirmation popup before using an item
 function useItem(key) {
   if (gameState.hasAnswered) return;
-  if ((player.inventory[key] || 0) <= 0) return;
+  if (gameState.phase === 'boss') { SoundFX.wrong(); return; } // PATCH H BUG-006
+  if (!canUseItem(key)) { SoundFX.wrong(); return; }
   
   const item = ITEMS[key];
   const overlay = document.getElementById('item-confirm-modal');
@@ -9098,37 +10917,58 @@ function closeItemConfirm() {
 
 function applyItem(key) {
   if (gameState.hasAnswered) return;
-  if ((player.inventory[key] || 0) <= 0) return;
-  
+  if (!canUseItem(key)) return;
+
   const q = gameState.activeQuestions[gameState.currentQuestionIndex];
-  
+
   if (key === 'hint') {
     showHint();
     gameState.hintUsed = false; // item-based hint: no score penalty
+    SoundFX.hint();
   } else if (key === 'fifty') {
     const btns = [...document.querySelectorAll('.choice-btn')].filter(b =>
-      b.style.visibility !== 'hidden' && b.textContent !== q.answer);
+      b.style.visibility !== 'hidden' && !b.disabled && getChoiceText(b) !== q.answer);
     shuffle(btns).slice(0, 2).forEach(b => { b.style.visibility = 'hidden'; });
     gameState.fiftyActiveThisQ = true;
+    SoundFX.fifty();
   } else if (key === 'heal') {
-    gameState.playerHP = Math.min(gameState.playerMaxHP, gameState.playerHP + 30);
+    const healAmt = 30 + (player.skills && player.skills.healBonus ? 10 : 0);
+    gameState.playerHP = Math.min(gameState.playerMaxHP, gameState.playerHP + healAmt);
     updatePlayerHP();
     SoundFX.heal();
+  } else if (key === 'megaHeal') {
+    gameState.playerHP = gameState.playerMaxHP; // full restore
+    updatePlayerHP();
+    SoundFX.megaHeal();
+    fxShieldRing(); // reuse shield ring FX for dramatic effect
   } else if (key === 'power') {
     gameState.powerStrike = true;
     const txt = document.getElementById('power-meter-text');
     if (txt) txt.textContent = '⚡ POWER x2!';
-    SoundFX.combo();
+    SoundFX.powerStrike();
   } else if (key === 'shield') {
     gameState.shieldActive = true;
     const txt = document.getElementById('power-meter-text');
     if (txt) txt.textContent = '🛡️ SHIELD ON!';
-    SoundFX.shieldUp();
+    SoundFX.shieldPotion();
     fxShieldRing();
   }
-  
+
   player.inventory[key]--;
-  SoundFX.correct();
+  SoundFX.coin(); // confirm spend
+
+  // Track item limits for boss battles
+  const isBoss = gameState.currentStage && gameState.currentStage.isBoss;
+  if (isBoss && gameState.battleItemLimits) {
+    const lim = gameState.battleItemLimits;
+    lim.totalBossItems++;
+    if (lim[key] !== undefined) lim[key]++;
+    // Set cooldown (reduced by bag equipment)
+    const rawCD = (ITEMS[key] && ITEMS[key].cooldown) || 0;
+    const cd = Math.max(0, rawCD - ((player.equipBonus && player.equipBonus.cooldownReduce) || 0));
+    lim.cooldownTurns = cd;
+  }
+
   saveProgress();
   const bar = document.getElementById('item-bar');
   if (bar) bar.innerHTML = renderItemButtons();
@@ -9181,6 +11021,8 @@ function nextQuestion() {
   if (gameState.phase === 'player' && gameState.bossHP > 0) {
     gameState.phase = 'boss';
     gameState.hasAnswered = false;
+    // Select boss pattern for this defense turn (shown as warning during player turn)
+    // chargeWarning already set above — no re-select needed here, pattern is from player turn
     // Pick a defense question, avoiding recent repeats
     const pool = gameState.currentStage.questions;
     const used = gameState.usedDefenseQuestions;
@@ -9201,6 +11043,10 @@ function nextQuestion() {
   }
   gameState.prevQWrongCount = gameState.wrongCountThisQ;
   gameState.wrongCountThisQ = 0;
+  // Tick down item cooldown
+  if (gameState.battleItemLimits && gameState.battleItemLimits.cooldownTurns > 0) {
+    gameState.battleItemLimits.cooldownTurns--;
+  }
   gameState.fiftyActiveThisQ = false;
   gameState.currentQuestionIndex++;
   gameState.hintUsed = false;
@@ -9208,23 +11054,54 @@ function nextQuestion() {
   gameState.attackPower = 100;
   gameState.wrongTries = 0;
   gameState.eliminated = [];
+  gameState.answerRevealed = false;
+
+  // Select boss pattern for upcoming boss turn — show warning during this player turn
+  const stage = gameState.currentStage;
+  if (stage && stage.isBoss) {
+    gameState.bossPattern = selectBossPattern();
+    gameState.chargeWarning = (gameState.bossPattern === 'CHARGE');
+  }
 
   if (gameState.currentQuestionIndex >= gameState.activeQuestions.length) {
-    const stage = gameState.currentStage;
     if (stage.isBoss && !gameState.reviewMode) {
-      // Boss still alive — draw next question from pool (anti-repeat)
-      const pool = stage.questions;
-      const used = gameState.usedAttackQuestions || (gameState.usedAttackQuestions = new Set());
-      let candidates = pool.filter(q => !used.has(q.question));
-      if (candidates.length === 0) { used.clear(); candidates = [...pool]; }
-      const nextQ = shuffle(candidates)[0];
-      used.add(nextQ.question);
-      gameState.activeQuestions.push({ ...nextQ, choices: shuffle(nextQ.choices) });
+      // Boss still alive after initial pool — enter or continue Final Stand
+      if (!gameState.finalStandActive) {
+        enterFinalStand();
+      } else {
+        // Bleed effect: boss loses 5% maxHP per Final Stand turn
+        gameState.finalStandTurns++;
+        const bleed = Math.round(gameState.bossMaxHP * 0.05);
+        gameState.bossHP = Math.max(0, gameState.bossHP - bleed);
+        updateBossHP();
+        // Show bleed FX
+        const bossEl = document.getElementById('battle-boss');
+        if (bossEl) { bossEl.classList.add('flash-white'); setTimeout(() => bossEl.classList.remove('flash-white'), 200); }
+
+        // Boss dies from bleed → Win
+        if (gameState.bossHP <= 0) {
+          gameState.bossDefeated = true;
+          BGM.stop();
+          renderWinCutscene();
+          return;
+        }
+        // 10 Final Stand turns survived → Auto-Win (Bronze)
+        if (gameState.finalStandTurns >= 10) {
+          gameState.bossDefeated = true;
+          gameState.finalStandBronze = true;
+          BGM.stop();
+          renderWinCutscene();
+          return;
+        }
+      }
+      // Draw next question (from review pool or stage pool)
+      const nextQ = getReviewQuestion();
+      gameState.activeQuestions.push(nextQ);
       renderGameScreen();
     } else {
       BGM.stop();
       const total = gameState.activeQuestions.length;
-      const pct = (gameState.score / (total * 10)) * 100;
+      const pct = (gameState.score / (total * 100)) * 100; // maxScore = total * 100
       if (gameState.reviewMode) {
         pct >= 50 ? renderReviewWinCutscene() : renderReviewLoseCutscene();
       } else {
@@ -9246,69 +11123,94 @@ function renderResultScreen() {
   const total = (stage.isBoss && gameState.bossDefeated)
     ? gameState.currentQuestionIndex + 1
     : gameState.activeQuestions.length;
-  const maxScore = total * 10;
+  const maxScore = total * 100; // Combat v2: 100 pts per question (first correct)
   const pct = Math.min(100, (gameState.score / maxScore) * 100);
 
+  // Badge thresholds: Gold 90+, Silver 75+, Bronze 60+ (or special win conditions)
   let badge = '', medal = '', title = '', titleClass = '', msg = '';
-
   if (pct >= 90) {
-    badge = 'gold'; medal = '🥇'; titleClass = 'gold';
-    title = 'VICTORY!';
-    msg = 'ยอดเยี่ยม! เธอคือ Grammar Champion!';
-  } else if (pct >= 70) {
+    badge = 'gold';   medal = '🥇'; titleClass = 'gold';
+    title = '🎉 ยอดเยี่ยม!';  msg = 'ยอดเยี่ยม! เธอคือ Grammar Champion!';
+  } else if (pct >= 75) {
     badge = 'silver'; medal = '🥈'; titleClass = 'silver';
-    title = 'GREAT JOB!';
-    msg = 'เก่งมาก! เข้าใจเกือบทั้งหมดแล้ว';
-  } else if (pct >= 50) {
+    title = '👍 เก่งมาก!';   msg = 'เก่งมาก! เข้าใจเกือบทั้งหมดแล้ว';
+  } else if (pct >= 60) {
     badge = 'bronze'; medal = '🥉'; titleClass = 'bronze';
-    title = 'WELL DONE';
-    msg = 'ดีมาก! ลองทบทวนอีกนิดจะเก่งขึ้นแน่นอน';
+    title = '💪 ดีนะ!';     msg = 'ดีมาก! ลองทบทวนอีกนิดจะเก่งขึ้นแน่นอน';
+  } else if (gameState.finalStandBronze) {
+    // Final Stand auto-win (survived 10 overtime turns)
+    badge = 'bronze'; medal = '🥉'; titleClass = 'bronze';
+    title = '💪 ดีนะ!';
+    msg = 'เอาชนะด้วย Final Stand! 10 เทิร์น Overtime ผ่านแล้ว! ฝึกคะแนนให้สูงขึ้นด้วยนะ!';
   } else if (stage.isBoss && gameState.bossDefeated) {
     // Killed the boss despite low score — still a win
     badge = 'bronze'; medal = '🥉'; titleClass = 'bronze';
-    title = 'BOSS SLAIN!';
+    title = '💪 ดีนะ!';
     msg = 'เจ้าเอาชนะบอสได้แล้ว! ลองฝึกทำคะแนนให้สูงกว่านี้อีกนิดนะ!';
   } else {
-    badge = null; medal = '💪'; titleClass = 'fail';
-    title = 'TRY AGAIN';
+    badge = null; medal = '📚'; titleClass = 'retry';
+    title = '💪 ลองอีกครั้ง!';
     msg = 'ไม่เป็นไรนะ ลองอ่านบทเรียนอีกครั้งแล้วกลับมาสู้ใหม่!';
   }
-  
-  // Result sound
-  const isWin = pct >= 50 || (stage.isBoss && gameState.bossDefeated);
-  if (isWin) SoundFX.victory();
-  else SoundFX.lose();
+
+  const isWin = badge !== null; // any badge = cleared
+  if (isWin) SoundFX.badgeEarned(badge); else SoundFX.lose();
   gameState.newSkill = null;
 
-  // --- RPG rewards: coins, EXP, level-up, item drop ---
-  let leveledUp = false;
-  let itemDrop = null;
-  // Revival boss wins give a bigger reward (player is rebuilding after T-Bot's revival)
+  // Replay / first-clear detection
+  gameState.clearedStages = gameState.clearedStages || [];
+  const isReplay = gameState.clearedStages.includes(stage.id);
+  const replayMult = isReplay ? 0.5 : 1.0;
+
+  // Variables declared here so HTML template can reference them
+  let leveledUp  = false;
+  let drops      = [];
+  let totalExpGained = 0;
+  let expMult    = 1;
+  const bossType = getBossType(stage);
   const isRevivalWin = isWin && gameState.tBotRevivalActive && [5, 10, 15].includes(stage.id);
+
   if (gameState.mode === 'student') {
-    let completionBonus = isWin ? (stage.isBoss ? 40 : 20) : 0;
-    let revivalBonusCoins = 0;
-    let revivalBonusExp = 0;
-    if (isRevivalWin) {
-      revivalBonusCoins = 80;   // big coin reward for clearing a revived boss
-      revivalBonusExp = 50;     // big EXP reward
-      gameState.earnedCoins += revivalBonusCoins;
-      gameState.earnedExp += revivalBonusExp;
-    }
+    // --- Coins ---
+    const completionBonus = isWin ? (stage.isBoss ? 40 : 20) : 0;
+    if (isRevivalWin) gameState.earnedCoins += 80;
     gameState.earnedCoins += completionBonus;
     player.coins += gameState.earnedCoins;
     player.stats.coinsLifetime = (player.stats.coinsLifetime || 0) + gameState.earnedCoins;
     if (player.coins >= 500) unlockAchievement('coin_rich');
+
+    // --- EXP calculation ---
+    // Revival EXP adds to combat earnedExp before applying replay mult
+    if (isRevivalWin) gameState.earnedExp += 50;
+    const effortExp  = gameState.effortExp || 0;
+    const questionExp = Math.round((gameState.earnedExp + effortExp) * replayMult);
+    const baseCompletion = bossType === 'final' ? 500 : bossType === 'world' ? 250 : 50;
+    const completionExp  = isWin ? Math.round(baseCompletion * replayMult) : 0;
+    const subtotal = questionExp + completionExp;
+    let badgeBonusExp = 0;
+    if      (badge === 'gold')   badgeBonusExp = 50;
+    else if (badge === 'silver') badgeBonusExp = Math.round(subtotal * 0.25);
+    else if (badge === 'bronze') badgeBonusExp = Math.round(subtotal * 0.10);
+    const totalEarnedExp = subtotal + badgeBonusExp;
+
+    expMult = 1
+      + ((player.skills && player.skills.expBonus) ? 0.20 : 0)
+      + ((player.equipBonus && player.equipBonus.expBonus) || 0);
+    totalExpGained = Math.round(totalEarnedExp * expMult);
+
     // Store pre-gain EXP fraction for bar animation
     gameState.expAnimFrom = Math.min(100, (player.exp / expForLevel(player.level)) * 100);
-    player.exp += gameState.earnedExp;
+    player.exp += totalExpGained;
+
     const beforeSkills = Object.keys(player.skills).length;
-    // Level up loop
-    while (player.exp >= expForLevel(player.level)) {
+    // Level up loop — capped at Lv10
+    while (player.level < 10 && player.exp >= expForLevel(player.level)) {
       player.exp -= expForLevel(player.level);
       player.level++;
       leveledUp = true;
     }
+    // Clamp excess EXP at max level
+    if (player.level >= 10) player.exp = Math.min(player.exp, expForLevel(10) - 1);
     // Store post-gain EXP fraction for bar animation
     gameState.expAnimTo = Math.min(100, (player.exp / expForLevel(player.level)) * 100);
     syncSkills();
@@ -9317,15 +11219,35 @@ function renderResultScreen() {
     if (newSkillKeys.length > beforeSkills) {
       gameState.newSkill = newSkillKeys.find(k => SKILLS[k].level === player.level) || null;
     }
-    // Item drop on win (passed stage)
+
+    // Item / equipment drops on win
     if (isWin) {
-      const dropKeys = Object.keys(ITEMS);
-      itemDrop = dropKeys[Math.floor(Math.random() * dropKeys.length)];
-      player.inventory[itemDrop] = (player.inventory[itemDrop] || 0) + 1;
+      drops = rollDrops(bossType);
+      drops.forEach(d => {
+        if (d.type === 'item') {
+          player.inventory[d.key] = (player.inventory[d.key] || 0) + 1;
+        } else if (d.type === 'equip') {
+          if (!player.equipmentInventory) player.equipmentInventory = {};
+          player.equipmentInventory[d.key] = true;
+        }
+      });
     }
-    // Sound handled by animateExpBar() after result screen renders
+
+    // Mark first clear (after drops so isReplay is still accurate above)
+    if (isWin && !isReplay) {
+      gameState.clearedStages.push(stage.id);
+    }
+    // Coin + drop sounds (short delay so badge sound plays first)
+    if (isWin && gameState.earnedCoins > 0) {
+      setTimeout(() => SoundFX.coins(), 600);
+    }
+    if (drops.length > 0) {
+      const topRarity = drops.some(d => d.rarity === 'rare' || d.rarity === 'legendary') ? 'rare' : 'common';
+      setTimeout(() => SoundFX.itemDrop(topRarity), 1100);
+    }
+    // EXP bar sound handled by animateExpBar() after result screen renders
   }
-  
+
   if (gameState.mode === 'student') {
     const prevBest = gameState.bestScores[stage.id] || 0;
     if (gameState.score > prevBest) gameState.bestScores[stage.id] = gameState.score;
@@ -9334,24 +11256,24 @@ function renderResultScreen() {
     if (badge && (!prevBadge || rank[badge] > (rank[prevBadge] || 0))) {
       gameState.badges[stage.id] = badge;
     }
-    
-    if (pct >= 50 || (stage.isBoss && gameState.bossDefeated)) {
+
+    if (isWin) {
       // Boss-gate config: each boss needs its 4 preceding stages done;
       // beating a boss opens the first stage of the next world.
       const BOSS_GATES = {
-        5:  { needs: [1, 2, 3, 4],     opensWorld: null,            flag: 'present' },
-        10: { needs: [6, 7, 8, 9],     opensWorld: 11,              flag: 'past' },
-        15: { needs: [11, 12, 13, 14], opensWorld: null,            flag: 'future' }
+        5:  { needs: [1, 2, 3, 4],     opensWorld: null, flag: 'present' },
+        10: { needs: [6, 7, 8, 9],     opensWorld: 11,   flag: 'past' },
+        15: { needs: [11, 12, 13, 14], opensWorld: null, flag: 'future' }
       };
       const BOSS_OPENS_NEXT = { 5: 6, 10: 11, 15: null }; // beating boss -> unlock id
       const WORLD_FLAG = { 5: 'present', 10: 'past', 15: 'future' };
-      
+
       // 1. Sequential unlock: next non-boss stage in the same chain
       const next = STAGES_DATA.find(s => s.id === stage.id + 1);
       if (next && next.playable && !next.isBoss && !gameState.unlockedStages.includes(next.id)) {
         gameState.unlockedStages.push(next.id);
       }
-      
+
       // 2. Completing a regular stage may satisfy a boss gate
       for (const bossId in BOSS_GATES) {
         const gate = BOSS_GATES[bossId];
@@ -9364,7 +11286,7 @@ function renderResultScreen() {
           }
         }
       }
-      
+
       // 3. Beating a boss opens the next world's first stage
       if (BOSS_OPENS_NEXT[stage.id]) {
         const opensId = BOSS_OPENS_NEXT[stage.id];
@@ -9373,12 +11295,12 @@ function renderResultScreen() {
           gameState.worldUnlocked = WORLD_FLAG[stage.id];
         }
       }
-      
+
       // 4. After T-Bot revival: re-unlock stage 16 when all 3 bosses re-beaten
       if ([5, 10, 15].includes(stage.id) && !gameState.unlockedStages.includes(16)) {
         if (gameState.badges[5] && gameState.badges[10] && gameState.badges[15]) {
-          gameState.tBotRevivalActive = false;    // End revival — all bosses reconquered
-          gameState.tBotRevivalCompleted = true;  // Flag for T-Bot revenge cutscene
+          gameState.tBotRevivalActive   = false; // End revival — all bosses reconquered
+          gameState.tBotRevivalCompleted = true; // Flag for T-Bot revenge cutscene
           gameState.unlockedStages.push(16);
           gameState.bossUnlocked = 'tbot';
           setTimeout(() => SoundFX.unlock(), 600);
@@ -9393,104 +11315,161 @@ function renderResultScreen() {
     }
     saveProgress();
   }
-  
+
   // Special unlock messages
   let unlockMsg = '';
   if (gameState.gameComplete && stage.id === 16) {
     unlockMsg = `
-      <div style="background: linear-gradient(180deg, #2a0a4a, #150525); border: 4px solid #ff69b4; padding: 18px; margin: 16px 0; box-shadow: 0 0 30px rgba(255,105,180,0.6);">
-        <div style="font-family: 'Press Start 2P', monospace; color: #ff69b4; font-size: 0.95rem; margin-bottom: 10px;">🌟 GAME COMPLETE! 🌟</div>
-        <div style="color: var(--ff-cream); font-size: 1rem;">เธอเอาชนะ Evil T-Bot และกู้คริสตัลทั้ง 12 ดวงคืนได้แล้ว! โลก 12 Tenses ปลอดภัยอย่างแท้จริง! ขอบคุณ Time Ranger ผู้กล้าหาญ! 🌟</div>
-      </div>
-    `;
+      <div style="background:linear-gradient(180deg,#2a0a4a,#150525);border:4px solid #ff69b4;padding:18px;margin:16px 0;box-shadow:0 0 30px rgba(255,105,180,0.6);">
+        <div style="font-family:'Press Start 2P',monospace;color:#ff69b4;font-size:0.95rem;margin-bottom:10px;">🌟 GAME COMPLETE! 🌟</div>
+        <div style="color:var(--ff-cream);font-size:1rem;">เธอเอาชนะ Evil T-Bot และกู้คริสตัลทั้ง 12 ดวงคืนได้แล้ว! โลก 12 Tenses ปลอดภัยอย่างแท้จริง! ขอบคุณ Time Ranger ผู้กล้าหาญ! 🌟</div>
+      </div>`;
     gameState.gameComplete = false;
   } else if (gameState.bossUnlocked) {
     const bossMsgs = {
-      present: { icon: '🐉', name: 'Time Dragon', color: 'var(--ff-gold)' },
-      past: { icon: '💀', name: 'Chrono Reaper', color: 'var(--ff-orange)' },
-      future: { icon: '👑', name: 'Time Emperor', color: 'var(--ff-cyan)' },
-      tbot: { icon: '🤖', name: 'Evil T-Bot', color: '#ff69b4' }
+      present: { icon: '🐉', name: 'Time Dragon',   color: 'var(--ff-gold)' },
+      past:    { icon: '💀', name: 'Chrono Reaper', color: 'var(--ff-orange)' },
+      future:  { icon: '👑', name: 'Time Emperor',  color: 'var(--ff-cyan)' },
+      tbot:    { icon: '🤖', name: 'Evil T-Bot',    color: '#ff69b4' }
     };
     const bm = bossMsgs[gameState.bossUnlocked] || bossMsgs.present;
     const bossMsg = gameState.bossUnlocked === 'tbot'
       ? `เธอเอาชนะ Boss ทั้ง 3 คืนมาได้แล้ว! <strong>Evil T-Bot</strong> รอการปะทะอีกครั้ง! กลับไปที่แผนที่ก่อนเลย!`
       : `เธอผ่านครบ 4 ด่านในโลกนี้แล้ว! <strong>${bm.name}</strong> ปรากฏตัว! กลับไปที่แผนที่เพื่อท้าทาย Boss Battle`;
     unlockMsg = `
-      <div style="background: linear-gradient(180deg, #4a2a08, #2a1804); border: 4px solid ${bm.color}; padding: 16px; margin: 16px 0; box-shadow: 0 0 20px rgba(255,205,117,0.4);">
-        <div style="font-family: 'Press Start 2P', monospace; color: ${bm.color}; font-size: 0.85rem; margin-bottom: 8px;">${bm.icon} BOSS UNLOCKED!</div>
-        <div style="color: var(--ff-cream); font-size: 0.95rem;">${bossMsg}</div>
-      </div>
-    `;
+      <div style="background:linear-gradient(180deg,#4a2a08,#2a1804);border:4px solid ${bm.color};padding:16px;margin:16px 0;box-shadow:0 0 20px rgba(255,205,117,0.4);">
+        <div style="font-family:'Press Start 2P',monospace;color:${bm.color};font-size:0.85rem;margin-bottom:8px;">${bm.icon} BOSS UNLOCKED!</div>
+        <div style="color:var(--ff-cream);font-size:0.95rem;">${bossMsg}</div>
+      </div>`;
     gameState.bossUnlocked = null;
   } else if (gameState.worldUnlocked) {
     const worldMsgs = {
-      past: { icon: '🏰', name: 'Past Kingdom' },
+      past:   { icon: '🏰', name: 'Past Kingdom' },
       future: { icon: '🚀', name: 'Future City' }
     };
     const wm = worldMsgs[gameState.worldUnlocked];
     if (wm) {
       unlockMsg = `
-        <div style="background: linear-gradient(180deg, #4a2010, #2a1004); border: 4px solid var(--ff-orange); padding: 16px; margin: 16px 0; box-shadow: 0 0 20px rgba(239,125,87,0.4);">
-          <div style="font-family: 'Press Start 2P', monospace; color: var(--ff-orange); font-size: 0.85rem; margin-bottom: 8px;">${wm.icon} NEW WORLD UNLOCKED!</div>
-          <div style="color: var(--ff-cream); font-size: 0.95rem;">บอสพ่ายแล้ว! <strong>${wm.name}</strong> เปิดประตูต้อนรับ Time Ranger!</div>
-        </div>
-      `;
+        <div style="background:linear-gradient(180deg,#4a2010,#2a1004);border:4px solid var(--ff-orange);padding:16px;margin:16px 0;box-shadow:0 0 20px rgba(239,125,87,0.4);">
+          <div style="font-family:'Press Start 2P',monospace;color:var(--ff-orange);font-size:0.85rem;margin-bottom:8px;">${wm.icon} NEW WORLD UNLOCKED!</div>
+          <div style="color:var(--ff-cream);font-size:0.95rem;">บอสพ่ายแล้ว! <strong>${wm.name}</strong> เปิดประตูต้อนรับ Time Ranger!</div>
+        </div>`;
     }
     gameState.worldUnlocked = null;
   }
-  
+
+  // Kru PP quote: praise on win, cheer on lose
+  const kruppQuote = isWin
+    ? `เก่งมากเลย! จำไว้นะ — ${GRAMMAR_TIPS[stage.id] || 'ฝึกต่อไปเรื่อย ๆ แล้วจะเก่งขึ้นเอง!'}`
+    : (TEACHER_CHEERS[stage.id] || 'ไม่เป็นไรเลย! กลับมาลองใหม่ได้เสมอ เราเชื่อในตัวเธอ!');
+  const grammarTip = GRAMMAR_TIPS[stage.id] || '';
+
+  // Badge colour chip
+  const badgeColor = badge === 'gold' ? 'var(--ff-gold)' : badge === 'silver' ? '#b0c4de' : '#cd7f32';
+  const badgeChip  = badge
+    ? `<div style="text-align:center;margin:4px 0 8px;font-size:0.6rem;font-family:'Press Start 2P',monospace;color:${badgeColor};">${badge.toUpperCase()} CLEAR</div>`
+    : '';
+
+  // Drops HTML
+  let dropsHtml = '';
+  if (drops.length > 0) {
+    const rowsHtml = drops.map(d => {
+      const info  = d.type === 'item' ? ITEMS[d.key] : (EQUIPMENT_CATALOG[d.key] || {icon:'?',name:d.key});
+      const col   = RARITY_COLOR[d.rarity] || '#9ca3af';
+      const label = RARITY_LABEL[d.rarity] || d.rarity;
+      return `<div class="drop-item-row">
+        <span style="font-size:1.1rem;">${info.icon}</span>
+        <span style="flex:1;font-size:0.72rem;color:var(--ff-cream);">${info.name}</span>
+        <span class="drop-rarity-tag" style="background:${col}22;color:${col};border:1px solid ${col};">${label}</span>
+      </div>`;
+    }).join('');
+    dropsHtml = `
+      <div style="margin:10px 0;">
+        <div style="font-family:'Press Start 2P',monospace;font-size:0.6rem;color:var(--ff-gold);margin-bottom:5px;">🎁 DROPS</div>
+        ${rowsHtml}
+      </div>`;
+  }
+
+  // NEXT button — show if stage.id+1 is unlocked (computed after unlock logic ran)
+  const nextStageId = stage.id + 1;
+  const nextBtn = gameState.unlockedStages.includes(nextStageId)
+    ? `<button class="ff-btn ff-btn-gold" onclick="SoundFX.click();renderLessonScreen(${nextStageId})">▶ NEXT</button>`
+    : '';
+
+  // Replay tip
+  const replayTip = (isWin && badge !== 'gold')
+    ? `<div class="replay-tip">ลองอีกครั้งเพื่อเอา 🥇 Gold ไหม?</div>`
+    : '';
+
   document.getElementById('app').innerHTML = `
     <div class="screen active">
       <div class="result-container">
         <div class="ff-box-fancy">
           <div class="result-medal">${medal}</div>
           <h2 class="result-title ${titleClass}">${title}</h2>
-          
+          <div style="text-align:center;font-size:0.7rem;color:var(--ff-cyan);margin-bottom:2px;">${stage.tense || ''}</div>
+          ${badgeChip}
+
           <div class="result-stats">
-            <div class="stat-box">
-              <div class="stat-label">SCORE</div>
-              <div class="stat-value">${gameState.score}</div>
-            </div>
             <div class="stat-box">
               <div class="stat-label">ACCURACY</div>
               <div class="stat-value">${Math.round(pct)}%</div>
             </div>
+            <div class="stat-box">
+              <div class="stat-label">SCORE</div>
+              <div class="stat-value">${gameState.score}</div>
+            </div>
           </div>
-          
+
           ${gameState.mode === 'student' ? `
           <div class="reward-panel">
             ${isRevivalWin ? `<div class="reward-row drop" style="color:#ef7d57;border-color:#b13e53;"><span>⚔️ REVIVAL BONUS!</span><span class="reward-val">+80 💰 / +50 ✨</span></div>` : ''}
             <div class="reward-row"><span>💰 เหรียญที่ได้</span><span class="reward-val">+${gameState.earnedCoins}</span></div>
-            <div class="reward-row"><span>✨ EXP ที่ได้</span><span class="reward-val">+${gameState.earnedExp}</span></div>
-            <div class="reward-row"><span>🎖️ Level</span><span class="reward-val">${player.level}${leveledUp ? ' ⬆️ LEVEL UP!' : ''}</span></div>
+            <div class="reward-row"><span>✨ EXP ที่ได้</span><span class="reward-val">+${totalExpGained}</span></div>
+            ${isReplay ? `<div style="text-align:center;font-size:0.58rem;color:#9ca3af;margin:-4px 0 4px;">🔁 Replay — 50% EXP</div>` : ''}
+            <div class="reward-row"><span>🎖️ Level</span><span class="reward-val">Lv.${player.level}${leveledUp ? ' ⬆️ LEVEL UP!' : ''}</span></div>
             <div class="exp-bar"><div class="exp-bar-fill" id="exp-bar-fill" style="width:${gameState.expAnimFrom||0}%;transition:none;" data-to="${gameState.expAnimTo||0}" data-leveled="${leveledUp?'1':'0'}"></div></div>
-            ${itemDrop ? `<div class="reward-row drop"><span>🎁 ไอเทมที่ได้</span><span class="reward-val">${ITEMS[itemDrop].icon} ${ITEMS[itemDrop].name}</span></div>` : ''}
             ${gameState.newSkill ? `<div class="reward-row drop"><span>🌟 สกิลใหม่!</span><span class="reward-val">${SKILLS[gameState.newSkill].icon} ${SKILLS[gameState.newSkill].name}</span></div>` : ''}
           </div>
+          ${dropsHtml}
           ` : ''}
-          
+
           ${unlockMsg}
-          
-          <p class="result-msg">${msg}</p>
-          
-          <div class="result-actions">
-            <button class="ff-btn ff-btn-gold" onclick="renderMapScreen()">▶ WORLD MAP</button>
-            <button class="ff-btn" onclick="startGame(${stage.id})">↻ RETRY</button>
-            <button class="ff-btn ff-btn-purple" onclick="renderShopScreen()">🛒 SHOP</button>
+
+          <div class="krupp-quote-box">
+            <div class="krupp-quote-sprite">
+              <svg viewBox="0 0 32 48" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;shape-rendering:crispEdges;"><use href="#krupp-sprite"/></svg>
+            </div>
+            <div class="krupp-quote-text">${kruppQuote}</div>
           </div>
+
+          ${grammarTip && isWin ? `<div class="grammar-tip-bar">💡 ${grammarTip}</div>` : ''}
+
+          ${replayTip}
+
+          <div class="result-actions">
+            <button class="ff-btn" onclick="renderMapScreen()">🗺 WORLD MAP</button>
+            <button class="ff-btn" onclick="startGame(${stage.id})">↻ RETRY</button>
+            ${nextBtn}
+          </div>
+
           ${stage.id === 15 && isWin && !gameState.tBotRevivalActive ? `
           <div style="margin-top:16px;text-align:center;">
             <button class="ff-btn ff-btn-red" style="font-size:1rem;padding:14px 24px;" onclick="renderLessonScreen(16)">⚡ FIGHT EVIL T-BOT! ⚡</button>
             <div style="color:#ff69b4;font-size:0.8rem;margin-top:6px;">T-Bot ทรยศแล้ว... กู้คริสตัลคืนมาเถอะ!</div>
           </div>` : ''}
           ${stage.id === 16 && isWin ? `
-          <div style="margin-top:16px;text-align:center;color:#ff69b4;font-family:'Press Start 2P',monospace;font-size:0.75rem;">🌟 GAME COMPLETE — ขอบคุณที่เล่น! 🌟</div>` : ''}
+          <div style="margin-top:20px;text-align:center;">
+            <button class="ff-btn ff-btn-gold" style="font-size:1rem;padding:14px 28px;animation:goldGlow 1.2s steps(4) infinite;"
+              onclick="SoundFX.click();renderEndCredits();">🌟 END CREDITS 🌟</button>
+            <div style="color:#ff69b4;font-family:'Press Start 2P',monospace;font-size:0.62rem;margin-top:8px;">GAME COMPLETE — ขอบคุณ Time Ranger!</div>
+          </div>` : ''}
         </div>
       </div>
     </div>
   `;
-  
-  if (pct >= 70) setTimeout(() => createConfetti(), 300);
+
+  if (pct >= 75) setTimeout(() => createConfetti(), 300);
   if (gameState.mode === 'student') setTimeout(animateExpBar, 700);
 }
 
@@ -9580,6 +11559,34 @@ function renderShopScreen(fromBuy = false) {
         </div>
         
         <div class="skills-section">
+          <h3 class="skills-title">🛡️ EQUIPMENT (อุปกรณ์เสริมพลัง)</h3>
+          <div class="skills-grid">
+            ${Object.keys(EQUIPMENT_CATALOG).map(key => {
+              const eq = EQUIPMENT_CATALOG[key];
+              const owned = player.equipmentInventory && player.equipmentInventory[key];
+              const isEquipped = player.equipped && player.equipped[eq.slot] === key;
+              const canBuy = player.coins >= eq.price;
+              const cardClass = isEquipped ? 'unlocked' : owned ? 'for-sale' : canBuy ? 'for-sale' : 'locked';
+              const slotLabel = {weapon:'⚔️',armor:'🧥',accessory:'💍',bag:'🎒'}[eq.slot] || '';
+              return `<div class="skill-card ${cardClass}" style="cursor:default;">
+                <div class="skill-icon">${eq.icon}</div>
+                <div class="skill-info">
+                  <div class="skill-name">${eq.name}</div>
+                  <div class="skill-desc">${slotLabel} ${eq.desc}</div>
+                  ${isEquipped ? '<div style="color:var(--ff-cyan);font-size:0.75rem;">⚔ กำลังสวมใส่อยู่</div>' : ''}
+                </div>
+                <div class="skill-status">
+                  ${owned
+                    ? `<button class="ff-btn ff-btn-small ${isEquipped ? '' : 'ff-btn-gold'}" onclick="toggleEquipment('${key}')">${isEquipped ? '✓ ON' : 'EQUIP'}</button>`
+                    : `<button class="ff-btn ff-btn-small ${canBuy ? 'ff-btn-gold' : ''}" ${canBuy ? '' : 'disabled'} onclick="buyEquipment('${key}')">💰${eq.price}</button>`
+                  }
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+
+        <div class="skills-section">
           <h3 class="skills-title">✨ COSMETICS (ตกแต่งตัวละคร)</h3>
           <div class="skills-grid">
             ${Object.keys(COSMETICS).map(key => {
@@ -9639,7 +11646,7 @@ function buyItem(key) {
   player.inventory[key] = (player.inventory[key] || 0) + 1;
   player.stats.itemsBoughtSet[key] = true;
   SoundFX.correct();
-  // Check all-items achievement (all 5 useable items bought at least once)
+  // Check all-items achievement (all useable items bought at least once)
   if (Object.keys(player.stats.itemsBoughtSet).length >= Object.keys(ITEMS).length) {
     unlockAchievement('all_items');
   }
@@ -9671,6 +11678,39 @@ function equipCosmetic(key) {
   const c = COSMETICS[key];
   if (!c || !player.ownedCosmetics[key]) return;
   player.appearance[c.category] = c.key;
+  SoundFX.correct();
+  saveProgress();
+  renderShopScreen(true);
+}
+
+function buyEquipment(key) {
+  const eq = EQUIPMENT_CATALOG[key];
+  if (!eq || player.coins < eq.price || (player.equipmentInventory && player.equipmentInventory[key])) {
+    SoundFX.wrong(); return;
+  }
+  player.coins -= eq.price;
+  if (!player.equipmentInventory) player.equipmentInventory = {};
+  player.equipmentInventory[key] = true;
+  SoundFX.victory();
+  saveProgress();
+  showGameConfirm(
+    `${eq.icon} ${eq.name}`,
+    `ซื้อสำเร็จ! สวมใส่เลยไหม?`,
+    () => { toggleEquipment(key); },
+    () => { renderShopScreen(true); }
+  );
+}
+
+function toggleEquipment(key) {
+  const eq = EQUIPMENT_CATALOG[key];
+  if (!eq || !(player.equipmentInventory && player.equipmentInventory[key])) return;
+  if (!player.equipped) player.equipped = { weapon:null, armor:null, accessory:null, bag:null };
+  if (player.equipped[eq.slot] === key) {
+    player.equipped[eq.slot] = null; // unequip
+  } else {
+    player.equipped[eq.slot] = key;  // equip (replaces previous in same slot)
+  }
+  applyEquipmentBonus(player);
   SoundFX.correct();
   saveProgress();
   renderShopScreen(true);
@@ -9836,6 +11876,7 @@ function startReviewBattle(stageId) {
   gameState.powerStrike = false;
   gameState.earnedCoins = 0;
   gameState.earnedExp = 0;
+  gameState.effortExp = 0;
   gameState.phase = 'player';
   gameState.guardUsed = false;
   gameState.usedAttackQuestions = new Set();
@@ -10044,11 +12085,19 @@ function openModal() { document.getElementById('howto-modal').classList.add('act
 function closeModal() { document.getElementById('howto-modal').classList.remove('active'); }
 
 function toggleSound() {
+  // Long-press / right-click → toggle volume panel; quick click → mute toggle
   const on = SoundFX.toggle();
   if (!on) BGM.stop();
   const btn = document.getElementById('sound-toggle');
-  btn.textContent = on ? '🔊' : '🔇';
-  btn.classList.toggle('muted', !on);
+  if (btn) {
+    btn.textContent = on ? '🔊' : '🔇';
+    btn.classList.toggle('muted', !on);
+  }
+  // settings already saved inside SoundFX.toggle()
+}
+
+function toggleAudioPanel() {
+  if (typeof AudioUI !== 'undefined') AudioUI.togglePanel();
 }
 
 function toggleTheme() {
@@ -10083,6 +12132,17 @@ try {
     if (btn) btn.textContent = '🌙';
   }
 } catch(e) {}
+// Restore audio settings
+SoundFX.loadSettings();
+AudioUI.syncSliders();
+// Sync mute button visual state
+(function() {
+  const btn = document.getElementById('sound-toggle');
+  if (btn) {
+    btn.textContent = SoundFX.enabled ? '🔊' : '🔇';
+    btn.classList.toggle('muted', !SoundFX.enabled);
+  }
+})();
 renderStartScreen();
 </script>
 </body>
