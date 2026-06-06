@@ -1,0 +1,8 @@
+name = "tense-adventure-scores"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tense-adventure-scores"
+database_id = "6dc970b1-6548-48e9-9cca-bec9aa322d81"

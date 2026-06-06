@@ -4393,6 +4393,107 @@ html.day-mode .stage-card.boss-card.playable { animation: none !important; }
   text-align: right;
 }
 
+/* ============================================
+   NAME SCREEN
+   ============================================ */
+.name-screen-box {
+  background: var(--ff-navy, #16213e);
+  border: 3px solid var(--ff-gold, #e8b820);
+  box-shadow: 4px 4px 0 #000, inset 0 0 0 1px rgba(255,255,255,0.06);
+  padding: 28px 22px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+}
+.name-input-wrap { margin: 10px 0 14px; }
+.name-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  background: #050a1a;
+  border: 3px solid var(--ff-gold, #e8b820);
+  color: var(--ff-gold, #e8b820);
+  padding: 12px 14px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  outline: none;
+  text-align: center;
+  margin-bottom: 5px;
+  border-radius: 0;
+}
+.name-input:focus { border-color: var(--ff-cyan, #41a6f6); box-shadow: 0 0 0 2px rgba(65,166,246,0.3); }
+.name-input::placeholder { color: #505060; }
+.name-char-count {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: #606070;
+  text-align: right;
+  margin-bottom: 3px;
+}
+.name-err {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  color: var(--ff-red, #e84848);
+  min-height: 14px;
+  text-align: center;
+}
+.name-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 10px; }
+
+/* ============================================
+   LEADERBOARD SCREEN
+   ============================================ */
+.lb-tabs { display: flex; justify-content: center; gap: 0; margin: 0 0 10px; }
+.lb-tab {
+  flex: 1;
+  max-width: 180px;
+  padding: 9px 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  background: #111122;
+  color: #606080;
+  border: 2px solid #222244;
+  cursor: pointer;
+}
+.lb-tab-active { background: #1a1a40; color: var(--ff-gold, #e8b820); border-color: var(--ff-gold, #e8b820); }
+.lb-stage-select {
+  background: #111122;
+  color: var(--ff-cream, #f4e8c1);
+  border: 2px solid var(--ff-gold, #e8b820);
+  padding: 7px 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  max-width: 340px;
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+}
+.lb-content { max-width: 520px; margin: 0 auto; padding-bottom: 40px; }
+.lb-loading, .lb-empty {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  color: #606080;
+  text-align: center;
+  padding: 30px 12px;
+}
+.lb-table { width: 100%; border-collapse: collapse; font-family: 'Press Start 2P', monospace; font-size: 0.55rem; }
+.lb-table th {
+  background: #1a1a40;
+  color: var(--ff-gold, #e8b820);
+  padding: 8px 5px;
+  border-bottom: 2px solid var(--ff-gold, #e8b820);
+  text-align: left;
+}
+.lb-table td {
+  padding: 7px 5px;
+  border-bottom: 1px solid #1a1a30;
+  color: var(--ff-cream, #f4e8c1);
+  vertical-align: middle;
+  word-break: break-all;
+}
+.lb-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+.lb-row-me td { background: rgba(232,184,32,0.12) !important; color: var(--ff-gold, #e8b820) !important; font-weight: bold; }
+
 </style>
 </head>
 <body>
@@ -7502,8 +7603,12 @@ const gameState = {
   totalWrongThisBattle: 0      // total wrong answers this battle (for perfect_boss achievement)
 };
 
+// --- Leaderboard backend (Cloudflare Worker + D1) ---
+const WORKER_URL = 'https://tense-adventure-scores.chaiphattana1996.workers.dev';
+
 // --- RPG: persistent player profile (saved separately) ---
 const player = {
+  name: '',             // player display name (max 12 chars)
   level: 1,
   exp: 0,
   coins: 0,
@@ -8286,6 +8391,7 @@ function normalizeSaveData(saved) {
   if (saved.crystals === undefined) saved.crystals = 0;
   if (!saved.equipBonus) saved.equipBonus = { dmgPercent:0, hpBonus:0, defPercent:0, critBonus:0,
     expBonus:0, freeShield:false, comboShield:false, itemLimitBonus:0, cooldownReduce:0 };
+  if (typeof saved.name !== 'string') saved.name = '';
   return saved;
 }
 
@@ -8320,6 +8426,7 @@ function loadProgress() {
         saved.stats || {}
       );
       if (saved.appearance) player.appearance = Object.assign(player.appearance, saved.appearance);
+      player.name = (saved.name || '').trim().slice(0, 12);
     }
     syncSkills();
     applyEquipmentBonus(player);
@@ -8358,7 +8465,8 @@ function resetProgress() {
       freeShield:false, comboShield:false, itemLimitBonus:0, cooldownReduce:0 };
     player.stats = { coinsLifetime:0, shopVisits:0, maxCombo:0, totalLosses:0, itemsBoughtSet:{}, reviewModeEntered:false };
     player.appearance = { gender:'boy', outfit:'green', weapon:'sword', eyes:'normal', mouth:'smile', hat:'hood', bag:'backpack' };
-    renderMapScreen();
+    player.name = '';
+    renderStartScreen(); // name-gate will trigger renderNameScreen() since name is now empty
   });
 }
 
@@ -8489,7 +8597,8 @@ function crystalSvg(color) {
 /* ============================================
    START SCREEN
    ============================================ */
-function renderStartScreen() {
+function renderStartScreen(_skipNameGate = false) {
+  if (!player.name && !_skipNameGate) { renderNameScreen(); return; }
   _currentScreen = 'start';
   const _myScreen = 'start';
   setTimeout(() => { if (_currentScreen === _myScreen) unlockAchievement('start_idle'); }, 60000);
@@ -8499,11 +8608,11 @@ function renderStartScreen() {
         <h1 class="game-title">Tense Time<br>Adventure</h1>
         <p class="subtitle">▶ ภารกิจกู้โลก 12 Tenses ◀</p>
       </div>
-      
+
       <div class="ff-box ff-box-gold-corners story-intro">
         เครื่องเวลาพังแล้ว! คริสตัลแห่งเวลาแตกกระจายไปทั่วโลกภาษาอังกฤษ ภารกิจของเธอคือช่วยแก้ประโยคให้ถูกต้อง เพื่อซ่อมเครื่องเวลาและกู้โลก 12 Tenses!
       </div>
-      
+
       <div class="hero-scene">
         <div class="time-machine">
           <svg class="tm-svg" viewBox="0 0 32 48" preserveAspectRatio="xMidYMid meet" style="shape-rendering:crispEdges"><use href="#time-machine-sprite"/></svg>
@@ -8512,16 +8621,220 @@ function renderStartScreen() {
           ${heroSprite()}
         </div>
       </div>
-      
+
+      <div style="text-align:center;font-family:'Press Start 2P',monospace;font-size:0.55rem;color:var(--ff-gold);margin-bottom:4px;">
+        ⚔ ${player.name} ⚔
+      </div>
+
       <div class="start-buttons">
         <button class="ff-btn ff-btn-gold" onclick="renderModeScreen()">START GAME</button>
+        <button class="ff-btn ff-btn-cyan" onclick="renderLeaderboardScreen()">🏆 LEADERBOARD</button>
         <button class="ff-btn ff-btn-cyan" onclick="renderCharacterCreator()">🎨 แต่งตัวละคร</button>
         <button class="ff-btn" onclick="renderReviewScreen()">REVIEW TENSES</button>
         <button class="ff-btn ff-btn-purple" onclick="openModal()">HOW TO PLAY</button>
         <button class="ff-btn" onclick="renderAchievementsScreen()">🏆 ACHIEVEMENTS</button>
+        <button class="ff-btn" style="font-size:0.5rem;padding:6px 10px;" onclick="renderNameScreen(true)">✏️ เปลี่ยนชื่อ (${player.name})</button>
       </div>
     </div>
   `;
+}
+
+/* ============================================
+   NAME SCREEN
+   ============================================ */
+function renderNameScreen(isChange = false) {
+  _currentScreen = 'name';
+  document.getElementById('app').innerHTML = `
+    <div class="screen active" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;box-sizing:border-box;">
+      <div class="name-screen-box">
+        <div style="font-family:'Press Start 2P',monospace;font-size:0.65rem;color:var(--ff-gold);margin-bottom:6px;text-align:center;">
+          ${isChange ? '✏️ CHANGE NAME' : '🌟 ENTER YOUR NAME'}
+        </div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:0.45rem;color:var(--pk-mid);margin-bottom:16px;text-align:center;">
+          ${isChange ? '▶ เปลี่ยนชื่อ Time Ranger ◀' : '▶ ตั้งชื่อนักรบแห่งเวลา ◀'}
+        </div>
+
+        <div style="display:flex;justify-content:center;margin-bottom:16px;">
+          ${heroSprite()}
+        </div>
+
+        <div class="name-input-wrap">
+          <input
+            type="text"
+            id="name-input"
+            class="name-input"
+            maxlength="12"
+            placeholder="Time Ranger..."
+            value="${isChange ? player.name : ''}"
+            oninput="document.getElementById('name-char-count').textContent=this.value.length+'/12'"
+            onkeydown="if(event.key==='Enter')confirmName(${isChange})">
+          <div id="name-char-count" class="name-char-count">${isChange ? player.name.length : 0}/12</div>
+          <div id="name-err" class="name-err"></div>
+        </div>
+
+        <div class="name-actions">
+          <button class="ff-btn ff-btn-gold" onclick="confirmName(${isChange})">
+            ✓ ${isChange ? 'บันทึก' : 'เริ่มผจญภัย!'}
+          </button>
+          ${isChange ? `<button class="ff-btn ff-btn-red" style="font-size:0.5rem;padding:6px 12px;" onclick="renderStartScreen(true)">✗ ยกเลิก</button>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+  setTimeout(() => {
+    const inp = document.getElementById('name-input');
+    if (inp) { inp.focus(); if (isChange) inp.select(); }
+  }, 80);
+}
+
+function confirmName(isChange = false) {
+  const inp = document.getElementById('name-input');
+  const err = document.getElementById('name-err');
+  const val = inp ? inp.value.trim() : '';
+  if (!val) {
+    if (err) err.textContent = '❌ กรุณาใส่ชื่อก่อนนะ!';
+    if (inp) inp.focus();
+    return;
+  }
+  player.name = val.slice(0, 12);
+  saveProgress();
+  SoundFX.victory && SoundFX.victory();
+  renderStartScreen();
+}
+
+/* ============================================
+   LEADERBOARD
+   ============================================ */
+const LB_STAGE_NAMES = {
+  1:'Present Simple',        2:'Present Continuous',
+  3:'Present Perfect',       4:'Present Perf. Cont.',
+  5:'Boss: Time Dragon',     6:'Past Simple',
+  7:'Past Continuous',       8:'Past Perfect',
+  9:'Past Perf. Cont.',      10:'Boss: Chrono Reaper',
+  11:'Future Simple',        12:'Future Continuous',
+  13:'Future Perfect',       14:'Future Perf. Cont.',
+  15:'Boss: Time Emperor',   16:'Boss: Evil T-Bot'
+};
+let _lbTab = 'overall';
+let _lbStage = 1;
+
+function renderLeaderboardScreen() {
+  _currentScreen = 'leaderboard';
+  document.getElementById('app').innerHTML = `
+    <div class="screen active" style="padding:16px;max-width:520px;margin:0 auto;box-sizing:border-box;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <button class="ff-btn" style="font-size:0.5rem;padding:5px 10px;" onclick="renderStartScreen()">◀ BACK</button>
+        <div style="font-family:'Press Start 2P',monospace;font-size:0.7rem;color:var(--ff-gold);">🏆 LEADERBOARD</div>
+      </div>
+
+      <div class="lb-tabs">
+        <button id="lb-tab-overall" class="lb-tab lb-tab-active" onclick="switchLbTab('overall')">OVERALL</button>
+        <button id="lb-tab-stage"   class="lb-tab" onclick="switchLbTab('stage')">BY STAGE</button>
+      </div>
+
+      <div id="lb-stage-sel" style="display:none;margin:8px 0;text-align:center;">
+        <select id="lb-stage-select" class="lb-stage-select" onchange="_lbStage=+this.value;loadLbStage(_lbStage)">
+          ${Object.entries(LB_STAGE_NAMES).map(([id,n])=>`<option value="${id}">${id}. ${n}</option>`).join('')}
+        </select>
+      </div>
+
+      <div id="lb-content" class="lb-content">
+        <div class="lb-loading">⏳ กำลังโหลด...</div>
+      </div>
+    </div>
+  `;
+  _lbTab = 'overall';
+  loadLbOverall();
+}
+
+function switchLbTab(tab) {
+  _lbTab = tab;
+  document.getElementById('lb-tab-overall').classList.toggle('lb-tab-active', tab==='overall');
+  document.getElementById('lb-tab-stage').classList.toggle('lb-tab-active', tab==='stage');
+  document.getElementById('lb-stage-sel').style.display = tab==='stage' ? 'block' : 'none';
+  if (tab==='overall') loadLbOverall();
+  else loadLbStage(_lbStage);
+}
+
+function lbRow(rank, name, col2, col3, col4, isMe) {
+  return `<tr class="${isMe?'lb-row-me':''}">
+    <td>${rank}</td><td>${escHtml(name)}</td><td>${col2}</td><td>${col3}</td><td>${col4}</td>
+  </tr>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function loadLbOverall() {
+  const c = document.getElementById('lb-content');
+  if (!c) return;
+  c.innerHTML = '<div class="lb-loading">⏳ กำลังโหลด...</div>';
+  fetch(WORKER_URL + '/leaderboard?type=overall&limit=30')
+    .then(r => r.json())
+    .then(data => {
+      if (!c || _lbTab !== 'overall') return;
+      const rows = data.rows || [];
+      if (!rows.length) { c.innerHTML = '<div class="lb-empty">ยังไม่มีคะแนน — เป็นคนแรก!</div>'; return; }
+      c.innerHTML = `
+        <table class="lb-table">
+          <thead><tr><th>#</th><th>ชื่อ</th><th>คะแนนรวม</th><th>ด่าน</th><th>🥇</th></tr></thead>
+          <tbody>
+            ${rows.map((r,i) => lbRow(i+1, r.player_name, r.total_score, r.stages_cleared, r.gold_count, r.player_name===player.name)).join('')}
+          </tbody>
+        </table>`;
+    })
+    .catch(() => { if (c) c.innerHTML = '<div class="lb-empty">❌ โหลดไม่ได้ — ลองใหม่ภายหลัง</div>'; });
+}
+
+function loadLbStage(stageId) {
+  _lbStage = stageId;
+  const sel = document.getElementById('lb-stage-select');
+  if (sel) sel.value = stageId;
+  const c = document.getElementById('lb-content');
+  if (!c) return;
+  c.innerHTML = '<div class="lb-loading">⏳ กำลังโหลด...</div>';
+  const badge = { gold:'🥇', silver:'🥈', bronze:'🥉' };
+  fetch(WORKER_URL + `/leaderboard?type=stage&stage=${stageId}&limit=30`)
+    .then(r => r.json())
+    .then(data => {
+      if (!c || _lbTab !== 'stage') return;
+      const rows = data.rows || [];
+      if (!rows.length) { c.innerHTML = '<div class="lb-empty">ยังไม่มีคะแนนสำหรับด่านนี้</div>'; return; }
+      c.innerHTML = `
+        <div style="font-family:'Press Start 2P',monospace;font-size:0.5rem;color:var(--ff-gold);text-align:center;margin-bottom:8px;">
+          Stage ${stageId}: ${LB_STAGE_NAMES[stageId]||''}
+        </div>
+        <table class="lb-table">
+          <thead><tr><th>#</th><th>ชื่อ</th><th>คะแนน</th><th>%</th><th>เหรียญ</th></tr></thead>
+          <tbody>
+            ${rows.map((r,i) => lbRow(i+1, r.player_name, r.score, Math.round(r.pct)+'%', badge[r.badge]||r.badge, r.player_name===player.name)).join('')}
+          </tbody>
+        </table>`;
+    })
+    .catch(() => { if (c) c.innerHTML = '<div class="lb-empty">❌ โหลดไม่ได้ — ลองใหม่ภายหลัง</div>'; });
+}
+
+/* ============================================
+   SCORE SUBMISSION
+   ============================================ */
+function submitScore(stage, score, badge, pct) {
+  if (gameState.mode !== 'student') return;
+  if (!player.name) return;
+  if (!badge) return; // only submit if player earned a badge
+  fetch(WORKER_URL + '/score', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      player_name: player.name,
+      stage_id:    stage.id,
+      stage_name:  stage.world  || '',
+      tense:       stage.tense  || '',
+      score,
+      badge,
+      pct: Math.round(pct * 10) / 10
+    })
+  }).catch(() => {}); // fire-and-forget — game unaffected if network fails
 }
 
 /* ============================================
@@ -11441,6 +11754,7 @@ function renderResultScreen() {
       }
     }
     saveProgress();
+    submitScore(stage, gameState.score, badge, pct); // leaderboard: fire-and-forget
   }
 
   // Special unlock messages
